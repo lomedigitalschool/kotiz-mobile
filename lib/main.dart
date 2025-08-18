@@ -3,14 +3,21 @@ import 'package:kotiz_app/components/pageBuilder.dart';
 import 'package:kotiz_app/views/home_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  final prefs = await SharedPreferences.getInstance();
+  final showHome = prefs.getBool("showHome") ?? false;
+
+  runApp(MyApp(showHome: showHome));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.showHome});
+  final bool showHome;
 
   // This widget is the root of your application.
   @override
@@ -23,22 +30,23 @@ class MyApp extends StatelessWidget {
         fontFamily: "Roboto",
         colorSchemeSeed: Color(0xffffffff),
       ),
-      home: const onBoarding(title: 'Kotiz on boarding '),
+      home: showHome ? HomePage() : OnBoarding(title: 'Kotiz on boarding '),
     );
   }
 }
 
-class onBoarding extends StatefulWidget {
-  const onBoarding({super.key, required this.title});
+class OnBoarding extends StatefulWidget {
+  const OnBoarding({super.key, required this.title});
 
   final String title;
 
   @override
-  State<onBoarding> createState() => _onBoardingState();
+  State<OnBoarding> createState() => _OnBoardingState();
 }
 
-class _onBoardingState extends State<onBoarding> {
+class _OnBoardingState extends State<OnBoarding> {
   final pageController = PageController();
+
   bool isLastPage = false;
 
   @override
@@ -49,12 +57,29 @@ class _onBoardingState extends State<onBoarding> {
 
   @override
   Widget build(BuildContext context) {
+    FlutterNativeSplash.remove();
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 150,
         backgroundColor: Color(0xffffffff),
         title: Image.asset('assets/images/onBoardingLogo.png'),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(top: 110.0, right: 20),
+            child: IconButton(
+              iconSize: 30,
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool("showHome", true);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+              },
+              icon: Icon(LucideIcons.x, color: Color(0xff3B5BAB)),
+            ),
+          ),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.only(bottom: 200),
@@ -118,7 +143,9 @@ class _onBoardingState extends State<onBoarding> {
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.easeInOut,
                       )
-                    : () {
+                    : () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setBool("showHome", true);
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) => HomePage()),
                         );
