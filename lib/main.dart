@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kotiz_app/components/pageBuilder.dart';
 import 'package:kotiz_app/views/home_page.dart';
+import 'package:kotiz_app/views_models/splash_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+// import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final showHome = prefs.getBool("showHome") ?? false;
 
@@ -23,22 +23,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "Roboto",
         colorSchemeSeed: Color(0xffffffff),
       ),
-      home: showHome ? HomePage() : OnBoarding(title: 'Kotiz on boarding '),
+      home: SplashScreen(showHome: showHome),
     );
   }
 }
 
 class OnBoarding extends StatefulWidget {
-  const OnBoarding({super.key, required this.title});
-
-  final String title;
+  const OnBoarding({super.key});
 
   @override
   State<OnBoarding> createState() => _OnBoardingState();
@@ -57,7 +53,6 @@ class _OnBoardingState extends State<OnBoarding> {
 
   @override
   Widget build(BuildContext context) {
-    FlutterNativeSplash.remove();
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 150,
