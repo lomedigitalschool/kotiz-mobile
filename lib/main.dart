@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kotiz_app/components/pageBuilder.dart';
+import 'package:kotiz_app/views/home_page.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:hive/hive.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,56 +17,130 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: "Roboto",
+        colorSchemeSeed: Color(0xffffffff),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const onBoarding(title: 'Kotiz on boarding '),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class onBoarding extends StatefulWidget {
+  const onBoarding({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<onBoarding> createState() => _onBoardingState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _onBoardingState extends State<onBoarding> {
+  final pageController = PageController();
+  bool isLastPage = false;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
+        toolbarHeight: 150,
+        backgroundColor: Color(0xffffffff),
+        title: Image.asset('assets/images/onBoardingLogo.png'),
+        centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      body: Container(
+        padding: EdgeInsets.only(bottom: 200),
+        child: PageView(
+          controller: pageController,
+          onPageChanged: (index) {
+            setState(() {
+              isLastPage = index == 2 ? true : false;
+            });
+          },
+          children: [
+            Pagebuilder(
+              title: "Lancez votre cotisation",
+              subtitle:
+                  'Créer votre cotisation en quelques  secondes pour un projet, un évènement ou une cause',
+            ),
+            Pagebuilder(
+              title: " Contribuez en un clic",
+              subtitle:
+                  'Partagez le lien et vos proches peuvent participer sans créer de compte, en toute simplicité.',
+            ),
+            Pagebuilder(
+              title: "Suivi instantané & retrait facile",
+              subtitle:
+                  'Suivez l’évolution de votre cotisation en temps réel et retirez vos fonds en toute  simplicité.',
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+
+      bottomSheet: Container(
+        color: Color(0xFFFFFFFF),
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        height: 200,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: SmoothPageIndicator(
+                controller: pageController,
+                count: 3,
+                effect: SlideEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  spacing: 8,
+                  dotColor: Colors.black26,
+                  activeDotColor: Color(0xFF3B5BAB),
+                ),
+                onDotClicked: (index) => pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 50),
+                  curve: Curves.easeInOut,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 21.0),
+              child: OutlinedButton(
+                onPressed: !isLastPage
+                    ? () => pageController.nextPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      )
+                    : () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
+                style: ButtonStyle(
+                  fixedSize: WidgetStatePropertyAll(Size(350, 55)),
+                  backgroundColor: WidgetStatePropertyAll(Color(0xFF3B5BAB)),
+                  foregroundColor: WidgetStatePropertyAll(Color(0xFFFFFFFF)),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5), // 👈 bords carrés
+                    ),
+                  ),
+                ),
+                child: Text(
+                  !isLastPage ? "Suivant" : "Commencer",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
