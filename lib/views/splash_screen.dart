@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kotiz_app/main.dart';
 import 'package:kotiz_app/views/home_page.dart';
+import 'package:kotiz_app/views/onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, required this.showHome});
@@ -36,13 +37,20 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // definition de l' effet de rétrécissement
-    _scaleAnimation = Tween(begin: 4.0, end: 1.5).animate(
-      CurvedAnimation(parent: _controllerAnimation, curve: Curves.easeIn),
+    _scaleAnimation = Tween(begin: 4.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controllerAnimation, curve: Curves.easeInOut),
     );
 
     _translateAnimation =
-        Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -0.4)).animate(
-          CurvedAnimation(parent: _controllerAnimation, curve: Curves.easeIn),
+        Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -2.05)).animate(
+          CurvedAnimation(
+            parent: _controllerAnimation,
+            curve: Interval(
+              0.8, // début du slide
+              1.0, // fin du slide
+              curve: Curves.easeInOut,
+            ),
+          ),
         );
 
     // lancement de l'animation
@@ -74,7 +82,10 @@ class _SplashScreenState extends State<SplashScreen>
           opacity: _fadeAnimation,
           child: ScaleTransition(
             scale: _scaleAnimation,
-            child: Image.asset("assets/images/onBoardingLogo.png"),
+            child: SlideTransition(
+              position: _translateAnimation,
+              child: Image.asset("assets/images/onBoardingLogo.png"),
+            ),
           ),
         ),
       ),
