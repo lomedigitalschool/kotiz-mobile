@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
-import 'package:kotiz_app/logic/bottomNavCubit.dart';
-import 'package:kotiz_app/presentation/components/AppButton.dart';
+import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/explore_page.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,7 +23,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentIndex = context.watch<BottomNavCubit>().state.currentIndex;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConstant.colorWhite,
@@ -47,39 +44,51 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: ColorConstant.colorWhite,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16, top: 64),
+            padding: const EdgeInsets.only(left: 30, top: 64),
             child: Text(
-              "Recentes cagnottes",
+              "Récentes cagnottes",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(height: 12),
 
-          // ListView.builder(
-          //   itemCount: 8,
-          //   scrollDirection: Axis.horizontal,
-          //   shrinkWrap: true,
-          //   itemBuilder: () {
-          //     Text("jfhjksdafjhsdjakh");
-          //     Image.asset("assets/images/Logo.png");
-          //    };
-          // ),
-          // SizedBox(height: 189),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16),
+              child: ListView.builder(
+                itemCount: 8,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: CagnotteTile(
+                      image: "assets/images/Logo-Text.png",
+                      title: "Fluffy's Vet Bills",
+                      currency: r'$',
+                      amount: "200",
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SizedBox(height: 189),
           Column(
             children: [
               Center(
                 child: AppButton(text: "Créer un compte", onPressed: () {}),
               ),
               SizedBox(height: 12),
-              Center(
-                child: AppButton(
-                  text: "Créer une cagnotte",
-                  onPressed: () {},
-                  backgroundColor: ColorConstant.colorGreen,
-                ),
+              AppButton(
+                text: "Créer une cagnotte",
+                onPressed: () {},
+                backgroundColor: ColorConstant.colorGreen,
               ),
+              SizedBox(height: 72),
             ],
           ),
         ],

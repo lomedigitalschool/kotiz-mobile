@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
-import 'package:kotiz_app/presentation/components/AppButton.dart';
-import 'package:kotiz_app/presentation/components/pageBuilder.dart';
+import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/presentation/components/page_builder.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
