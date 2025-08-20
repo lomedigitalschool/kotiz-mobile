@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/main.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
+import 'package:kotiz_app/presentation/views/main_page.dart';
 import 'package:kotiz_app/presentation/views/onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -60,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen>
     Timer(Duration(seconds: 4), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => widget.showHome ? HomePage() : OnBoarding(),
+          builder: (_) => widget.showHome ? MainPage() : OnBoarding(),
         ),
       );
     });

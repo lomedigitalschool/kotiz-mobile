@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/logic/bottomNavCubit.dart';
 import 'package:kotiz_app/presentation/components/AppButton.dart';
+import 'package:kotiz_app/presentation/views/create_page.dart';
+import 'package:kotiz_app/presentation/views/explore_page.dart';
+import 'package:kotiz_app/presentation/views/profil_page.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,8 +16,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<Widget> pages = const [
+    HomePage(),
+    ExplorePage(),
+    CreatePage(),
+    ProfilPage(),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final currentIndex = context.watch<BottomNavCubit>().state.currentIndex;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConstant.colorWhite,

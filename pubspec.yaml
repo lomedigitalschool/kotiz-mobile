@@ -37,6 +37,7 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   lucide_icons_flutter: ^3.0.9
   shared_preferences: ^2.5.3
+  flutter_bloc: ^9.1.1
 
 dev_dependencies:
   flutter_test:
