@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kotiz_app/views/splash_screen.dart';
+import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/presentation/views/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "Roboto",
-        colorSchemeSeed: Color(0xffffffff),
+        colorSchemeSeed: ColorConstant.colorWhite,
       ),
       home: SplashScreen(showHome: showHome),
     );

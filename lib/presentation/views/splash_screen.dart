@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/main.dart';
-import 'package:kotiz_app/views/home_page.dart';
-import 'package:kotiz_app/views/onboarding.dart';
+import 'package:kotiz_app/presentation/views/home_page.dart';
+import 'package:kotiz_app/presentation/views/onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, required this.showHome});
@@ -76,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorConstant.colorWhite,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
