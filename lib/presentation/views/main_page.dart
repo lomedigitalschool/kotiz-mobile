@@ -47,7 +47,7 @@ class MainPage extends StatelessWidget {
               LucideIcons.search600,
               color: ColorConstant.colorGreen,
             ),
-            icon: Icon(LucideIcons.search, color: Colors.black),
+            icon: Icon(LucideIcons.search200, color: Colors.black),
             label: "Decouverte",
           ),
           BottomNavigationBarItem(

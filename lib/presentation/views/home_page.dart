@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: ColorConstant.colorWhite,
         centerTitle: true,
@@ -44,55 +45,60 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       backgroundColor: ColorConstant.colorWhite,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 30, top: 64),
-            child: Text(
-              "Récentes cagnottes",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(height: 12),
-
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16),
-              child: ListView.builder(
-                itemCount: 8,
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 12.0),
-                    child: CagnotteTile(
-                      image: "assets/images/Logo-Text.png",
-                      title: "Fluffy's Vet Bills",
-                      currency: r'$',
-                      amount: "200",
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          SizedBox(height: 189),
-          Column(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: AppButton(text: "Créer un compte", onPressed: () {}),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, top: 64),
+                child: Text(
+                  "Récentes cagnottes",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
               ),
               SizedBox(height: 12),
-              AppButton(
-                text: "Créer une cagnotte",
-                onPressed: () {},
-                backgroundColor: ColorConstant.colorGreen,
+
+              SizedBox(
+                height: 300,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16),
+                  child: ListView.builder(
+                    itemCount: 8,
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: CagnotteTile(
+                          image: "assets/images/Logo-Text.png",
+                          title: "Fluffy's Vet Bills",
+                          currency: r'$',
+                          amount: "200",
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-              SizedBox(height: 72),
+              SizedBox(height: 189),
+              Column(
+                children: [
+                  Center(
+                    child: AppButton(text: "Créer un compte", onPressed: () {}),
+                  ),
+                  SizedBox(height: 12),
+                  AppButton(
+                    text: "Créer une cagnotte",
+                    onPressed: () {},
+                    backgroundColor: ColorConstant.colorGreen,
+                  ),
+                  SizedBox(height: 72),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

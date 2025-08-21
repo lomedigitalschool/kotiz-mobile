@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kotiz_app/components/BottomNavBar.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/bottomNavCubit.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
@@ -13,6 +12,7 @@ import 'package:kotiz_app/presentation/views/onboarding.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
 import 'package:kotiz_app/presentation/views/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,8 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GoRouter _router = GoRouter(
-      initialLocation: "/",
-
+      initialLocation: kDebugMode ? "/main" : "/",
       routes: [
         GoRoute(
           path: "/",
