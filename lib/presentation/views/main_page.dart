@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/bottomNavCubit.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
@@ -23,8 +24,8 @@ class MainPage extends StatelessWidget {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: context.watch<BottomNavCubit>().state.currentIndex,
-        onTap: (index) {
-          context.read<BottomNavCubit>().setIndex(index);
+        onTap: (currentIndex) {
+          context.read<BottomNavCubit>().setIndex(currentIndex);
         },
         type: BottomNavigationBarType.fixed,
         backgroundColor: ColorConstant.colorWhite,

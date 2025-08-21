@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         title: Image.asset("assets/images/Logo-Text.png", width: 100),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () => context.go("/login"),
             child: Text(
               "Se connecter",
               style: TextStyle(
