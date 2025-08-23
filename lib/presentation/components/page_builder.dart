@@ -21,7 +21,11 @@ class Pagebuilder extends StatelessWidget {
                   softWrap: true,
                   textAlign: TextAlign.center,
                   title,
-                  style: TextStyle(color: Color(0xFF3B5BAB), fontSize: 32),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               SizedBox(
@@ -31,7 +35,7 @@ class Pagebuilder extends StatelessWidget {
                   maxLines: 3,
                   subtitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Color(0xff4CA260), fontSize: 20),
+                  style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
               ),
             ],

@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 12),
 
               SizedBox(
-                height: 300,
+                height: 600,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16),
                   child: ListView.builder(
@@ -68,20 +68,33 @@ class _HomePageState extends State<HomePage> {
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 12.0),
-                        child: CagnotteTile(
-                          image: "assets/images/Logo-Text.png",
-                          title: "Fluffy's Vet Bills",
-                          currency: r'$',
-                          amount: "200",
-                        ),
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child: CagnotteTile(
+                              image: "assets/images/Logo-Text.png",
+                              title: "Fluffy's Vet Bills",
+                              currency: r'$',
+                              amount: "200",
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child: CagnotteTile(
+                              image: "assets/images/Logo-Text.png",
+                              title: "Fluffy's Vet Bills",
+                              currency: r'$',
+                              amount: "200",
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),
                 ),
               ),
-              SizedBox(height: 189),
+              // SizedBox(height: 189),
               Column(
                 children: [
                   Center(

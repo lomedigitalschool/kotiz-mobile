@@ -12,6 +12,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailOrPhoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool isFill = true;
+
+  // void _validateForm(){
+  //   isFill
+  // }
+
+  // @override
+  void dispose() {
+    super.dispose();
+    _emailOrPhoneController.dispose();
+    _passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -50,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 15),
 
                   TextField(
+                    controller: _emailOrPhoneController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
@@ -66,6 +82,8 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 15),
 
                   TextField(
+                    controller: _passwordController,
+                    obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
@@ -75,7 +93,27 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 50),
-                  AppButton(text: "Connecter", onPressed: () {}, fontSize: 18),
+                  AppButton(
+                    text: "Connecter",
+                    onPressed:
+                        _emailOrPhoneController.text.trim().isEmpty &&
+                            _passwordController.text.trim().isEmpty
+                        ? () {
+                            setState(() {
+                              isFill = false;
+                            });
+                            return null;
+                          }
+                        : () {
+                            setState(() {
+                              isFill = true;
+                            });
+                          },
+                    fontSize: 18,
+                    backgroundColor: !isFill
+                        ? Colors.grey
+                        : ColorConstant.colorBlue,
+                  ),
                   SizedBox(height: 20),
                   Flexible(
                     child: Row(
@@ -90,7 +128,6 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {},
                             child: Text(
                               "Créer un compte",
-                              // softWrap: true,
                               softWrap: true,
                               style: TextStyle(
                                 fontSize: 16,
