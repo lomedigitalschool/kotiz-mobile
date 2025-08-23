@@ -60,52 +60,54 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 12),
 
               SizedBox(
-                height: 600,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 16),
-                  child: ListView.builder(
-                    itemCount: 8,
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: CagnotteTile(
-                              image: "assets/images/Logo-Text.png",
-                              title: "Fluffy's Vet Bills",
-                              currency: r'$',
-                              amount: "200",
-                            ),
+                height: 550,
+                child: ListView.builder(
+                  itemCount: 8,
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8),
+                          child: CagnotteTile(
+                            image: "assets/images/Logo-Text.png",
+                            title: "Fluffy's Vet Bills",
+                            currency: r'$',
+                            amount: "200",
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: CagnotteTile(
-                              image: "assets/images/Logo-Text.png",
-                              title: "Fluffy's Vet Bills",
-                              currency: r'$',
-                              amount: "200",
-                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: CagnotteTile(
+                            image: "assets/images/Logo-Text.png",
+                            title: "Fluffy's Vet Bills",
+                            currency: r'$',
+                            amount: "200",
                           ),
-                        ],
-                      );
-                    },
-                  ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               // SizedBox(height: 189),
               Column(
                 children: [
                   Center(
-                    child: AppButton(text: "Créer un compte", onPressed: () {}),
+                    child: Column(
+                      children: [
+                        AppButton(
+                          text: "Créer une cagnotte",
+                          onPressed: () {},
+                          backgroundColor: ColorConstant.colorGreen,
+                        ),
+                        SizedBox(height: 12),
+                        AppButton(text: "Créer un compte", onPressed: () {}),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 12),
-                  AppButton(
-                    text: "Créer une cagnotte",
-                    onPressed: () {},
-                    backgroundColor: ColorConstant.colorGreen,
-                  ),
+
                   SizedBox(height: 72),
                 ],
               ),
