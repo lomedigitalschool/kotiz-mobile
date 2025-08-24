@@ -15,28 +15,31 @@ class CagnotteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Card(child: Image.asset(image, width: 160, height: 160)),
-        SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Text(
-            title,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+    return SizedBox(
+      height: 250,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(child: Image.asset(image, width: 160, height: 160)),
+          SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(
+              title,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Text("$amount$currency atteint"),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text("$amount$currency atteint"),
+          ),
+        ],
+      ),
     );
   }
 }

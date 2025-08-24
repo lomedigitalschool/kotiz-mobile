@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
           fontFamily: "Roboto",
           colorSchemeSeed: ColorConstant.colorWhite,
         ),
-        home: SplashScreen(showHome: showHome),
+        // home: SplashScreen(showHome: showHome),
       ),
     );
   }
