@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -14,25 +16,28 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailOrPhoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool isFill = true;
 
-  // void _validateForm(){
-  //   isFill
-  // }
+  bool passwordView = false;
 
-  // @override
+  void _toggleView() {
+    setState(() {
+      passwordView = !passwordView;
+    });
+  }
+
+  @override
   void dispose() {
-    super.dispose();
     _emailOrPhoneController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.go("/main"); // déclenché par le bouton physique
-        return false; // empêche Flutter de fermer l'app
+        context.go("/main");
+        return false;
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -68,11 +73,15 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _emailOrPhoneController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ), // arrondi des coins
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    onChanged: (_) {
+                      context.read<AuthCubit>().validateForm(
+                        _emailOrPhoneController.text.trim(),
+                        _passwordController.text.trim(),
+                      );
+                    },
                   ),
                   SizedBox(height: 20),
                   Text(
@@ -83,36 +92,44 @@ class _LoginPageState extends State<LoginPage> {
 
                   TextField(
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: passwordView ? false : true,
                     decoration: InputDecoration(
+                      suffixIcon: GestureDetector(
+                        onTap: () => _toggleView(),
+                        child: Icon(
+                          passwordView ? LucideIcons.eyeOff : LucideIcons.eye,
+                        ),
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ), // arrondi des coins
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    onChanged: (_) {
+                      context.read<AuthCubit>().validateForm(
+                        _emailOrPhoneController.text.trim(),
+                        _passwordController.text.trim(),
+                      );
+                    },
                   ),
                   SizedBox(height: 50),
-                  AppButton(
-                    text: "Connecter",
-                    onPressed:
-                        _emailOrPhoneController.text.trim().isEmpty &&
-                            _passwordController.text.trim().isEmpty
-                        ? () {
-                            setState(() {
-                              isFill = false;
-                            });
-                            return null;
-                          }
-                        : () {
-                            setState(() {
-                              isFill = true;
-                            });
-                          },
-                    fontSize: 18,
-                    backgroundColor: !isFill
-                        ? Colors.grey
-                        : ColorConstant.colorBlue,
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      bool isFill = false;
+
+                      if (state is AuthFormInvalid) {
+                        isFill = state.isValid;
+                      }
+
+                      return AppButton(
+                        text: "Connecter",
+                        onPressed: () {},
+
+                        fontSize: 18,
+                        backgroundColor: isFill == false
+                            ? Colors.grey
+                            : ColorConstant.colorBlue,
+                      );
+                    },
                   ),
                   SizedBox(height: 20),
                   Flexible(
@@ -125,7 +142,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         Expanded(
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.go("/register");
+                            },
                             child: Text(
                               "Créer un compte",
                               softWrap: true,
