@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kotiz_app/components/pageBuilder.dart';
-import 'package:kotiz_app/views/home_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/presentation/components/page_builder.dart';
+import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -28,7 +31,7 @@ class _OnBoardingState extends State<OnBoarding> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 150,
-        backgroundColor: Color(0xffffffff),
+        backgroundColor: ColorConstant.colorWhite,
         title: Image.asset('assets/images/onBoardingLogo.png'),
         centerTitle: true,
       ),
@@ -61,7 +64,7 @@ class _OnBoardingState extends State<OnBoarding> {
         ),
       ),
       bottomSheet: Container(
-        color: Color(0xFFFFFFFF),
+        color: ColorConstant.colorWhite,
         padding: EdgeInsets.symmetric(horizontal: 10),
         height: 200,
         child: Column(
@@ -76,7 +79,7 @@ class _OnBoardingState extends State<OnBoarding> {
                   dotWidth: 8,
                   spacing: 8,
                   dotColor: Colors.black26,
-                  activeDotColor: Color(0xFF3B5BAB),
+                  activeDotColor: ColorConstant.colorBlue,
                 ),
                 onDotClicked: (index) => pageController.animateToPage(
                   index,
@@ -103,14 +106,15 @@ class _OnBoardingState extends State<OnBoarding> {
                           "Passer",
                           style: TextStyle(
                             fontSize: 18,
-                            color: Color(0xFF3B5BAB),
+                            color: ColorConstant.colorBlue,
                           ),
                         ),
                       ),
 
                       Padding(
                         padding: const EdgeInsets.only(top: 21.0),
-                        child: OutlinedButton(
+                        child: AppButton(
+                          text: !isLastPage ? "Suivant" : "Commencer",
                           onPressed: !isLastPage
                               ? () => pageController.nextPage(
                                   duration: const Duration(milliseconds: 500),
@@ -126,36 +130,15 @@ class _OnBoardingState extends State<OnBoarding> {
                                     ),
                                   );
                                 },
-                          style: ButtonStyle(
-                            fixedSize: WidgetStatePropertyAll(Size(200, 55)),
-                            backgroundColor: WidgetStatePropertyAll(
-                              Color(0xFF3B5BAB),
-                            ),
-                            foregroundColor: WidgetStatePropertyAll(
-                              Color(0xFFFFFFFF),
-                            ),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  5,
-                                ), // 👈 bords carrés
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            !isLastPage ? "Suivant" : "Commencer",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                          size: Size(200, 55),
                         ),
                       ),
                     ],
                   )
                 : Padding(
                     padding: const EdgeInsets.only(top: 21.0),
-                    child: OutlinedButton(
+                    child: AppButton(
+                      text: !isLastPage ? "Suivant" : "Commencer",
                       onPressed: !isLastPage
                           ? () => pageController.nextPage(
                               duration: const Duration(milliseconds: 500),
@@ -165,35 +148,9 @@ class _OnBoardingState extends State<OnBoarding> {
                               final prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.setBool("showHome", true);
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => HomePage(),
-                                ),
-                              );
+                              context.go('/main');
                             },
-                      style: ButtonStyle(
-                        fixedSize: WidgetStatePropertyAll(Size(365, 55)),
-                        backgroundColor: WidgetStatePropertyAll(
-                          Color(0xFF3B5BAB),
-                        ),
-                        foregroundColor: WidgetStatePropertyAll(
-                          Color(0xFFFFFFFF),
-                        ),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              5,
-                            ), // 👈 bords carrés
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        !isLastPage ? "Suivant" : "Commencer",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      size: Size(365, 55),
                     ),
                   ),
           ],
