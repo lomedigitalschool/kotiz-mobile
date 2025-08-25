@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.go("/main");
+        context.pop();
         return false;
       },
       child: Scaffold(
@@ -64,11 +64,11 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextFieldComponenet(
+                  TextFieldComponent(
                     labelTitle: "Email/numero",
                     controller: _emailOrPhoneController,
                     onChanged: (_) {
-                      context.read<AuthCubit>().validateForm(
+                      context.read<AuthCubit>().validateLoginForm(
                         _emailOrPhoneController.text.trim(),
                         _passwordController.text.trim(),
                       );
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 20),
 
-                  TextFieldComponenet(
+                  TextFieldComponent(
                     labelTitle: "Mot de passe",
                     controller: _passwordController,
                     obscureText: passwordView ? false : true,
@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
 
                     onChanged: (_) {
-                      context.read<AuthCubit>().validateForm(
+                      context.read<AuthCubit>().validateLoginForm(
                         _emailOrPhoneController.text.trim(),
                         _passwordController.text.trim(),
                       );
@@ -117,25 +117,24 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 20),
                   Flexible(
                     child: Row(
+                      spacing: 4,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Vous n'avez pas de compte?",
                           style: TextStyle(fontSize: 16),
                         ),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              context.go("/register");
-                            },
-                            child: Text(
-                              "Créer un compte",
-                              softWrap: true,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: ColorConstant.colorBlue,
-                                decoration: TextDecoration.underline,
-                              ),
+                        InkWell(
+                          onTap: () {
+                            context.push("/register");
+                          },
+                          child: Text(
+                            "Créer un compte",
+                            softWrap: true,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: ColorConstant.colorBlue,
+                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ),

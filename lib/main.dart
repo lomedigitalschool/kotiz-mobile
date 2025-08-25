@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
+import 'package:kotiz_app/presentation/views/auth/register_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/explore_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
@@ -24,13 +25,13 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final bool showHome;
   MyApp({super.key, required this.showHome});
+  final bool showHome;
 
   @override
   Widget build(BuildContext context) {
     final GoRouter _router = GoRouter(
-      initialLocation: kDebugMode ? "/main" : "/",
+      initialLocation: "/register",
       routes: [
         GoRoute(
           path: "/",
@@ -43,9 +44,9 @@ class MyApp extends StatelessWidget {
         GoRoute(path: "/create", builder: (context, state) => CreatePage()),
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),
+        GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
       ],
     );
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),

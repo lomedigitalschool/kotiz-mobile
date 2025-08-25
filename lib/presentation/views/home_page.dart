@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         title: Image.asset("assets/images/Logo-Text.png", width: 100),
         actions: [
           TextButton(
-            onPressed: () => context.go("/login"),
+            onPressed: () => context.push("/login"),
             child: Text(
               "Se connecter",
               style: TextStyle(
@@ -103,7 +103,12 @@ class _HomePageState extends State<HomePage> {
                           backgroundColor: ColorConstant.colorGreen,
                         ),
                         SizedBox(height: 12),
-                        AppButton(text: "Créer un compte", onPressed: () {}),
+                        AppButton(
+                          text: "Créer un compte",
+                          onPressed: () {
+                            context.push("/register");
+                          },
+                        ),
                       ],
                     ),
                   ),

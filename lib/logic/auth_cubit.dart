@@ -42,8 +42,25 @@ class AuthFormInvalid extends AuthState {
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
-  void validateForm(String email, String password) {
+  void validateLoginForm(String email, String password) {
     final isValid = email.trim().isNotEmpty && password.trim().isNotEmpty;
+    emit(AuthFormInvalid(isValid));
+  }
+
+  void validateRegisterForm(
+    String name,
+    String email,
+    String phone,
+    String password,
+    String confirmPassword,
+  ) {
+    final bool phoneOrEmail =
+        email.trim().isNotEmpty || phone.trim().isNotEmpty;
+    final isValid =
+        name.trim().isNotEmpty &&
+        phoneOrEmail &&
+        password.trim().isNotEmpty &&
+        confirmPassword.trim().isNotEmpty;
     emit(AuthFormInvalid(isValid));
   }
 }
