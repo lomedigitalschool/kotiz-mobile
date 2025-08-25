@@ -22,6 +22,20 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  bool password1View = false;
+  bool password2View = false;
+
+  void toggleView1() {
+    setState(() {
+      password1View = !password1View;
+    });
+  }
+
+  void toggleView2() {
+    setState(() {
+      password2View = !password2View;
+    });
+  }
 
   @override
   void dispose() {
@@ -111,6 +125,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelTitle: "Mot de passe",
                     astherix: true,
                     obscureText: true,
+                    suffixIcon: GestureDetector(
+                      onTap: () => toggleView1(),
+                      child: Icon(
+                        password1View ? LucideIcons.eyeOff : LucideIcons.eye,
+                      ),
+                    ),
                     onChanged: (_) {
                       context.read<AuthCubit>().validateRegisterForm(
                         _nameController.text.trim(),
@@ -126,6 +146,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelTitle: "Confirmer le mot de passe",
                     astherix: true,
                     obscureText: true,
+                    suffixIcon: GestureDetector(
+                      onTap: () => toggleView2(),
+                      child: Icon(
+                        password2View ? LucideIcons.eyeOff : LucideIcons.eye,
+                      ),
+                    ),
                     onChanged: (_) {
                       context.read<AuthCubit>().validateRegisterForm(
                         _nameController.text.trim(),

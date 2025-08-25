@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool passwordView = false;
 
-  void _toggleView() {
+  void toggleView() {
     setState(() {
       passwordView = !passwordView;
     });
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _passwordController,
                     obscureText: passwordView ? false : true,
                     suffixIcon: GestureDetector(
-                      onTap: () => _toggleView(),
+                      onTap: () => toggleView(),
                       child: Icon(
                         passwordView ? LucideIcons.eyeOff : LucideIcons.eye,
                       ),
