@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/presentation/components/text_field.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class LoginPage extends StatefulWidget {
@@ -63,19 +64,9 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Email/phone",
-                    style: TextStyle(fontSize: 24, color: Colors.black45),
-                  ),
-                  SizedBox(height: 15),
-
-                  TextField(
+                  TextFieldComponenet(
+                    labelTitle: "Email/numero",
                     controller: _emailOrPhoneController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
                     onChanged: (_) {
                       context.read<AuthCubit>().validateForm(
                         _emailOrPhoneController.text.trim(),
@@ -84,26 +75,18 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    "Mot de passe",
-                    style: TextStyle(fontSize: 24, color: Colors.black45),
-                  ),
-                  SizedBox(height: 15),
 
-                  TextField(
+                  TextFieldComponenet(
+                    labelTitle: "Mot de passe",
                     controller: _passwordController,
                     obscureText: passwordView ? false : true,
-                    decoration: InputDecoration(
-                      suffixIcon: GestureDetector(
-                        onTap: () => _toggleView(),
-                        child: Icon(
-                          passwordView ? LucideIcons.eyeOff : LucideIcons.eye,
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    suffixIcon: GestureDetector(
+                      onTap: () => _toggleView(),
+                      child: Icon(
+                        passwordView ? LucideIcons.eyeOff : LucideIcons.eye,
                       ),
                     ),
+
                     onChanged: (_) {
                       context.read<AuthCubit>().validateForm(
                         _emailOrPhoneController.text.trim(),

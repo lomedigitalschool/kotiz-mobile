@@ -7,7 +7,7 @@ import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/explore_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
-import 'package:kotiz_app/presentation/views/login_page.dart';
+import 'package:kotiz_app/presentation/views/auth/login_page.dart';
 import 'package:kotiz_app/presentation/views/main_page.dart';
 import 'package:kotiz_app/presentation/views/onboarding.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
