@@ -165,7 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                   BlocBuilder<AuthCubit, AuthState>(
                     builder: (context, state) {
-                      bool isFill = true;
+                      bool isFill = false;
 
                       if (state is AuthFormInvalid) {
                         isFill = state.isValid;
