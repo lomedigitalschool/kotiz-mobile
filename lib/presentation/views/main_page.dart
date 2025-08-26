@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
-import 'package:kotiz_app/logic/bottomNavCubit.dart';
+import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/explore_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -23,8 +23,8 @@ class MainPage extends StatelessWidget {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: context.watch<BottomNavCubit>().state.currentIndex,
-        onTap: (index) {
-          context.read<BottomNavCubit>().setIndex(index);
+        onTap: (currentIndex) {
+          context.read<BottomNavCubit>().setIndex(currentIndex);
         },
         type: BottomNavigationBarType.fixed,
         backgroundColor: ColorConstant.colorWhite,
@@ -34,35 +34,23 @@ class MainPage extends StatelessWidget {
         showSelectedLabels: true,
         items: [
           BottomNavigationBarItem(
-            activeIcon: Icon(
-              LucideIcons.house600,
-              color: ColorConstant.colorGreen,
-            ),
-            icon: Icon(LucideIcons.house200, color: Colors.black),
+            activeIcon: Icon(Icons.house, color: ColorConstant.colorGreen),
+            icon: Icon(Icons.house_outlined, color: Colors.black),
             label: "Accueil",
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(
-              LucideIcons.search600,
-              color: ColorConstant.colorGreen,
-            ),
-            icon: Icon(LucideIcons.search, color: Colors.black),
+            activeIcon: Icon(Icons.search, color: ColorConstant.colorGreen),
+            icon: Icon(Icons.search, color: Colors.black),
             label: "Decouverte",
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(
-              LucideIcons.squarePlus600,
-              color: ColorConstant.colorGreen,
-            ),
-            icon: Icon(LucideIcons.squarePlus200, color: Colors.black),
+            activeIcon: Icon(Icons.add_box, color: ColorConstant.colorGreen),
+            icon: Icon(Icons.add_box_outlined, color: Colors.black),
             label: "Créer",
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(
-              LucideIcons.userRound600,
-              color: ColorConstant.colorGreen,
-            ),
-            icon: Icon(LucideIcons.userRound200, color: Colors.black),
+            activeIcon: Icon(Icons.person, color: ColorConstant.colorGreen),
+            icon: Icon(Icons.person_outline, color: Colors.black),
             label: "Profil",
           ),
         ],
