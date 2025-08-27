@@ -4,10 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
+import 'package:kotiz_app/presentation/views/auth/register_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/explore_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
-import 'package:kotiz_app/presentation/views/login_page.dart';
+import 'package:kotiz_app/presentation/views/auth/login_page.dart';
 import 'package:kotiz_app/presentation/views/main_page.dart';
 import 'package:kotiz_app/presentation/views/onboarding.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
@@ -43,9 +44,9 @@ class MyApp extends StatelessWidget {
         GoRoute(path: "/create", builder: (context, state) => CreatePage()),
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),
+        GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
       ],
     );
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),
