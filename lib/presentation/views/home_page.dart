@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
@@ -25,14 +24,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: ColorConstant.colorWhite,
         centerTitle: true,
         title: Image.asset("assets/images/Logo-Text.png", width: 100),
         actions: [
           TextButton(
-            onPressed: () => context.push("/login"),
+            onPressed: () {},
             child: Text(
               "Se connecter",
               style: TextStyle(
@@ -45,80 +43,55 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       backgroundColor: ColorConstant.colorWhite,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 30, top: 64),
+            child: Text(
+              "Récentes cagnottes",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(height: 12),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16),
+              child: ListView.builder(
+                itemCount: 8,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: CagnotteTile(
+                      image: "assets/images/Logo-Text.png",
+                      title: "Fluffy's Vet Bills",
+                      currency: r'$',
+                      amount: "200",
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SizedBox(height: 189),
+          Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 30, top: 64),
-                child: Text(
-                  "Récentes cagnottes",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
+              Center(
+                child: AppButton(text: "Créer un compte", onPressed: () {}),
               ),
               SizedBox(height: 12),
-
-              SizedBox(
-                height: 550,
-                child: ListView.builder(
-                  itemCount: 8,
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: CagnotteTile(
-                            image: "assets/images/Logo-Text.png",
-                            title: "Fluffy's Vet Bills",
-                            currency: r'$',
-                            amount: "200",
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: CagnotteTile(
-                            image: "assets/images/Logo-Text.png",
-                            title: "Fluffy's Vet Bills",
-                            currency: r'$',
-                            amount: "200",
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+              AppButton(
+                text: "Créer une cagnotte",
+                onPressed: () {},
+                backgroundColor: ColorConstant.colorGreen,
               ),
-              // SizedBox(height: 189),
-              Column(
-                children: [
-                  Center(
-                    child: Column(
-                      children: [
-                        AppButton(
-                          text: "Créer une cagnotte",
-                          onPressed: () {},
-                          backgroundColor: ColorConstant.colorGreen,
-                        ),
-                        SizedBox(height: 12),
-                        AppButton(
-                          text: "Créer un compte",
-                          onPressed: () {
-                            context.push("/register");
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 72),
-                ],
-              ),
+              SizedBox(height: 72),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

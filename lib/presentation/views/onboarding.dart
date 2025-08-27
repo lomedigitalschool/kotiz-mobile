@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/page_builder.dart';
@@ -148,7 +147,11 @@ class _OnBoardingState extends State<OnBoarding> {
                               final prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.setBool("showHome", true);
-                              context.go('/main');
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(),
+                                ),
+                              );
                             },
                       size: Size(365, 55),
                     ),

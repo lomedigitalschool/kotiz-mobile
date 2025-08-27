@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/main.dart';
+import 'package:kotiz_app/presentation/views/home_page.dart';
+import 'package:kotiz_app/presentation/views/main_page.dart';
+import 'package:kotiz_app/presentation/views/onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, required this.showHome});
@@ -56,7 +59,11 @@ class _SplashScreenState extends State<SplashScreen>
     _controllerAnimation.forward();
 
     Timer(Duration(seconds: 4), () {
-      widget.showHome ? context.go("/main") : context.go("/onboarding");
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => widget.showHome ? MainPage() : OnBoarding(),
+        ),
+      );
     });
   }
 
