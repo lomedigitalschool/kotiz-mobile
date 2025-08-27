@@ -25,8 +25,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final bool showHome;
   MyApp({super.key, required this.showHome});
+  final bool showHome;
 
   @override
   Widget build(BuildContext context) {
