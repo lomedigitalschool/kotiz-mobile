@@ -203,7 +203,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             softWrap: true,
                             style: TextStyle(
                               fontSize: 16,
-                              color: ColorConstant.colorBlue,
+                              color: ColorConstant.colorGreen,
                               decoration: TextDecoration.underline,
                             ),
                           ),

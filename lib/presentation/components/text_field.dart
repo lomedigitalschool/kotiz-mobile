@@ -8,7 +8,7 @@ class TextFieldComponent extends StatelessWidget {
   final Widget? suffixIcon;
   final bool astherix;
   final bool isPhone;
-  TextInputType keyboardType;
+  final TextInputType keyboardType;
 
   @override
   TextFieldComponent({
@@ -26,6 +26,7 @@ class TextFieldComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
       children: [
         Row(
           spacing: 5,
@@ -40,7 +41,6 @@ class TextFieldComponent extends StatelessWidget {
                 : SizedBox(width: 1),
           ],
         ),
-        SizedBox(height: 15),
 
         TextField(
           keyboardType: keyboardType,

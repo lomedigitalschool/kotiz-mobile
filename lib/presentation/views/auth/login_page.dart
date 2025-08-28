@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(32),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height, // 👈 taille écran
+              height: MediaQuery.of(context).size.height,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                         fontSize: 18,
                         backgroundColor: isFill == false
                             ? Colors.grey
-                            : ColorConstant.colorBlue,
+                            : ColorConstant.colorGreen,
                       );
                     },
                   ),
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                   Flexible(
                     child: Row(
                       spacing: 4,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
                           "Vous n'avez pas de compte?",
