@@ -115,22 +115,27 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 20),
-                  Flexible(
-                    child: Row(
-                      spacing: 4,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
+                  Row(
+                    spacing: 4,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Text(
                           "Vous n'avez pas de compte?",
+                          softWrap: true,
+                          maxLines: 3,
                           style: TextStyle(fontSize: 16),
                         ),
-                        InkWell(
-                          onTap: () {
-                            context.push("/register");
-                          },
+                      ),
+                      InkWell(
+                        onTap: () {
+                          context.push("/register");
+                        },
+                        child: Flexible(
                           child: Text(
                             "Créer un compte",
                             softWrap: true,
+                            maxLines: 3,
                             style: TextStyle(
                               fontSize: 16,
                               color: ColorConstant.colorBlue,
@@ -138,8 +143,8 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
