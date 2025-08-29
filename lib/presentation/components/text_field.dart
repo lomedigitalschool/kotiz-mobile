@@ -48,7 +48,7 @@ class TextFieldComponent extends StatelessWidget {
           obscureText: obscureText,
           decoration: InputDecoration(
             suffixIcon: suffixIcon,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           onChanged: onChanged,
         ),

@@ -14,6 +14,7 @@ class PoolPage2 extends StatefulWidget {
 
 class _PoolPage2State extends State<PoolPage2> {
   String? _typeSelected;
+  DateTime? _selectedDate;
 
   List<String> _typeList = ["publique", "privée"];
 
@@ -26,6 +27,22 @@ class _PoolPage2State extends State<PoolPage2> {
     if (images.isNotEmpty) {
       setState(() {
         _images = images;
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      locale: const Locale("fr", "FR"),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
       });
     }
   }
@@ -88,6 +105,7 @@ class _PoolPage2State extends State<PoolPage2> {
             onPressed: _pickImages,
             backgroundColor: Colors.transparent,
             foregroundColor: Colors.black26,
+            borderRadius: 12,
           ),
 
           if (_images.isNotEmpty)
@@ -111,7 +129,43 @@ class _PoolPage2State extends State<PoolPage2> {
               },
             ),
 
-          TextFieldComponent(labelTitle: "Date limite", astherix: true),
+          Row(
+            spacing: 5,
+            children: [
+              Text(
+                " Date limite de la cagnotte",
+                style: TextStyle(fontSize: 24, color: Colors.black45),
+              ),
+
+              Text("*", style: TextStyle(color: Colors.red, fontSize: 24)),
+            ],
+          ),
+
+          // SizedBox(height: 2),
+          GestureDetector(
+            onTap: () {
+              _selectDate(context);
+            },
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black54),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedDate != null
+                        ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
+                        : "Choisir une date  ",
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  ),
+                  Icon(Icons.calendar_today, color: Colors.grey),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
