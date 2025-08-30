@@ -144,6 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   TextFieldComponent(
                     controller: _confirmPasswordController,
                     labelTitle: "Confirmer le mot de passe",
+                    overflow: TextOverflow.clip,
                     astherix: true,
                     obscureText: true,
                     suffixIcon: GestureDetector(
@@ -172,35 +173,42 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
 
                       return Padding(
-                        padding: const EdgeInsets.only(top: 45.0),
-                        child: AppButton(
-                          text: "Créer le compte",
-                          backgroundColor: isFill == false
-                              ? Colors.grey
-                              : ColorConstant.colorBlue,
-                          onPressed: () {},
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: Flexible(
+                          child: AppButton(
+                            text: "Créer le compte",
+                            backgroundColor: isFill == false
+                                ? Colors.grey
+                                : ColorConstant.colorBlue,
+                            onPressed: () {},
+                          ),
                         ),
                       );
                     },
                   ),
 
-                  Expanded(
-                    child: Row(
-                      spacing: 4,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
+                  Row(
+                    spacing: 4,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Text(
                           "Vous  avez déjà un compte ?",
+                          softWrap: true,
+                          maxLines: 2,
                           style: TextStyle(fontSize: 16),
                         ),
-                        InkWell(
-                          onTap: () {
-                            context.push("/login");
-                          },
+                      ),
+                      InkWell(
+                        onTap: () {
+                          context.push("/login");
+                        },
+                        child: Flexible(
                           child: Text(
                             "Se connecter",
                             softWrap: true,
+                            maxLines: 2,
                             style: TextStyle(
                               fontSize: 16,
                               color: ColorConstant.colorGreen,
@@ -208,8 +216,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 20),
+                    ],
                   ),
                 ],
               ),

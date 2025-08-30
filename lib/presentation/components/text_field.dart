@@ -9,6 +9,8 @@ class TextFieldComponent extends StatelessWidget {
   final bool astherix;
   final bool isPhone;
   final TextInputType keyboardType;
+  final TextOverflow? overflow;
+  final bool softWrap;
 
   @override
   TextFieldComponent({
@@ -21,6 +23,8 @@ class TextFieldComponent extends StatelessWidget {
     this.astherix = false,
     this.isPhone = false,
     this.keyboardType = TextInputType.text,
+    this.overflow,
+    this.softWrap = true,
   });
 
   Widget build(BuildContext context) {
@@ -33,11 +37,20 @@ class TextFieldComponent extends StatelessWidget {
           children: [
             Text(
               labelTitle,
+              softWrap: softWrap,
+              maxLines: 2,
               style: TextStyle(fontSize: 24, color: Colors.black45),
             ),
 
             astherix
-                ? Text("*", style: TextStyle(color: Colors.red, fontSize: 24))
+                ? Flexible(
+                    child: Text(
+                      "*",
+                      style: TextStyle(color: Colors.red, fontSize: 24),
+                      maxLines: 2,
+                      softWrap: softWrap,
+                    ),
+                  )
                 : SizedBox(width: 1),
           ],
         ),
