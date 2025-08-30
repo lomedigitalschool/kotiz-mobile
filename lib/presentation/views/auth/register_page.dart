@@ -22,8 +22,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  bool password1View = false;
-  bool password2View = false;
+  bool password1View = true;
+  bool password2View = true;
 
   void toggleView1() {
     setState(() {
@@ -122,11 +122,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _passwordController,
                   labelTitle: "Mot de passe",
                   astherix: true,
-                  obscureText: true,
+                  obscureText: password1View,
                   suffixIcon: GestureDetector(
                     onTap: () => toggleView1(),
                     child: Icon(
-                      password1View ? LucideIcons.eyeOff : LucideIcons.eye,
+                      password1View ? LucideIcons.eye : LucideIcons.eyeOff,
                     ),
                   ),
                   onChanged: (_) {
@@ -142,13 +142,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextFieldComponent(
                   controller: _confirmPasswordController,
                   labelTitle: "Confirmer le mot de passe",
-                  overflow: TextOverflow.clip,
                   astherix: true,
-                  obscureText: true,
+                  obscureText: password2View,
                   suffixIcon: GestureDetector(
                     onTap: () => toggleView2(),
                     child: Icon(
-                      password2View ? LucideIcons.eyeOff : LucideIcons.eye,
+                      password2View ? LucideIcons.eye : LucideIcons.eyeOff,
                     ),
                   ),
                   onChanged: (_) {
@@ -209,7 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           maxLines: 2,
                           style: TextStyle(
                             fontSize: 16,
-                            color: ColorConstant.colorGreen,
+                            color: ColorConstant.colorBlue,
                             decoration: TextDecoration.underline,
                           ),
                         ),
