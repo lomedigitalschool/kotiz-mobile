@@ -77,28 +77,25 @@ class _CreatePageState extends State<CreatePage> {
                 }
               : null,
           controlsBuilder: (context, details) {
-            return SizedBox(
-              height: 90,
-
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                spacing: 20,
+            return Flexible(
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 15,
                 children: [
+                  SizedBox(height: 10),
+                  AppButton(
+                    onPressed: details.onStepContinue,
+                    text: currentStep == 1 ? "Créer " : "Suivant",
+                    backgroundColor: ColorConstant.colorGreen,
+                  ),
                   currentStep == 1
                       ? AppButton(
                           onPressed: details.onStepCancel,
                           backgroundColor: Colors.grey,
                           text: "Retour",
-                          size: Size(150, 20),
                         )
                       : Text(""),
-                  AppButton(
-                    onPressed: details.onStepContinue,
-                    text: currentStep == 1 ? "Créer " : "Suivant",
-                    backgroundColor: ColorConstant.colorGreen,
-                    size: Size(150, 20),
-                  ),
                 ],
               ),
             );
