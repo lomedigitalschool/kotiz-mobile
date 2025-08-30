@@ -73,155 +73,152 @@ class _RegisterPageState extends State<RegisterPage> {
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(32),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                spacing: 20,
-                children: [
-                  TextFieldComponent(
-                    controller: _nameController,
-                    labelTitle: "Nom",
-                    astherix: true,
-                    onChanged: (_) {
-                      context.read<AuthCubit>().validateRegisterForm(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                        _phoneController.text.trim(),
-                        _passwordController.text.trim(),
-                        _confirmPasswordController.text.trim(),
-                      );
-                    },
-                  ),
+            child: Column(
+              spacing: 20,
+              children: [
+                TextFieldComponent(
+                  controller: _nameController,
+                  labelTitle: "Nom",
+                  astherix: true,
+                  onChanged: (_) {
+                    context.read<AuthCubit>().validateRegisterForm(
+                      _nameController.text.trim(),
+                      _emailController.text.trim(),
+                      _phoneController.text.trim(),
+                      _passwordController.text.trim(),
+                      _confirmPasswordController.text.trim(),
+                    );
+                  },
+                ),
 
-                  TextFieldComponent(
-                    controller: _emailController,
-                    labelTitle: "Email",
-                    onChanged: (_) {
-                      context.read<AuthCubit>().validateRegisterForm(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                        _phoneController.text.trim(),
-                        _passwordController.text.trim(),
-                        _confirmPasswordController.text.trim(),
-                      );
-                    },
-                  ),
-                  TextFieldComponent(
-                    controller: _phoneController,
-                    labelTitle: "Numero de telephone",
-                    keyboardType: TextInputType.phone,
-                    onChanged: (_) {
-                      context.read<AuthCubit>().validateRegisterForm(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                        _phoneController.text.trim(),
-                        _passwordController.text.trim(),
-                        _confirmPasswordController.text.trim(),
-                      );
-                    },
-                  ),
-                  TextFieldComponent(
-                    controller: _passwordController,
-                    labelTitle: "Mot de passe",
-                    astherix: true,
-                    obscureText: true,
-                    suffixIcon: GestureDetector(
-                      onTap: () => toggleView1(),
-                      child: Icon(
-                        password1View ? LucideIcons.eyeOff : LucideIcons.eye,
-                      ),
+                TextFieldComponent(
+                  controller: _emailController,
+                  labelTitle: "Email",
+                  onChanged: (_) {
+                    context.read<AuthCubit>().validateRegisterForm(
+                      _nameController.text.trim(),
+                      _emailController.text.trim(),
+                      _phoneController.text.trim(),
+                      _passwordController.text.trim(),
+                      _confirmPasswordController.text.trim(),
+                    );
+                  },
+                ),
+                TextFieldComponent(
+                  controller: _phoneController,
+                  labelTitle: "Numero de telephone",
+                  keyboardType: TextInputType.phone,
+                  onChanged: (_) {
+                    context.read<AuthCubit>().validateRegisterForm(
+                      _nameController.text.trim(),
+                      _emailController.text.trim(),
+                      _phoneController.text.trim(),
+                      _passwordController.text.trim(),
+                      _confirmPasswordController.text.trim(),
+                    );
+                  },
+                ),
+                TextFieldComponent(
+                  controller: _passwordController,
+                  labelTitle: "Mot de passe",
+                  astherix: true,
+                  obscureText: true,
+                  suffixIcon: GestureDetector(
+                    onTap: () => toggleView1(),
+                    child: Icon(
+                      password1View ? LucideIcons.eyeOff : LucideIcons.eye,
                     ),
-                    onChanged: (_) {
-                      context.read<AuthCubit>().validateRegisterForm(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                        _phoneController.text.trim(),
-                        _passwordController.text.trim(),
-                        _confirmPasswordController.text.trim(),
-                      );
-                    },
                   ),
-                  TextFieldComponent(
-                    controller: _confirmPasswordController,
-                    labelTitle: "Confirmer le mot de passe",
-                    overflow: TextOverflow.clip,
-                    astherix: true,
-                    obscureText: true,
-                    suffixIcon: GestureDetector(
-                      onTap: () => toggleView2(),
-                      child: Icon(
-                        password2View ? LucideIcons.eyeOff : LucideIcons.eye,
-                      ),
+                  onChanged: (_) {
+                    context.read<AuthCubit>().validateRegisterForm(
+                      _nameController.text.trim(),
+                      _emailController.text.trim(),
+                      _phoneController.text.trim(),
+                      _passwordController.text.trim(),
+                      _confirmPasswordController.text.trim(),
+                    );
+                  },
+                ),
+                TextFieldComponent(
+                  controller: _confirmPasswordController,
+                  labelTitle: "Confirmer le mot de passe",
+                  overflow: TextOverflow.clip,
+                  astherix: true,
+                  obscureText: true,
+                  suffixIcon: GestureDetector(
+                    onTap: () => toggleView2(),
+                    child: Icon(
+                      password2View ? LucideIcons.eyeOff : LucideIcons.eye,
                     ),
-                    onChanged: (_) {
-                      context.read<AuthCubit>().validateRegisterForm(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                        _phoneController.text.trim(),
-                        _passwordController.text.trim(),
-                        _confirmPasswordController.text.trim(),
-                      );
-                    },
                   ),
+                  onChanged: (_) {
+                    context.read<AuthCubit>().validateRegisterForm(
+                      _nameController.text.trim(),
+                      _emailController.text.trim(),
+                      _phoneController.text.trim(),
+                      _passwordController.text.trim(),
+                      _confirmPasswordController.text.trim(),
+                    );
+                  },
+                ),
 
-                  BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, state) {
-                      bool isFill = false;
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    bool isFill = false;
 
-                      if (state is AuthFormInvalid) {
-                        isFill = state.isValid;
-                      }
+                    if (state is AuthFormInvalid) {
+                      isFill = state.isValid;
+                    }
 
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
-                        child: Flexible(
-                          child: AppButton(
-                            text: "Créer le compte",
-                            backgroundColor: isFill == false
-                                ? Colors.grey
-                                : ColorConstant.colorBlue,
-                            onPressed: () {},
-                          ),
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Flexible(
+                        child: AppButton(
+                          text: "Créer le compte",
+                          backgroundColor: isFill == false
+                              ? Colors.grey
+                              : ColorConstant.colorBlue,
+                          onPressed: () {},
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
+                ),
 
-                  Row(
-                    spacing: 4,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Flexible(
+                Row(
+                  spacing: 4,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        "Vous  avez déjà un compte ?",
+                        softWrap: true,
+                        maxLines: 2,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        context.push("/login");
+                      },
+                      child: Flexible(
                         child: Text(
-                          "Vous  avez déjà un compte ?",
+                          "Se connecter",
                           softWrap: true,
                           maxLines: 2,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          context.push("/login");
-                        },
-                        child: Flexible(
-                          child: Text(
-                            "Se connecter",
-                            softWrap: true,
-                            maxLines: 2,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: ColorConstant.colorGreen,
-                              decoration: TextDecoration.underline,
-                            ),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: ColorConstant.colorGreen,
+                            decoration: TextDecoration.underline,
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
