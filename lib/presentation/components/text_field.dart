@@ -8,7 +8,9 @@ class TextFieldComponent extends StatelessWidget {
   final Widget? suffixIcon;
   final bool astherix;
   final bool isPhone;
-  TextInputType keyboardType;
+  final TextInputType keyboardType;
+  final TextOverflow overflow;
+  final bool softWrap;
 
   @override
   TextFieldComponent({
@@ -21,26 +23,38 @@ class TextFieldComponent extends StatelessWidget {
     this.astherix = false,
     this.isPhone = false,
     this.keyboardType = TextInputType.text,
+    this.overflow = TextOverflow.ellipsis,
+    this.softWrap = true,
   });
 
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           spacing: 5,
           children: [
-            Text(
-              labelTitle,
-              style: TextStyle(fontSize: 24, color: Colors.black45),
+            Expanded(
+              child: Text(
+                labelTitle,
+                overflow: overflow,
+                maxLines: 1,
+                style: TextStyle(fontSize: 24, color: Colors.black45),
+              ),
             ),
 
             astherix
-                ? Text("*", style: TextStyle(color: Colors.red, fontSize: 24))
+                ? Expanded(
+                    child: Text(
+                      "*",
+                      style: TextStyle(color: Colors.red, fontSize: 24),
+                    ),
+                  )
                 : SizedBox(width: 1),
           ],
         ),
-        SizedBox(height: 15),
 
         TextField(
           keyboardType: keyboardType,
@@ -48,7 +62,7 @@ class TextFieldComponent extends StatelessWidget {
           obscureText: obscureText,
           decoration: InputDecoration(
             suffixIcon: suffixIcon,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           onChanged: onChanged,
         ),

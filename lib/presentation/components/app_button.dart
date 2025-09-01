@@ -3,7 +3,7 @@ import 'package:kotiz_app/core/utils/color_constants.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color backgroundColor;
   final Color foregroundColor;
   final double borderRadius;
@@ -14,7 +14,7 @@ class AppButton extends StatelessWidget {
   const AppButton({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     this.backgroundColor = ColorConstant.colorBlue,
     this.foregroundColor = ColorConstant.colorWhite,
     this.borderRadius = 5,

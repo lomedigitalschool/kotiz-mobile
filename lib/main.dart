@@ -15,6 +15,7 @@ import 'package:kotiz_app/presentation/views/profil_page.dart';
 import 'package:kotiz_app/presentation/views/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +60,12 @@ class MyApp extends StatelessWidget {
           fontFamily: "Roboto",
           colorSchemeSeed: ColorConstant.colorWhite,
         ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('en', 'US'), Locale('fr', 'FR')],
         // home: SplashScreen(showHome: showHome),
       ),
     );
