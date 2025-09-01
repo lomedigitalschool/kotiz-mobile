@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permissions pour les images -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <!-- Pour Android 12 et moins -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Pour la caméra -->
+    <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:label="kotiz_app"
         android:name="${applicationName}"

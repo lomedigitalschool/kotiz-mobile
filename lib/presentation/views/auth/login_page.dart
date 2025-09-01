@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(32),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height, // 👈 taille écran
+              height: MediaQuery.of(context).size.height,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -110,27 +110,32 @@ class _LoginPageState extends State<LoginPage> {
                         fontSize: 18,
                         backgroundColor: isFill == false
                             ? Colors.grey
-                            : ColorConstant.colorBlue,
+                            : ColorConstant.colorGreen,
                       );
                     },
                   ),
                   SizedBox(height: 20),
-                  Flexible(
-                    child: Row(
-                      spacing: 4,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
+                  Row(
+                    spacing: 4,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Text(
                           "Vous n'avez pas de compte?",
+                          softWrap: true,
+                          maxLines: 3,
                           style: TextStyle(fontSize: 16),
                         ),
-                        InkWell(
-                          onTap: () {
-                            context.push("/register");
-                          },
+                      ),
+                      InkWell(
+                        onTap: () {
+                          context.push("/register");
+                        },
+                        child: Flexible(
                           child: Text(
                             "Créer un compte",
                             softWrap: true,
+                            maxLines: 3,
                             style: TextStyle(
                               fontSize: 16,
                               color: ColorConstant.colorBlue,
@@ -138,8 +143,8 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
