@@ -4,6 +4,7 @@ class TextFieldComponent extends StatelessWidget {
   final String labelTitle;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
+  final FormFieldValidator<String>? validator;
   final bool obscureText;
   final Widget? suffixIcon;
   final bool astherix;
@@ -11,6 +12,8 @@ class TextFieldComponent extends StatelessWidget {
   final TextInputType keyboardType;
   final TextOverflow overflow;
   final bool softWrap;
+  final int? maxLines;
+  final int? minLines;
 
   @override
   TextFieldComponent({
@@ -25,6 +28,9 @@ class TextFieldComponent extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.overflow = TextOverflow.ellipsis,
     this.softWrap = true,
+    this.validator,
+    this.minLines,
+    this.maxLines,
   });
 
   Widget build(BuildContext context) {
@@ -51,7 +57,10 @@ class TextFieldComponent extends StatelessWidget {
           ],
         ),
 
-        TextField(
+        TextFormField(
+          validator: validator,
+          minLines: minLines,
+          maxLines: maxLines,
           keyboardType: keyboardType,
           controller: controller,
           obscureText: obscureText,

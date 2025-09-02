@@ -67,6 +67,12 @@ class _PoolPage2State extends State<PoolPage2> {
           ),
 
           DropdownButtonFormField<String>(
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Ce champ est obligatoire";
+              }
+              return null;
+            },
             value: _typeSelected,
             decoration: InputDecoration(
               border: OutlineInputBorder(

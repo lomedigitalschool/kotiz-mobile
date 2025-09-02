@@ -6,7 +6,7 @@ import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
-import 'package:kotiz_app/presentation/views/explore_page.dart';
+import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Widget> pages = const [
     HomePage(),
-    ExplorePage(),
+    DashboardPage(),
     CreatePage(),
     ProfilPage(),
   ];
