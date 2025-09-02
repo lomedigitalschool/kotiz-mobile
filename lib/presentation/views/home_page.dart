@@ -97,31 +97,35 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               // SizedBox(height: 189),
-              Column(
-                children: [
-                  Center(
-                    child: Column(
-                      children: [
-                        AppButton(
-                          text: "Créer une cagnotte",
-                          onPressed: () {
-                            context.read<BottomNavCubit>().setIndex(2);
-                          },
-                          backgroundColor: ColorConstant.colorGreen,
-                        ),
-                        SizedBox(height: 12),
-                        AppButton(
-                          text: "Créer un compte",
-                          onPressed: () {
-                            context.push("/register");
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+              Padding(
+                padding: const EdgeInsets.all(32),
 
-                  SizedBox(height: 72),
-                ],
+                child: Column(
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          AppButton(
+                            text: "Créer une cagnotte",
+                            onPressed: () {
+                              context.read<BottomNavCubit>().setIndex(2);
+                            },
+                            backgroundColor: ColorConstant.colorGreen,
+                          ),
+                          SizedBox(height: 12),
+                          AppButton(
+                            text: "Créer un compte",
+                            onPressed: () {
+                              context.push("/register");
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 72),
+                  ],
+                ),
               ),
             ],
           ),
