@@ -31,7 +31,10 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: ColorConstant.colorWhite,
         centerTitle: true,
-        title: Image.asset("assets/images/Logo-Text.png", width: 100),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 6.0),
+          child: Image.asset("assets/images/Logo-Text.png", width: 100),
+        ),
         actions: [
           TextButton(
             onPressed: () => context.push("/login"),
