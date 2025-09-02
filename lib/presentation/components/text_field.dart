@@ -36,7 +36,7 @@ class TextFieldComponent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 5,
           children: [
-            Expanded(
+            Flexible(
               child: Text(
                 labelTitle,
                 overflow: overflow,
@@ -46,12 +46,7 @@ class TextFieldComponent extends StatelessWidget {
             ),
 
             astherix
-                ? Expanded(
-                    child: Text(
-                      "*",
-                      style: TextStyle(color: Colors.red, fontSize: 24),
-                    ),
-                  )
+                ? Text("*", style: TextStyle(color: Colors.red, fontSize: 24))
                 : SizedBox(width: 1),
           ],
         ),
