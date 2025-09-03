@@ -6,7 +6,7 @@ import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/views/auth/register_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
-import 'package:kotiz_app/presentation/views/explore_page.dart';
+import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:kotiz_app/presentation/views/auth/login_page.dart';
 import 'package:kotiz_app/presentation/views/main_page.dart';
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         GoRoute(path: "/login", builder: (context, state) => LoginPage()),
         GoRoute(path: "/onboarding", builder: (context, state) => OnBoarding()),
         GoRoute(path: "/home", builder: (context, state) => HomePage()),
-        GoRoute(path: "/explore", builder: (context, state) => ExplorePage()),
+        GoRoute(path: "/explore", builder: (context, state) => DashboardPage()),
         GoRoute(path: "/create", builder: (context, state) => CreatePage()),
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),

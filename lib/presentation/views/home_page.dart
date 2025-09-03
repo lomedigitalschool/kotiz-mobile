@@ -6,7 +6,7 @@ import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
-import 'package:kotiz_app/presentation/views/explore_page.dart';
+import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Widget> pages = const [
     HomePage(),
-    ExplorePage(),
+    DashboardPage(),
     CreatePage(),
     ProfilPage(),
   ];
@@ -31,7 +31,10 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: ColorConstant.colorWhite,
         centerTitle: true,
-        title: Image.asset("assets/images/Logo-Text.png", width: 100),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 6.0),
+          child: Image.asset("assets/images/Logo-Text.png", width: 100),
+        ),
         actions: [
           TextButton(
             onPressed: () => context.push("/login"),
@@ -94,31 +97,35 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               // SizedBox(height: 189),
-              Column(
-                children: [
-                  Center(
-                    child: Column(
-                      children: [
-                        AppButton(
-                          text: "Créer une cagnotte",
-                          onPressed: () {
-                            context.read<BottomNavCubit>().setIndex(2);
-                          },
-                          backgroundColor: ColorConstant.colorGreen,
-                        ),
-                        SizedBox(height: 12),
-                        AppButton(
-                          text: "Créer un compte",
-                          onPressed: () {
-                            context.push("/register");
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+              Padding(
+                padding: const EdgeInsets.all(32),
 
-                  SizedBox(height: 72),
-                ],
+                child: Column(
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          AppButton(
+                            text: "Créer une cagnotte",
+                            onPressed: () {
+                              context.read<BottomNavCubit>().setIndex(2);
+                            },
+                            backgroundColor: ColorConstant.colorGreen,
+                          ),
+                          SizedBox(height: 12),
+                          AppButton(
+                            text: "Créer un compte",
+                            onPressed: () {
+                              context.push("/register");
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 72),
+                  ],
+                ),
               ),
             ],
           ),

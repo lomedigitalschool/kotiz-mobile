@@ -4,6 +4,7 @@ class TextFieldComponent extends StatelessWidget {
   final String labelTitle;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
+  final FormFieldValidator<String>? validator;
   final bool obscureText;
   final Widget? suffixIcon;
   final bool astherix;
@@ -11,6 +12,8 @@ class TextFieldComponent extends StatelessWidget {
   final TextInputType keyboardType;
   final TextOverflow overflow;
   final bool softWrap;
+  final int maxLines;
+  final String? hintText;
 
   @override
   TextFieldComponent({
@@ -25,6 +28,9 @@ class TextFieldComponent extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.overflow = TextOverflow.ellipsis,
     this.softWrap = true,
+    this.validator,
+    this.maxLines = 1,
+    this.hintText,
   });
 
   Widget build(BuildContext context) {
@@ -36,7 +42,7 @@ class TextFieldComponent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 5,
           children: [
-            Expanded(
+            Flexible(
               child: Text(
                 labelTitle,
                 overflow: overflow,
@@ -46,21 +52,20 @@ class TextFieldComponent extends StatelessWidget {
             ),
 
             astherix
-                ? Expanded(
-                    child: Text(
-                      "*",
-                      style: TextStyle(color: Colors.red, fontSize: 24),
-                    ),
-                  )
+                ? Text("*", style: TextStyle(color: Colors.red, fontSize: 24))
                 : SizedBox(width: 1),
           ],
         ),
 
-        TextField(
+        TextFormField(
+          validator: validator,
+          maxLines: maxLines,
           keyboardType: keyboardType,
           controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.black54),
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
