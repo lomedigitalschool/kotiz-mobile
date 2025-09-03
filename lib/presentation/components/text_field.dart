@@ -12,8 +12,8 @@ class TextFieldComponent extends StatelessWidget {
   final TextInputType keyboardType;
   final TextOverflow overflow;
   final bool softWrap;
-  final int? maxLines;
-  final int? minLines;
+  final int maxLines;
+  final String? hintText;
 
   @override
   TextFieldComponent({
@@ -29,8 +29,8 @@ class TextFieldComponent extends StatelessWidget {
     this.overflow = TextOverflow.ellipsis,
     this.softWrap = true,
     this.validator,
-    this.minLines,
-    this.maxLines,
+    this.maxLines = 1,
+    this.hintText,
   });
 
   Widget build(BuildContext context) {
@@ -59,12 +59,13 @@ class TextFieldComponent extends StatelessWidget {
 
         TextFormField(
           validator: validator,
-          minLines: minLines,
           maxLines: maxLines,
           keyboardType: keyboardType,
           controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.black54),
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),

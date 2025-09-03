@@ -32,8 +32,8 @@ class _PoolPage1State extends State<PoolPage1> {
           TextFieldComponent(
             labelTitle: "Description",
             keyboardType: TextInputType.multiline,
-            minLines: 5,
-            maxLines: 20,
+
+            maxLines: 5,
           ),
           TextFieldComponent(
             labelTitle: "Montant",
