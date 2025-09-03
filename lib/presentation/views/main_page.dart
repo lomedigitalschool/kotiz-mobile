@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
-import 'package:kotiz_app/presentation/views/explore_page.dart';
+import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
 
@@ -17,7 +17,12 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
-        children: const [HomePage(), ExplorePage(), CreatePage(), ProfilPage()],
+        children: const [
+          HomePage(),
+          DashboardPage(),
+          CreatePage(),
+          ProfilPage(),
+        ],
       ),
 
       bottomNavigationBar: BottomNavigationBar(
@@ -38,9 +43,9 @@ class MainPage extends StatelessWidget {
             label: "Accueil",
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(Icons.search, color: ColorConstant.colorGreen),
-            icon: Icon(Icons.search, color: Colors.black),
-            label: "Decouverte",
+            activeIcon: Icon(Icons.dashboard, color: ColorConstant.colorGreen),
+            icon: Icon(Icons.dashboard_outlined, color: Colors.black),
+            label: "Dashboard",
           ),
           BottomNavigationBarItem(
             activeIcon: Icon(Icons.add_box, color: ColorConstant.colorGreen),

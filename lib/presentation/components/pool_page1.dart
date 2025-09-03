@@ -11,7 +11,7 @@ class PoolPage1 extends StatefulWidget {
 
 class _PoolPage1State extends State<PoolPage1> {
   String? _selectedValue;
-  final List<String> currencyList = ["EUR", "DOLLAR", "CFA"];
+  final List<String> currencyList = ["EUR", "DOLLAR", "XOF"];
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +19,32 @@ class _PoolPage1State extends State<PoolPage1> {
       child: Column(
         spacing: 50,
         children: [
-          TextFieldComponent(labelTitle: "Titre", astherix: true),
+          TextFieldComponent(
+            labelTitle: "Titre",
+            astherix: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Ce champ est obligatoire";
+              }
+              return null;
+            },
+          ),
           TextFieldComponent(
             labelTitle: "Description",
             keyboardType: TextInputType.multiline,
+
+            maxLines: 5,
           ),
           TextFieldComponent(
             labelTitle: "Montant",
             keyboardType: TextInputType.number,
             astherix: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Ce champ est obligatoire";
+              }
+              return null;
+            },
           ),
 
           Column(
@@ -46,6 +63,12 @@ class _PoolPage1State extends State<PoolPage1> {
               ),
 
               DropdownButtonFormField<String>(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Veuiller choisir une devise";
+                  }
+                  return null;
+                },
                 value: _selectedValue,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(

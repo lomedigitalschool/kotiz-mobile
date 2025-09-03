@@ -18,17 +18,19 @@ class CreatePage extends StatefulWidget {
 class _CreatePageState extends State<CreatePage> {
   int currentStep = 0;
 
+  final formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>()];
+
   List<Step> getSteps() => [
     Step(
       state: currentStep > 0 ? StepState.complete : StepState.indexed,
       title: Text(""),
-      content: PoolPage1(),
+      content: Form(key: formKeys[0], child: PoolPage1()),
       isActive: currentStep >= 0,
     ),
     Step(
       state: currentStep > 1 ? StepState.complete : StepState.indexed,
       title: Text(""),
-      content: PoolPage2(),
+      content: Form(key: formKeys[1], child: PoolPage2()),
       isActive: currentStep >= 1,
     ),
   ];
@@ -65,9 +67,12 @@ class _CreatePageState extends State<CreatePage> {
           elevation: 0,
           stepIconMargin: EdgeInsets.all(0),
           onStepContinue: () {
-            setState(() {
-              currentStep += 1;
-            });
+            final form = formKeys[currentStep].currentState!;
+            if (form.validate()) {
+              setState(() {
+                currentStep += 1;
+              });
+            }
           },
           onStepCancel: currentStep > 0
               ? () {
