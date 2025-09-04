@@ -25,4 +25,13 @@ class User {
       avatarUrl: json["avatarUrl"] ?? "",
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'email': email,
+    'name': name,
+    'phone': phone,
+    'role': role,
+    'isVerified': isVerified,
+    "avatarUrl": avatarUrl,
+  };
 }

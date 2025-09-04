@@ -17,6 +17,15 @@ class AuthInitial extends AuthState {}
 
 class AuthRegisterSucces extends AuthState {}
 
+class Authenticated extends AuthState {
+  final User user;
+  const Authenticated(this.user);
+  @override
+  List<Object> get props => [user];
+}
+
+class Unauthenticated extends AuthState {}
+
 class AuthSuccess extends AuthState {
   final User user;
   const AuthSuccess(this.user);
@@ -46,6 +55,7 @@ class AuthFormInvalid extends AuthState {
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthService authService;
+  final _secureStorage = SecureStorage();
 
   AuthCubit(this.authService) : super(AuthInitial());
 
@@ -75,7 +85,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final user = await authService.login(email, password);
-
+      await _secureStorage.saveUser(user);
       emit(AuthSuccess(user));
     } catch (e) {
       emit(
@@ -100,8 +110,19 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void logout() {
+  void logout() async {
     authService.logout();
+    await _secureStorage.deleteUser();
     emit(AuthInitial());
+  }
+
+  Future<void> checkAuthStatus() async {
+    final token = await _secureStorage.getToken();
+    if (token != null && token.isNotEmpty) {
+      final user = await _secureStorage.getUser();
+      emit(Authenticated(user!));
+    } else {
+      emit(Unauthenticated());
+    }
   }
 }
