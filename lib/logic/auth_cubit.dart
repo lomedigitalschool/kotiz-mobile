@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kotiz_app/core/services/auth_service.dart';
+import 'package:kotiz_app/core/utils/secure_storage.dart';
+import 'package:kotiz_app/data/models/user.dart';
 
 // les States
 abstract class AuthState extends Equatable {
@@ -11,15 +15,16 @@ abstract class AuthState extends Equatable {
 
 class AuthInitial extends AuthState {}
 
-class AuthLoading extends AuthState {}
+class AuthRegisterSucces extends AuthState {}
 
-class Authenticated extends AuthState {
-  final String token;
-  const Authenticated(this.token);
-
+class AuthSuccess extends AuthState {
+  final User user;
+  const AuthSuccess(this.user);
   @override
-  List<Object?> get props => [token];
+  List<Object> get props => [user];
 }
+
+class AuthLoading extends AuthState {}
 
 class AuthError extends AuthState {
   final String message;
@@ -40,7 +45,9 @@ class AuthFormInvalid extends AuthState {
 // cubit
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial());
+  final AuthService authService;
+
+  AuthCubit(this.authService) : super(AuthInitial());
 
   void validateLoginForm(String email, String password) {
     final isValid = email.trim().isNotEmpty && password.trim().isNotEmpty;
@@ -62,5 +69,39 @@ class AuthCubit extends Cubit<AuthState> {
         password.trim().isNotEmpty &&
         confirmPassword.trim().isNotEmpty;
     emit(AuthFormInvalid(isValid));
+  }
+
+  Future<void> login(String email, String password) async {
+    emit(AuthLoading());
+    try {
+      final user = await authService.login(email, password);
+
+      emit(AuthSuccess(user));
+    } catch (e) {
+      emit(
+        AuthError(
+          e is DioException
+              ? e.response?.data["message"] ?? "Erreur réseau"
+              : "Erreur inattendue : $e",
+        ),
+      );
+    }
+  }
+
+  Future<void> register(String email, String password, String name) async {
+    emit(AuthLoading());
+    try {
+      await authService.register(email, password, name);
+      emit(AuthRegisterSucces());
+    } on DioException catch (e) {
+      emit(
+        AuthError(e.response?.data["message"] ?? "Impossible de s’inscrire."),
+      );
+    }
+  }
+
+  void logout() {
+    authService.logout();
+    emit(AuthInitial());
   }
 }

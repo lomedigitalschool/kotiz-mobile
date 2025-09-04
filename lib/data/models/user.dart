@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class User {
   final String email;
   final String name;
@@ -24,7 +22,7 @@ class User {
       phone: json["phone"],
       role: json["role"],
       isVerified: json["isVerified"],
-      avatarUrl: json["avatarUrl"],
+      avatarUrl: json["avatarUrl"] ?? "",
     );
   }
 }

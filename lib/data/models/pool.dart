@@ -1,6 +1,6 @@
-import 'dart:io';
+// import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 
 class Pool {
   final int id;
@@ -13,9 +13,9 @@ class Pool {
   final String imageUrl;
   final int participantLimit;
   final String status;
-  final String shareLink;
-  final String qrCodeUrl;
-  final bool isApproved;
+  // final String? shareLink;
+  // final String? qrCodeUrl;
+  // final bool? isApproved;
 
   Pool({
     required this.id,
@@ -28,26 +28,26 @@ class Pool {
     required this.imageUrl,
     required this.participantLimit,
     required this.status,
-    required this.shareLink,
-    required this.qrCodeUrl,
-    required this.isApproved,
+    // this.shareLink,
+    // this.qrCodeUrl,
+    // this.isApproved,
   });
-
   factory Pool.fromJson(Map<String, dynamic> json) {
     return Pool(
       id: json["id"],
       title: json["title"],
-      description: json["description"],
-      goalAmount: json["goalAmount"],
-      currency: json["currency"],
-      deadline: json["deadline"],
-      type: json["type"],
-      imageUrl: json["imageUrl"],
+      description: json["description"] ?? "",
+      goalAmount: json["goalAmount"]?.toString() ?? "0",
+      currency: json["currency"] ?? "XOF",
+      deadline: DateTime.parse(json["deadline"]),
+      type: json["type"] ?? "public",
+      imageUrl: json["imageUrl"] ?? "",
       participantLimit: json["participantLimit"],
-      status: json["status"],
-      shareLink: json["shareLink"],
-      qrCodeUrl: json["qrCodeUrl"],
-      isApproved: json["isApproved"],
+      status: json["status"] ?? "active",
+
+      // shareLink: json["shareLink"],
+      // qrCodeUrl: json["qrCodeUrl"],
+      // isApproved: json["isApproved"],
     );
   }
 }

@@ -1,18 +1,38 @@
 import 'package:dio/dio.dart';
 import 'package:kotiz_app/core/netework/Http_CLient.dart';
+import 'package:kotiz_app/core/utils/secure_storage.dart';
 
-class ApiAuth extends HttpCLient {
+class ApiConfig extends HttpCLient {
   final Dio _dio;
+  final SecureStorage _secureStorage = SecureStorage();
 
-  ApiAuth({String? baseUrl})
+  ApiConfig({String? baseUrl})
     : _dio = Dio(
         BaseOptions(
-          baseUrl: baseUrl ?? "",
+          baseUrl: baseUrl ?? "https://kotiz-back.onrender.com",
           connectTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 10),
           headers: {"Content-Type": "application/json"},
         ),
-      );
+      ) {
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          // Routes pour lesquelles on ne met pas le token
+          const skipAuth = ["/auth/register", "/auth/login"];
+
+          if (!skipAuth.contains(options.path)) {
+            final token = await _secureStorage.getToken();
+            if (token != null) {
+              options.headers["Authorization"] = "Bearer $token";
+            }
+          }
+
+          handler.next(options);
+        },
+      ),
+    );
+  }
 
   @override
   Future<T> get<T>(String url) async {
