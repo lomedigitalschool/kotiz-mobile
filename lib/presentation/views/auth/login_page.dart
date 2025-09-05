@@ -111,6 +111,18 @@ class _LoginPageState extends State<LoginPage> {
                           animationDuration: Duration(milliseconds: 600),
                         );
                       }
+                      if (state is AuthSuccess) {
+                        toastification.show(
+                          context: context,
+                          type: ToastificationType.success,
+                          title: const Text('connexion reussie'),
+                          description: Text(state.user.name + "bienvenue"),
+                          icon: const Icon(Icons.error, color: Colors.white),
+                          backgroundColor: Colors.red,
+                          autoCloseDuration: Duration(seconds: 3),
+                          animationDuration: Duration(milliseconds: 600),
+                        );
+                      }
                     },
                     child: BlocBuilder<AuthCubit, AuthState>(
                       builder: (context, state) {
