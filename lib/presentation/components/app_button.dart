@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 
 class AppButton extends StatelessWidget {
-  final String text;
+  final String? text;
   final VoidCallback? onPressed;
   final Color backgroundColor;
   final Color foregroundColor;
@@ -10,10 +10,11 @@ class AppButton extends StatelessWidget {
   final double fontSize;
   final FontWeight fontWeight;
   final Size size;
+  final Widget? widget;
 
   const AppButton({
     super.key,
-    required this.text,
+    this.text,
     this.onPressed,
     this.backgroundColor = ColorConstant.colorBlue,
     this.foregroundColor = ColorConstant.colorWhite,
@@ -21,6 +22,7 @@ class AppButton extends StatelessWidget {
     this.fontSize = 16,
     this.fontWeight = FontWeight.bold,
     this.size = const Size(389, 55),
+    this.widget,
   });
 
   @override
@@ -37,10 +39,12 @@ class AppButton extends StatelessWidget {
           ),
         ),
       ),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
-      ),
+      child:
+          widget ??
+          Text(
+            text!,
+            style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
+          ),
     );
   }
 }

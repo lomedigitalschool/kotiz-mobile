@@ -10,7 +10,7 @@ class AuthService {
   Future<User> login(String email, String password) async {
     try {
       final data = await _app.post<Map<String, dynamic>>(
-        "/auth/login",
+        "/auth/login-normal",
         data: {"email": email, "password": password},
       );
       await _secureStorage.saveToken(data["token"]);

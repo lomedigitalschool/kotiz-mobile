@@ -46,6 +46,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   dio: ^5.9.0
+  toastification: ^3.0.3
 
 dev_dependencies:
   flutter_test:
