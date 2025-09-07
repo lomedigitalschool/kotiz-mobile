@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
+import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/text_field.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -122,6 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );
+                        context.read<BottomNavCubit>().setIndex(0);
                       }
                     },
                     child: BlocBuilder<AuthCubit, AuthState>(
