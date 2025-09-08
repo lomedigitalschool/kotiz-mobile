@@ -28,6 +28,13 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  void _onSubmit() {
+    context.read<AuthCubit>().login(
+      email: _emailOrPhoneController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+  }
+
   @override
   void dispose() {
     _emailOrPhoneController.dispose();
@@ -154,12 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                           text: "Connecter",
 
                           onPressed: () {
-                            isFill == true
-                                ? context.read<AuthCubit>().login(
-                                    _emailOrPhoneController.text.trim(),
-                                    _passwordController.text.trim(),
-                                  )
-                                : null;
+                            isFill == true ? _onSubmit() : null;
                           },
 
                           fontSize: 18,

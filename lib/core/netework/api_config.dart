@@ -9,9 +9,7 @@ class ApiConfig extends HttpCLient {
   ApiConfig({String? baseUrl})
     : _dio = Dio(
         BaseOptions(
-          baseUrl: baseUrl ?? "https://kotiz-back.onrender.com",
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
+          baseUrl: baseUrl ?? "https://kotiz-back.onrender.com/api/v1",
           headers: {"Content-Type": "application/json"},
         ),
       ) {
@@ -19,7 +17,7 @@ class ApiConfig extends HttpCLient {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           // Routes pour lesquelles on ne met pas le token
-          const skipAuth = ["/auth/register", "/auth/login"];
+          const skipAuth = ["/auth/register", "/auth/login-normal"];
 
           if (!skipAuth.contains(options.path)) {
             final token = await _secureStorage.getToken();

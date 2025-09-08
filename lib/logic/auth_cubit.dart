@@ -81,7 +81,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthFormInvalid(isValid));
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login({required String email, required String password}) async {
     emit(AuthLoading());
     try {
       final user = await authService.login(email, password);
@@ -98,10 +98,15 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> register(String email, String password, String name) async {
+  Future<void> register({
+    required String email,
+    required String password,
+    required String name,
+    required String phone,
+  }) async {
     emit(AuthLoading());
     try {
-      await authService.register(email, password, name);
+      await authService.register(email, password, name, phone);
       emit(AuthRegisterSucces());
     } on DioException catch (e) {
       emit(
