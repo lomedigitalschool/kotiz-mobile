@@ -9,7 +9,7 @@ class ApiConfig extends HttpCLient {
   ApiConfig({String? baseUrl})
     : _dio = Dio(
         BaseOptions(
-          baseUrl: baseUrl ?? "https://kotiz-back.onrender.com/api/v1",
+          baseUrl: baseUrl ?? "https://kotiz-back.onrender.com/api/v1/",
           headers: {"Content-Type": "application/json"},
         ),
       ) {
@@ -30,6 +30,9 @@ class ApiConfig extends HttpCLient {
         },
       ),
     );
+    // _dio.interceptors.add(
+    //   LogInterceptor(requestBody: true, responseBody: true),
+    // );
   }
 
   @override

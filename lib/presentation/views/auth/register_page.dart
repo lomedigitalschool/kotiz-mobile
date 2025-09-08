@@ -187,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         toastification.show(
                           context: context,
                           type: ToastificationType.error,
-                          title: const Text('Erreur de connexion'),
+                          title: const Text('Erreur lors de l\' inscription '),
                           description: Text(state.message),
                           icon: const Icon(Icons.error, color: Colors.white),
                           backgroundColor: Colors.red,
@@ -241,7 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               text: "Créer le compte",
                               backgroundColor: isFill == false
                                   ? Colors.grey
-                                  : ColorConstant.colorBlue,
+                                  : ColorConstant.colorGreen,
                               onPressed: () {
                                 final form = formKey.currentState!;
                                 isFill == false

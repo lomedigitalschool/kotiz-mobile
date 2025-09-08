@@ -91,7 +91,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         AuthError(
           e is DioException
-              ? e.response?.data["message"] ?? "Erreur réseau"
+              ? e.response?.data["error"] ?? "Erreur réseau"
               : "Erreur inattendue : $e",
         ),
       );
@@ -109,9 +109,7 @@ class AuthCubit extends Cubit<AuthState> {
       await authService.register(email, password, name, phone);
       emit(AuthRegisterSucces());
     } on DioException catch (e) {
-      emit(
-        AuthError(e.response?.data["message"] ?? "Impossible de s’inscrire."),
-      );
+      emit(AuthError(e.response?.data["error"] ?? "Impossible de s’inscrire."));
     }
   }
 
