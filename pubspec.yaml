@@ -47,6 +47,7 @@ dependencies:
     sdk: flutter
   dio: ^5.9.0
   toastification: ^3.0.3
+  intl_phone_field: ^3.2.0
 
 dev_dependencies:
   flutter_test:

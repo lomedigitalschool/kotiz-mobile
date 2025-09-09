@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
@@ -117,19 +118,43 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
                     },
                   ),
-                  TextFieldComponent(
+
+                  // TextFieldComponent(
+                  //   controller: _phoneController,
+                  //   labelTitle: "Numero de telephone",
+                  //   keyboardType: TextInputType.phone,
+                  //   onChanged: (_) {
+                  //     context.read<AuthCubit>().validateRegisterForm(
+                  //       _nameController.text.trim(),
+                  //       _emailController.text.trim(),
+                  //       _phoneController.text.trim(),
+                  //       _passwordController.text.trim(),
+                  //       _confirmPasswordController.text.trim(),
+                  //     );
+                  //   },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    spacing: 5,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          "Numero de telephone",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(fontSize: 24, color: Colors.black45),
+                        ),
+                      ),
+                    ],
+                  ),
+                  IntlPhoneField(
                     controller: _phoneController,
-                    labelTitle: "Numero de telephone",
-                    keyboardType: TextInputType.phone,
-                    onChanged: (_) {
-                      context.read<AuthCubit>().validateRegisterForm(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                        _phoneController.text.trim(),
-                        _passwordController.text.trim(),
-                        _confirmPasswordController.text.trim(),
-                      );
-                    },
+                    initialCountryCode: "TG",
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    // decoration: ,
                   ),
                   TextFieldComponent(
                     controller: _passwordController,
@@ -199,8 +224,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         toastification.show(
                           context: context,
                           type: ToastificationType.success,
-                          title: const Text('Inscription  reussie'),
-                          description: Text(state.user.name + "bienvenue"),
+                          title: const Text('Inscription  réussie'),
+                          description: Text("${state.user.name} bienvenue"),
                           icon: const Icon(Icons.error, color: Colors.white),
                           backgroundColor: Colors.red,
                           autoCloseDuration: Duration(seconds: 3),
@@ -244,11 +269,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                   : ColorConstant.colorGreen,
                               onPressed: () {
                                 final form = formKey.currentState!;
-                                isFill == false
-                                    ? null
-                                    : {
-                                        if (form.validate()) {_onSubmit()},
-                                      };
+                                if (isFill == false) {
+                                  null;
+                                } else if (form.validate()) {
+                                  _onSubmit();
+                                }
                               },
                             ),
                           ),
