@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
+import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/text_field.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:toastification/toastification.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,6 +26,13 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       passwordView = !passwordView;
     });
+  }
+
+  void _onSubmit() {
+    context.read<AuthCubit>().login(
+      email: _emailOrPhoneController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
   }
 
   @override
@@ -95,24 +104,73 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 50),
-                  BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, state) {
-                      bool isFill = false;
 
-                      if (state is AuthFormInvalid) {
-                        isFill = state.isValid;
+                  BlocListener<AuthCubit, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthError) {
+                        toastification.show(
+                          context: context,
+                          type: ToastificationType.error,
+                          title: const Text('Erreur de connexion'),
+                          description: Text(state.message),
+                          icon: const Icon(Icons.error, color: Colors.white),
+                          backgroundColor: Colors.red,
+                          autoCloseDuration: Duration(seconds: 3),
+                          animationDuration: Duration(milliseconds: 600),
+                        );
                       }
-
-                      return AppButton(
-                        text: "Connecter",
-                        onPressed: () {},
-
-                        fontSize: 18,
-                        backgroundColor: isFill == false
-                            ? Colors.grey
-                            : ColorConstant.colorGreen,
-                      );
+                      if (state is AuthSuccess) {
+                        toastification.show(
+                          context: context,
+                          type: ToastificationType.success,
+                          title: const Text('connexion reussie'),
+                          description: Text(state.user.name + "bienvenue"),
+                          icon: const Icon(Icons.error, color: Colors.white),
+                          backgroundColor: Colors.red,
+                          autoCloseDuration: Duration(seconds: 3),
+                          animationDuration: Duration(milliseconds: 600),
+                        );
+                        context.read<BottomNavCubit>().setIndex(0);
+                      }
                     },
+                    child: BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, state) {
+                        bool isFill = false;
+
+                        if (state is AuthFormInvalid) {
+                          isFill = state.isValid;
+                        }
+
+                        return AppButton(
+                          widget: state is AuthLoading
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text("Connexion..."),
+                                  ],
+                                )
+                              : null,
+                          text: "Connecter",
+
+                          onPressed: () {
+                            isFill == true ? _onSubmit() : null;
+                          },
+
+                          fontSize: 18,
+                          backgroundColor: isFill == false
+                              ? Colors.grey
+                              : ColorConstant.colorGreen,
+                        );
+                      },
+                    ),
                   ),
                   SizedBox(height: 20),
                   Row(
