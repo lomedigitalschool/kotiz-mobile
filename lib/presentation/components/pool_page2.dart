@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
-import 'package:kotiz_app/presentation/components/text_field.dart';
 
 class PoolPage2 extends StatefulWidget {
   const PoolPage2({super.key});
@@ -19,14 +18,14 @@ class _PoolPage2State extends State<PoolPage2> {
   List<String> _typeList = ["publique", "privée"];
 
   final ImagePicker _picker = ImagePicker();
-  List<XFile> _images = [];
+  XFile? _image;
 
   Future<void> _pickImages() async {
-    final List<XFile> images = await _picker.pickMultiImage();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
-    if (images.isNotEmpty) {
+    if (image!.path.isNotEmpty) {
       setState(() {
-        _images = images;
+        _image = image;
       });
     }
   }
@@ -105,34 +104,24 @@ class _PoolPage2State extends State<PoolPage2> {
           ),
 
           AppButton(
-            text: _images.isNotEmpty
-                ? "${_images.length} image${_images.length > 1 ? "s" : ""} selectionnée${_images.length > 1 ? "s" : ""}"
-                : "Choisir une ou plusieurs images",
+            text: _image != null
+                ? " Une image selectionnée "
+                : "Choisir une  image",
             onPressed: _pickImages,
             backgroundColor: Colors.transparent,
             foregroundColor: Colors.black26,
             borderRadius: 12,
           ),
-
-          if (_images.isNotEmpty)
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, // 3 images par ligne
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+          if (_image != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(
+                File(_image!.path),
+                fit: BoxFit.cover,
+                height:
+                    200, // tu peux définir une taille pour éviter qu'elle explose l'écran
+                width: double.infinity,
               ),
-              itemCount: _images.length,
-              itemBuilder: (context, index) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    File(_images[index].path),
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
             ),
 
           Row(

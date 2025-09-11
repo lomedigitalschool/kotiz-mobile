@@ -3,6 +3,9 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <!-- Pour Android 12 et moins -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- pour acceder a internet -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <!-- Pour la caméra -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <application

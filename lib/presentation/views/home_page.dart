@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/data/models/user.dart';
+import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
@@ -25,6 +27,13 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+
+    context.read<AuthCubit>().checkAuthStatus();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -36,16 +45,30 @@ class _HomePageState extends State<HomePage> {
           child: Image.asset("assets/images/Logo-Text.png", width: 100),
         ),
         actions: [
-          TextButton(
-            onPressed: () => context.push("/login"),
-            child: Text(
-              "Se connecter",
-              style: TextStyle(
-                color: ColorConstant.colorBlue,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is Authenticated) {
+                return Text(
+                  " Bienvenue,${state.user.name}",
+                  style: TextStyle(
+                    color: ColorConstant.colorBlue,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              }
+              return TextButton(
+                onPressed: () => context.push("/login"),
+                child: Text(
+                  "Se connecter",
+                  style: TextStyle(
+                    color: ColorConstant.colorBlue,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
