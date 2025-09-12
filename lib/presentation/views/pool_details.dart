@@ -37,6 +37,7 @@ class _PoolDetailsState extends State<PoolDetails> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 15,
 
             children: [
               Image.asset("assets/images/Logo.png", width: 415, height: 220),
@@ -88,11 +89,33 @@ class _PoolDetailsState extends State<PoolDetails> {
                 ),
               ),
               Padding(
+                padding: const EdgeInsets.only(right: 25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [Text("360.000", style: TextStyle(fontSize: 14))],
+                ),
+              ),
+              SizedBox(
+                height: 07,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadiusGeometry.circular(12),
+                    child: LinearProgressIndicator(
+                      value: 0.8,
+                      color: ColorConstant.colorGreen,
+                      backgroundColor: Colors.grey,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.only(left: 25, right: 25),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 12,
                   children: [
+                    Text("12 contributeurs"),
                     Text(
                       "Description",
                       style: TextStyle(
