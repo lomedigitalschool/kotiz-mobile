@@ -14,6 +14,7 @@ import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:kotiz_app/presentation/views/auth/login_page.dart';
 import 'package:kotiz_app/presentation/views/main_page.dart';
 import 'package:kotiz_app/presentation/views/onboarding.dart';
+import 'package:kotiz_app/presentation/views/pool_details.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
 import 'package:kotiz_app/presentation/views/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,6 +53,14 @@ class MyApp extends StatelessWidget {
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),
         GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
+        GoRoute(
+          path: "/poolDetails/:id",
+          builder: (context, state) {
+            final String id = state.pathParameters["id"]!;
+
+            return PoolDetails(id: id);
+          },
+        ),
       ],
     );
     return MultiBlocProvider(
