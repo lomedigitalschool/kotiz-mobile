@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 class CagnotteTile extends StatelessWidget {
   const CagnotteTile({
     super.key,
-    required this.image,
+    this.image,
     required this.title,
     required this.currency,
     required this.amount,
+    required this.poolId,
   });
-  final String image;
+  final String poolId;
+  final String? image;
   final String title;
   final String currency;
   final String amount;
@@ -17,13 +19,32 @@ class CagnotteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push("/poolDetails/2"),
+      onTap: () => context.push("/poolDetails/$poolId"),
       child: SizedBox(
         height: 250,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(child: Image.asset(image, width: 160, height: 160)),
+            Card(
+              child: Image.network(
+                image!,
+                width: 160,
+                height: 160,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+                errorBuilder: (_, __, ___) => Image.asset(
+                  'assets/images/Logo.png',
+                  width: 160,
+                  height: 160,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
             SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),

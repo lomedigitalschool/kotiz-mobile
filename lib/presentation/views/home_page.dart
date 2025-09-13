@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/data/models/pool.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
+import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
@@ -20,7 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Widget> pages = const [
-    HomePage(),
+    // HomePage(),
     DashboardPage(),
     CreatePage(),
     ProfilPage(),
@@ -31,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     context.read<AuthCubit>().checkAuthStatus();
+    context.read<PoolCubit>().getAll();
   }
 
   @override
@@ -87,37 +90,60 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 12),
 
-              SizedBox(
-                height: 550,
-                child: ListView.builder(
-                  itemCount: 8,
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: CagnotteTile(
-                            image: "assets/images/Logo-Text.png",
-                            title: "Fluffy's Vet Bills",
-                            currency: r'$',
-                            amount: "200",
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: CagnotteTile(
-                            image: "assets/images/Logo-Text.png",
-                            title: "Fluffy's Vet Bills",
-                            currency: r'$',
-                            amount: "200",
-                          ),
-                        ),
-                      ],
+              BlocBuilder<PoolCubit, PoolState>(
+                builder: (context, state) {
+                  if (state is PoolLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstant.colorGreen,
+                      ),
                     );
-                  },
-                ),
+                  }
+
+                  if (state is PoolLoaded) {
+                    return SizedBox(
+                      height: 550,
+                      child: ListView.builder(
+                        itemCount: state.pools.length,
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final Pool pool = state.pools[index];
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 8.0,
+                                  right: 8,
+                                ),
+                                child: CagnotteTile(
+                                  poolId: pool.id.toString(),
+                                  image: pool.imageUrl,
+                                  title: pool.title,
+                                  currency: pool.currency,
+                                  amount: pool.goalAmount.toString(),
+                                ),
+                              ),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(left: 8.0),
+                              //   child: CagnotteTile(
+                              //     image: "assets/images/Logo-Text.png",
+                              //     title: "Fluffy's Vet Bills",
+                              //     currency: r'$',
+                              //     amount: "200",
+                              //   ),
+                              // ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  if (state is PoolError) {
+                    return Container(child: Center(child: Text(state.message)));
+                  }
+                  return SizedBox();
+                },
               ),
               // SizedBox(height: 189),
               Padding(

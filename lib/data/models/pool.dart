@@ -6,18 +6,23 @@ class Pool {
   final int id;
   final String title;
   final String description;
-  final String goalAmount;
+  final int goalAmount;
   final String currency;
-  final DateTime deadline;
+  final DateTime? deadline;
   final String type;
   final String imageUrl;
-  final int participantLimit;
+  // final int participantLimit;
   final String status;
+  final int contributionCount;
+  final int progressPercentage;
+  final Map<String, dynamic> owner;
   // final String? shareLink;
   // final String? qrCodeUrl;
   // final bool? isApproved;
 
   Pool({
+    required this.contributionCount,
+    required this.progressPercentage,
     required this.id,
     required this.title,
     required this.description,
@@ -26,8 +31,9 @@ class Pool {
     required this.deadline,
     required this.type,
     required this.imageUrl,
-    required this.participantLimit,
+    // required this.participantLimit,
     required this.status,
+    required this.owner,
     // this.shareLink,
     // this.qrCodeUrl,
     // this.isApproved,
@@ -37,13 +43,18 @@ class Pool {
       id: json["id"],
       title: json["title"],
       description: json["description"] ?? "",
-      goalAmount: json["goalAmount"]?.toString() ?? "0",
+      goalAmount: json["goalAmount"] ?? 0,
       currency: json["currency"] ?? "XOF",
-      deadline: DateTime.parse(json["deadline"]),
+      deadline: json["deadline"] == null
+          ? DateTime.now()
+          : DateTime.parse(json["deadline"]),
       type: json["type"] ?? "public",
       imageUrl: json["imageUrl"] ?? "",
-      participantLimit: json["participantLimit"],
+      // participantLimit: json["participantLimit"],
       status: json["status"] ?? "active",
+      contributionCount: json["contributionCount"],
+      progressPercentage: json["progressPercentage"],
+      owner: json["owner"],
 
       // shareLink: json["shareLink"],
       // qrCodeUrl: json["qrCodeUrl"],

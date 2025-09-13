@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
+import 'package:kotiz_app/core/services/pool_service.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
+import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/views/auth/register_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/dashboard_page.dart';
@@ -35,6 +37,7 @@ class MyApp extends StatelessWidget {
   final apiConfig = ApiConfig();
   final secureStorage = SecureStorage();
   late final authService = AuthService(apiConfig, secureStorage);
+  late final _poolService = PoolService(apiConfig);
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +70,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),
         BlocProvider(create: (_) => AuthCubit(authService)),
+        BlocProvider(create: (_) => PoolCubit(_poolService)),
       ],
       child: MaterialApp.router(
         routerConfig: _router,
