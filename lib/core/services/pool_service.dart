@@ -12,7 +12,7 @@ class PoolService {
     try {
       final data = await _app.get<Map<String, dynamic>>("public/pulls/$id");
 
-      return Pool.fromJson(data['pool']);
+      return Pool.fromJson(data['data']);
     } catch (e, s) {
       debugPrint(" error lors de la recuperation : $e\n$s");
       rethrow;

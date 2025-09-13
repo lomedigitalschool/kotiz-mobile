@@ -8,7 +8,7 @@ class Pool {
   final String description;
   final int goalAmount;
   final String currency;
-  final DateTime? deadline;
+  final DateTime deadline;
   final String type;
   final String imageUrl;
   // final int participantLimit;

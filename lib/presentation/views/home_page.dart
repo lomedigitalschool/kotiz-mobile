@@ -22,7 +22,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Widget> pages = const [
-    // HomePage(),
     DashboardPage(),
     CreatePage(),
     ProfilPage(),
@@ -34,6 +33,15 @@ class _HomePageState extends State<HomePage> {
 
     context.read<AuthCubit>().checkAuthStatus();
     context.read<PoolCubit>().getAll();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+    if (isCurrent) {
+      context.read<PoolCubit>().getAll();
+    }
   }
 
   @override
@@ -77,106 +85,111 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: ColorConstant.colorWhite,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 30, top: 64),
-                child: Text(
-                  "Récentes cagnottes",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        child: RefreshIndicator(
+          onRefresh: () => context.read<PoolCubit>().getAll(),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 30, top: 64),
+                  child: Text(
+                    "Récentes cagnottes",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              SizedBox(height: 12),
+                SizedBox(height: 12),
 
-              BlocBuilder<PoolCubit, PoolState>(
-                builder: (context, state) {
-                  if (state is PoolLoading) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstant.colorGreen,
-                      ),
-                    );
-                  }
+                BlocBuilder<PoolCubit, PoolState>(
+                  builder: (context, state) {
+                    if (state is PoolLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: ColorConstant.colorGreen,
+                        ),
+                      );
+                    }
 
-                  if (state is PoolLoaded) {
-                    return SizedBox(
-                      height: 550,
-                      child: ListView.builder(
-                        itemCount: state.pools.length,
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          final Pool pool = state.pools[index];
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8,
+                    if (state is PoolLoaded) {
+                      return SizedBox(
+                        height: 550,
+                        child: ListView.builder(
+                          itemCount: state.pools.length,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            final Pool pool = state.pools[index];
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 8.0,
+                                    right: 8,
+                                  ),
+                                  child: CagnotteTile(
+                                    poolId: pool.id.toString(),
+                                    image: pool.imageUrl,
+                                    title: pool.title,
+                                    currency: pool.currency,
+                                    amount: pool.goalAmount.toString(),
+                                  ),
                                 ),
-                                child: CagnotteTile(
-                                  poolId: pool.id.toString(),
-                                  image: pool.imageUrl,
-                                  title: pool.title,
-                                  currency: pool.currency,
-                                  amount: pool.goalAmount.toString(),
-                                ),
-                              ),
-                              // Padding(
-                              //   padding: const EdgeInsets.only(left: 8.0),
-                              //   child: CagnotteTile(
-                              //     image: "assets/images/Logo-Text.png",
-                              //     title: "Fluffy's Vet Bills",
-                              //     currency: r'$',
-                              //     amount: "200",
-                              //   ),
-                              // ),
-                            ],
-                          );
-                        },
-                      ),
-                    );
-                  }
-                  if (state is PoolError) {
-                    return Container(child: Center(child: Text(state.message)));
-                  }
-                  return SizedBox();
-                },
-              ),
-              // SizedBox(height: 189),
-              Padding(
-                padding: const EdgeInsets.all(32),
-
-                child: Column(
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          AppButton(
-                            text: "Créer une cagnotte",
-                            onPressed: () {
-                              context.read<BottomNavCubit>().setIndex(2);
-                            },
-                            backgroundColor: ColorConstant.colorGreen,
-                          ),
-                          SizedBox(height: 12),
-                          AppButton(
-                            text: "Créer un compte",
-                            onPressed: () {
-                              context.push("/register");
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 72),
-                  ],
+                                // Padding(
+                                //   padding: const EdgeInsets.only(left: 8.0),
+                                //   child: CagnotteTile(
+                                //     image: "assets/images/Logo-Text.png",
+                                //     title: "Fluffy's Vet Bills",
+                                //     currency: r'$',
+                                //     amount: "200",
+                                //   ),
+                                // ),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    if (state is PoolError) {
+                      return Container(
+                        child: Center(child: Text(state.message)),
+                      );
+                    }
+                    return SizedBox();
+                  },
                 ),
-              ),
-            ],
+                // SizedBox(height: 189),
+                Padding(
+                  padding: const EdgeInsets.all(32),
+
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Column(
+                          children: [
+                            AppButton(
+                              text: "Créer une cagnotte",
+                              onPressed: () {
+                                context.read<BottomNavCubit>().setIndex(2);
+                              },
+                              backgroundColor: ColorConstant.colorGreen,
+                            ),
+                            SizedBox(height: 12),
+                            AppButton(
+                              text: "Créer un compte",
+                              onPressed: () {
+                                context.push("/register");
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 72),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

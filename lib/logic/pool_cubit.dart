@@ -22,6 +22,13 @@ class PoolLoaded extends PoolState {
   List<Object?> get props => [pools];
 }
 
+class PoolDetailsLoaded extends PoolState {
+  final Pool pool;
+  PoolDetailsLoaded(this.pool);
+  @override
+  List<Object?> get props => [pool];
+}
+
 class PoolError extends PoolState {
   final String message;
   PoolError(this.message);
@@ -34,6 +41,16 @@ class PoolError extends PoolState {
 class PoolCubit extends Cubit<PoolState> {
   final PoolService _service;
   PoolCubit(this._service) : super(PoolLoading());
+
+  Future<void> getPoolDetails(String id) async {
+    emit(PoolLoading());
+    try {
+      final pool = await _service.poolDetails(id);
+      emit(PoolDetailsLoaded(pool));
+    } catch (e) {
+      emit(PoolError("Erreur lors du chargement"));
+    }
+  }
 
   Future<void> getAll() async {
     emit(PoolLoading());
