@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PoolDetails extends StatefulWidget {
   const PoolDetails({super.key, required this.id});
@@ -21,6 +24,11 @@ class _PoolDetailsState extends State<PoolDetails> {
     context.read<PoolCubit>().getPoolDetails(widget.id);
   }
 
+  void sharePool(String poolId) {
+    final url = 'https://kotiz.app/pool/$poolId';
+    Share.share("Rejoins ma cagnotte $url");
+  }
+
   String initialLetter(String name) {
     final String initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return initial;
@@ -32,6 +40,14 @@ class _PoolDetailsState extends State<PoolDetails> {
       appBar: AppBar(
         backgroundColor: ColorConstant.colorWhite,
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              sharePool(widget.id);
+            },
+            icon: Icon(Icons.share, size: 32),
+          ),
+        ],
         title: Padding(
           padding: const EdgeInsets.only(top: 6.0),
           child: Image.asset("assets/images/Logo-Text.png", width: 100),
@@ -40,8 +56,9 @@ class _PoolDetailsState extends State<PoolDetails> {
       backgroundColor: ColorConstant.colorWhite,
       body: BlocBuilder<PoolCubit, PoolState>(
         builder: (context, state) {
-          if (state is PoolLoading)
+          if (state is PoolLoading) {
             return const Center(child: CircularProgressIndicator());
+          }
           if (state is PoolError) return Text('Erreur: ${state.message}');
           if (state is PoolDetailsLoaded) {
             final pool = state.pool;

@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:math';
+
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -31,22 +35,41 @@ void main() async {
   runApp(MyApp(showHome: showHome));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key, required this.showHome});
   final bool showHome;
-  final apiConfig = ApiConfig();
-  final secureStorage = SecureStorage();
-  late final authService = AuthService(apiConfig, secureStorage);
-  late final _poolService = PoolService(apiConfig);
 
   @override
-  Widget build(BuildContext context) {
-    final GoRouter _router = GoRouter(
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final apiConfig = ApiConfig();
+
+  final secureStorage = SecureStorage();
+
+  late final authService = AuthService(apiConfig, secureStorage);
+
+  late final _poolService = PoolService(apiConfig);
+  StreamSubscription<Uri>? sub;
+
+  final _appLinks = AppLinks();
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = _buildRouter();
+    listenDeepLinks();
+  }
+
+  GoRouter _buildRouter() {
+    return GoRouter(
       initialLocation: kDebugMode ? "/main" : "/",
       routes: [
         GoRoute(
           path: "/",
-          builder: (context, state) => SplashScreen(showHome: showHome),
+          builder: (context, state) => SplashScreen(showHome: widget.showHome),
         ),
         GoRoute(path: "/login", builder: (context, state) => LoginPage()),
         GoRoute(path: "/onboarding", builder: (context, state) => OnBoarding()),
@@ -66,6 +89,33 @@ class MyApp extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  // void _handleUri(Uri uri) {
+
+  // }
+
+  Future<void> listenDeepLinks() async {
+    sub = _appLinks.uriLinkStream.listen((uri) {
+      log('Uri: ${uri.toString()}' as num);
+      if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'pool') {
+        final id = uri.pathSegments[1];
+        if (id != null && int.tryParse(id) != null) {
+          _router.go('/pool/$id');
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    sub?.cancel();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),

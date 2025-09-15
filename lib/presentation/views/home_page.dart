@@ -12,6 +12,7 @@ import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,47 +47,47 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        backgroundColor: ColorConstant.colorWhite,
-        centerTitle: true,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 6.0),
-          child: Image.asset("assets/images/Logo-Text.png", width: 100),
-        ),
-        actions: [
-          BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              if (state is Authenticated) {
-                return Text(
-                  " Bienvenue,${state.user.name}",
-                  style: TextStyle(
-                    color: ColorConstant.colorBlue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+    return RefreshIndicator(
+      onRefresh: () => context.read<PoolCubit>().getAll(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: ColorConstant.colorWhite,
+          centerTitle: true,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 6.0),
+            child: Image.asset("assets/images/Logo-Text.png", width: 100),
+          ),
+          actions: [
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                if (state is Authenticated) {
+                  return Text(
+                    " Bienvenue,${state.user.name}",
+                    style: TextStyle(
+                      color: ColorConstant.colorBlue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }
+                return TextButton(
+                  onPressed: () => context.push("/login"),
+                  child: Text(
+                    "Se connecter",
+                    style: TextStyle(
+                      color: ColorConstant.colorBlue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 );
-              }
-              return TextButton(
-                onPressed: () => context.push("/login"),
-                child: Text(
-                  "Se connecter",
-                  style: TextStyle(
-                    color: ColorConstant.colorBlue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      backgroundColor: ColorConstant.colorWhite,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () => context.read<PoolCubit>().getAll(),
+              },
+            ),
+          ],
+        ),
+        backgroundColor: ColorConstant.colorWhite,
+        body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,9 +104,12 @@ class _HomePageState extends State<HomePage> {
                 BlocBuilder<PoolCubit, PoolState>(
                   builder: (context, state) {
                     if (state is PoolLoading) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: ColorConstant.colorGreen,
+                      return Container(
+                        height: 550,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstant.colorGreen,
+                          ),
                         ),
                       );
                     }
