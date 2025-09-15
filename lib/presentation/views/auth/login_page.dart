@@ -58,8 +58,8 @@ class _LoginPageState extends State<LoginPage> {
           leading: IconButton(
             onPressed: () => context.go("/main"),
             icon: Icon(
-              LucideIcons.chevronLeft400,
-              size: 50.0,
+              LucideIcons.arrowLeft400,
+              size: 30.0,
               color: ColorConstant.colorBlue,
             ),
           ),

@@ -80,10 +80,10 @@ class _MyAppState extends State<MyApp> {
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),
         GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
-        GoRoute(
-          path: "/contribute",
-          builder: (context, state) => ContributionPage(),
-        ),
+        // GoRoute(
+        //   path: "/contribute",
+        //   builder: (context, state) => ContributionPage(),
+        // ),
         GoRoute(
           path: "/poolDetails/:id",
           builder: (context, state) {
@@ -132,7 +132,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           fontFamily: "Roboto",
-          colorSchemeSeed: ColorConstant.colorWhite,
+          // colorSchemeSeed: ColorConstant.colorWhite,
         ),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

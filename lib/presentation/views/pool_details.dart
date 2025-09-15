@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/presentation/views/contribution_page.dart';
 import 'package:share_plus/share_plus.dart';
 
 class PoolDetails extends StatefulWidget {
@@ -31,6 +32,19 @@ class _PoolDetailsState extends State<PoolDetails> {
   String initialLetter(String name) {
     final String initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return initial;
+  }
+
+  Future<double?> showContributionBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      isScrollControlled: true,
+      enableDrag: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => const ContributionPage(),
+    );
   }
 
   @override
@@ -134,8 +148,8 @@ class _PoolDetailsState extends State<PoolDetails> {
                       child: AppButton(
                         backgroundColor: ColorConstant.colorGreen,
                         text: "Contribuer",
-                        onPressed: () {
-                          context.push('/contribute');
+                        onPressed: () async {
+                          await showContributionBottomSheet(context);
                         },
                       ),
                     ),
