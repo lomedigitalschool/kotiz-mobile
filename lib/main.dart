@@ -14,6 +14,7 @@ import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/views/auth/register_page.dart';
+import 'package:kotiz_app/presentation/views/contribution_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
@@ -79,6 +80,10 @@ class _MyAppState extends State<MyApp> {
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),
         GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
+        GoRoute(
+          path: "/contribute",
+          builder: (context, state) => ContributionPage(),
+        ),
         GoRoute(
           path: "/poolDetails/:id",
           builder: (context, state) {

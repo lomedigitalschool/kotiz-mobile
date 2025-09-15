@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
-import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:share_plus/share_plus.dart';
@@ -135,6 +134,9 @@ class _PoolDetailsState extends State<PoolDetails> {
                       child: AppButton(
                         backgroundColor: ColorConstant.colorGreen,
                         text: "Contribuer",
+                        onPressed: () {
+                          context.push('/contribute');
+                        },
                       ),
                     ),
                     Padding(
