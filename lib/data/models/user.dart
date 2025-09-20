@@ -1,27 +1,27 @@
 class User {
+  final String id;
   final String email;
   final String name;
   final String phone;
-  final String role;
-  final bool isVerified;
-  final String avatarUrl;
+  // final bool isVerified;
+  final String? avatarUrl;
 
   User({
+    required this.id,
     required this.email,
     required this.name,
     required this.phone,
-    required this.role,
-    required this.isVerified,
-    required this.avatarUrl,
+    // required this.isVerified,
+    this.avatarUrl,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
+      id: json['id'],
       email: json["email"],
       name: json["name"],
       phone: json["phone"],
-      role: json["role"],
-      isVerified: json["isVerified"],
+      // isVerified: json["isVerified"],
       avatarUrl: json["avatarUrl"] ?? "",
     );
   }
@@ -30,8 +30,7 @@ class User {
     'email': email,
     'name': name,
     'phone': phone,
-    'role': role,
-    'isVerified': isVerified,
+    // 'isVerified': isVerified,
     "avatarUrl": avatarUrl,
   };
 }
