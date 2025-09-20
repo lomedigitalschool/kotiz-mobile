@@ -2,19 +2,19 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:app_links/app_links.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
 import 'package:kotiz_app/core/services/pool_service.dart';
-import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
+import 'package:kotiz_app/firebase_options.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/views/auth/register_page.dart';
-import 'package:kotiz_app/presentation/views/contribution_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
@@ -30,6 +30,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final prefs = await SharedPreferences.getInstance();
   final showHome = prefs.getBool("showHome") ?? false;
 
@@ -49,7 +50,7 @@ class _MyAppState extends State<MyApp> {
 
   final secureStorage = SecureStorage();
 
-  late final authService = AuthService(apiConfig, secureStorage);
+  late final authService = AuthService(secureStorage);
 
   late final _poolService = PoolService(apiConfig);
   StreamSubscription<Uri>? sub;

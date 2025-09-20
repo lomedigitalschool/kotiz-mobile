@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/user.dart';
+import 'package:kotiz_app/data/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 // les States
 abstract class AuthState extends Equatable {
@@ -16,13 +18,6 @@ abstract class AuthState extends Equatable {
 class AuthInitial extends AuthState {}
 
 class AuthRegisterSucces extends AuthState {}
-
-class Authenticated extends AuthState {
-  final User user;
-  const Authenticated(this.user);
-  @override
-  List<Object> get props => [user];
-}
 
 class Unauthenticated extends AuthState {}
 
@@ -84,17 +79,11 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> login({required String email, required String password}) async {
     emit(AuthLoading());
     try {
-      final user = await authService.login(email, password);
+      final User user = await authService.login(email, password);
       await _secureStorage.saveUser(user);
       emit(AuthSuccess(user));
     } catch (e) {
-      emit(
-        AuthError(
-          e is DioException
-              ? e.response?.data["error"] ?? "Erreur réseau"
-              : "Erreur inattendue : $e",
-        ),
-      );
+      emit(AuthError(e.toString()));
     }
   }
 
@@ -108,8 +97,8 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       await authService.register(email, password, name, phone);
       emit(AuthRegisterSucces());
-    } on DioException catch (e) {
-      emit(AuthError(e.response?.data["error"] ?? "Impossible de s’inscrire."));
+    } catch (e) {
+      emit(AuthError(e.toString()));
     }
   }
 
@@ -121,11 +110,19 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> checkAuthStatus() async {
     final token = await _secureStorage.getToken();
+
     if (token != null && token.isNotEmpty) {
-      final user = await _secureStorage.getUser();
-      emit(Authenticated(user!));
-    } else {
-      emit(Unauthenticated());
+      final fb.User? firebaseUser = fb.FirebaseAuth.instance.currentUser;
+
+      if (firebaseUser != null) {
+        final User? storedUser = await _secureStorage.getUser();
+        if (storedUser != null) {
+          emit(AuthSuccess(storedUser));
+          return;
+        }
+      }
     }
+
+    emit(Unauthenticated());
   }
 }

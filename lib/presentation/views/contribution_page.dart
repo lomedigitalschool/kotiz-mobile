@@ -18,6 +18,7 @@ class _ContributionPageState extends State<ContributionPage> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _phoneController = TextEditingController();
+  bool _anonyme = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class _ContributionPageState extends State<ContributionPage> {
       child: Form(
         key: _formKey,
         child: Column(
-          mainAxisSize: MainAxisSize.min, // hauteur ajustée au contenu
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           // spacing: 15,
           children: [
@@ -70,6 +71,20 @@ class _ContributionPageState extends State<ContributionPage> {
                           style: TextStyle(fontSize: 24, color: Colors.black45),
                         ),
                       ),
+                    ],
+                  ),
+                  Row(
+                    spacing: 10,
+                    children: [
+                      Checkbox(
+                        value: _anonyme,
+                        onChanged: (bool? newValue) {
+                          setState(() {
+                            _anonyme = newValue ?? false;
+                          });
+                        },
+                      ),
+                      Text("Rester anonyme"),
                     ],
                   ),
                   IntlPhoneField(
