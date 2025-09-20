@@ -29,21 +29,23 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
+  @override
   void initState() {
     super.initState();
-
-    context.read<AuthCubit>().checkAuthStatus();
-    context.read<PoolCubit>().getAll();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
-    if (isCurrent) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthCubit>().checkAuthStatus();
       context.read<PoolCubit>().getAll();
-    }
+    });
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+  //   if (isCurrent) {
+  //     context.read<PoolCubit>().getAll();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -61,27 +63,31 @@ class _HomePageState extends State<HomePage> {
           actions: [
             BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
-                if (state is Authenticated) {
-                  return Text(
-                    " Bienvenue,${state.user.name}",
-                    style: TextStyle(
-                      color: ColorConstant.colorBlue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                if (state is AuthSuccess) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "${state.user.name}",
+                      style: TextStyle(
+                        color: ColorConstant.colorBlue,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else {
+                  return TextButton(
+                    onPressed: () => context.push("/login"),
+                    child: Text(
+                      "Se connecter",
+                      style: TextStyle(
+                        color: ColorConstant.colorBlue,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   );
                 }
-                return TextButton(
-                  onPressed: () => context.push("/login"),
-                  child: Text(
-                    "Se connecter",
-                    style: TextStyle(
-                      color: ColorConstant.colorBlue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
               },
             ),
           ],
@@ -105,7 +111,6 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, state) {
                     if (state is PoolLoading) {
                       return Container(
-                        height: 550,
                         child: Center(
                           child: CircularProgressIndicator(
                             color: ColorConstant.colorGreen,

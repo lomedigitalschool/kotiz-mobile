@@ -58,8 +58,8 @@ class _LoginPageState extends State<LoginPage> {
           leading: IconButton(
             onPressed: () => context.go("/main"),
             icon: Icon(
-              LucideIcons.chevronLeft400,
-              size: 50.0,
+              LucideIcons.arrowLeft400,
+              size: 30.0,
               color: ColorConstant.colorBlue,
             ),
           ),
@@ -126,11 +126,11 @@ class _LoginPageState extends State<LoginPage> {
                           title: const Text('connexion reussie'),
                           description: Text(state.user.name + "bienvenue"),
                           icon: const Icon(Icons.error, color: Colors.white),
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.green,
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );
-                        context.read<BottomNavCubit>().setIndex(0);
+                        context.pop();
                       }
                     },
                     child: BlocBuilder<AuthCubit, AuthState>(

@@ -75,8 +75,8 @@ class _RegisterPageState extends State<RegisterPage> {
           leading: IconButton(
             onPressed: () => context.go("/main"),
             icon: Icon(
-              LucideIcons.chevronLeft400,
-              size: 50.0,
+              LucideIcons.arrowLeft400,
+              size: 30.0,
               color: ColorConstant.colorBlue,
             ),
           ),
@@ -119,19 +119,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
 
-                  // TextFieldComponent(
-                  //   controller: _phoneController,
-                  //   labelTitle: "Numero de telephone",
-                  //   keyboardType: TextInputType.phone,
-                  //   onChanged: (_) {
-                  //     context.read<AuthCubit>().validateRegisterForm(
-                  //       _nameController.text.trim(),
-                  //       _emailController.text.trim(),
-                  //       _phoneController.text.trim(),
-                  //       _passwordController.text.trim(),
-                  //       _confirmPasswordController.text.trim(),
-                  //     );
-                  //   },
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     spacing: 5,
