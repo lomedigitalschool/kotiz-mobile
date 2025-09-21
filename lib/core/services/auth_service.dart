@@ -36,7 +36,7 @@ class AuthService {
       final extraData = doc.data()!;
 
       return User(
-        id: user.uid,
+        id: int.tryParse(user.uid),
         email: user.email!,
         name: extraData['name'],
         phone: extraData['phone'],
