@@ -97,6 +97,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       await authService.register(email, password, name, phone);
       emit(AuthRegisterSucces());
+      emit(AuthInitial());
     } catch (e) {
       emit(AuthError(e.toString()));
     }

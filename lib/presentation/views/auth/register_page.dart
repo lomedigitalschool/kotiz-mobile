@@ -207,27 +207,22 @@ class _RegisterPageState extends State<RegisterPage> {
                           animationDuration: Duration(milliseconds: 600),
                         );
                       }
-                      if (state is AuthSuccess) {
+                      if (state is AuthRegisterSucces) {
                         toastification.show(
                           context: context,
                           type: ToastificationType.success,
                           title: const Text('Inscription  réussie'),
-                          description: Text("${state.user.name} bienvenue"),
                           icon: const Icon(Icons.error, color: Colors.white),
                           backgroundColor: Colors.red,
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );
-                        context.go("/login");
+                        context.push("/login");
                       }
                     },
                     child: BlocBuilder<AuthCubit, AuthState>(
                       builder: (context, state) {
-                        bool isFill = false;
-
-                        if (state is AuthFormInvalid) {
-                          isFill = state.isValid;
-                        }
+                        bool isFill = state is AuthFormInvalid && state.isValid;
 
                         return Padding(
                           padding: const EdgeInsets.only(top: 30.0),

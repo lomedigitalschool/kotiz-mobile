@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "908529151553",
-    "project_id": "kotizapp-f1a01",
-    "storage_bucket": "kotizapp-f1a01.firebasestorage.app"
+    "project_number": "725312163058",
+    "project_id": "kotizpull",
+    "storage_bucket": "kotizpull.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:908529151553:android:6f336a6349e5d3b93820c0",
+        "mobilesdk_app_id": "1:725312163058:android:73d636c6ec8ef22298546b",
         "android_client_info": {
           "package_name": "com.kotiz_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD56DmsplTCr9YFGy_QdC41A4rGtZjLovk"
+          "current_key": "AIzaSyDSxcp2Kj3wG-rP4YikPF_n-aeGNrxZnu0"
         }
       ],
       "services": {
