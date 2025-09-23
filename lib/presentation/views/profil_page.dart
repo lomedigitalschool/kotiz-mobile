@@ -17,6 +17,12 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthCubit>().getProfil();
+  }
+
   String initialLetter(String name) {
     final String initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return initial;
@@ -55,6 +61,11 @@ class _ProfilPageState extends State<ProfilPage> {
             ),
           );
         }
+        final dynamic profil;
+        if (state is AuthProfil) {
+          profil = state.profil;
+        }
+
         return Scaffold(
           backgroundColor: ColorConstant.colorWhite,
           appBar: AppBar(
@@ -72,7 +83,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     backgroundColor: Colors.grey,
                     radius: 56,
                     child: Text(
-                      initialLetter("John"),
+                      initialLetter("fjkladsjfl"),
                       style: const TextStyle(
                         fontSize: 32,
                         color: Colors.white,
@@ -81,7 +92,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                   ),
 
-                  Text("John adebayo", style: TextStyle(fontSize: 19)),
+                  Text("hjhajdfjjjdsfha", style: TextStyle(fontSize: 19)),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -101,12 +112,12 @@ class _ProfilPageState extends State<ProfilPage> {
                       ProfilTile(
                         type: "Email",
                         icon: Icon(LucideIcons.mail),
-                        content: "fhjjjjjkhadshfjhas@gmail.com",
+                        content: "jafhjjadsjfhjkashfhjkdsah",
                       ),
                       ProfilTile(
                         type: "Telephone",
                         icon: Icon(LucideIcons.phone),
-                        content: "+2398888898904",
+                        content: "3244324343444442",
                       ),
                       ProfilTile(
                         type: "Modifier le mot de passe",
@@ -135,8 +146,6 @@ class _ProfilPageState extends State<ProfilPage> {
                     showPen: false,
                     widget: Switch(
                       activeColor: ColorConstant.colorGreen,
-                      activeTrackColor: ColorConstant.colorGreen,
-                      //TODO changer la couleur du switch en vert
                       value: isOn,
                       onChanged: (value) => setState(() => isOn = value),
                     ),

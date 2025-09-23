@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
+import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
@@ -26,6 +27,13 @@ class AuthSuccess extends AuthState {
   const AuthSuccess(this.user);
   @override
   List<Object> get props => [user];
+}
+
+class AuthProfil extends AuthState {
+  final ProfilUser profil;
+  const AuthProfil(this.profil);
+  @override
+  List<Object> get props => [profil];
 }
 
 class AuthLoading extends AuthState {}
@@ -98,6 +106,18 @@ class AuthCubit extends Cubit<AuthState> {
       await authService.register(email, password, name, phone);
       emit(AuthRegisterSucces());
       emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> getProfil() async {
+    emit(AuthLoading());
+    try {
+      final profil = await authService.fetchProfile();
+      // print(profil);
+
+      emit(AuthProfil(profil));
     } catch (e) {
       emit(AuthError(e.toString()));
     }

@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:725312163058:android:73d636c6ec8ef22298546b",
+        "mobilesdk_app_id": "1:725312163058:android:096a21e458125d3398546b",
         "android_client_info": {
           "package_name": "com.kotiz_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDSxcp2Kj3wG-rP4YikPF_n-aeGNrxZnu0"
+          "current_key": "AIzaSyBcnUJycqbtDpv1ZdhA7KoDOza5A2Pj5B0"
         }
       ],
       "services": {

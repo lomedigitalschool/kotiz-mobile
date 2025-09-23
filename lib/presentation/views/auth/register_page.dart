@@ -202,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           title: const Text('Erreur lors de l\' inscription '),
                           description: Text(state.message),
                           icon: const Icon(Icons.error, color: Colors.white),
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.red.shade200,
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );
@@ -213,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           type: ToastificationType.success,
                           title: const Text('Inscription  réussie'),
                           icon: const Icon(Icons.error, color: Colors.white),
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.green.shade200,
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );

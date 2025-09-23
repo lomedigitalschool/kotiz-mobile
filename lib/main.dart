@@ -30,7 +30,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   final prefs = await SharedPreferences.getInstance();
   final showHome = prefs.getBool("showHome") ?? false;
 
@@ -50,7 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   final secureStorage = SecureStorage();
 
-  late final authService = AuthService(secureStorage);
+  late final authService = AuthService(secureStorage, apiConfig);
 
   late final _poolService = PoolService(apiConfig);
   StreamSubscription<Uri>? sub;

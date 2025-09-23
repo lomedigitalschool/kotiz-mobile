@@ -47,13 +47,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDSxcp2Kj3wG-rP4YikPF_n-aeGNrxZnu0',
-    appId: '1:725312163058:android:73d636c6ec8ef22298546b',
+    apiKey: 'AIzaSyBcnUJycqbtDpv1ZdhA7KoDOza5A2Pj5B0',
+    appId: '1:725312163058:android:096a21e458125d3398546b',
     messagingSenderId: '725312163058',
     projectId: 'kotizpull',
     storageBucket: 'kotizpull.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDSxcp2Kj3wG-rP4YikPF_n-aeGNrxZnu0',
     appId: '1:725312163058:ios:73d636c6ec8ef22298546b',
