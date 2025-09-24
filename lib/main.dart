@@ -140,7 +140,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),
-        BlocProvider(create: (_) => AuthCubit(authService)),
+        BlocProvider(create: (_) => AuthCubit(authService, _poolService)),
         BlocProvider(create: (_) => PoolCubit(_poolService)),
       ],
       child: MaterialApp.router(

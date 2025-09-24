@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/data/models/dashboard_data.dart';
+import 'package:kotiz_app/data/models/pool.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
@@ -29,6 +31,8 @@ class DashboardPage extends StatelessWidget {
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is AuthSuccess) {
+            final DashboardData? dashboard = state.dashboardData;
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(top: 30.0),
@@ -39,7 +43,7 @@ class DashboardPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: Text(
-                        "BIENVENU SUR VOTRE \nDASHBOARD",
+                        "BIENVENU SUR VOTRE \nDASHBOARD ${state.user.name.toUpperCase()}",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -71,7 +75,9 @@ class DashboardPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "800.000 fr",
+                                dashboard != null
+                                    ? dashboard.totalCollected.toString()
+                                    : "0",
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -94,24 +100,36 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12.0),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 8,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: const CagnotteTilesDashboard9(
-                              title: "kjjfdasklfjkl",
-                              poolId: "",
-                              image: "jflkjdasf",
+                    dashboard == null || dashboard.myPools.isNotEmpty
+                        ? Center(
+                            child: Text(
+                              "Vous ne possédez aucunes cagnottes pour le moment",
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: dashboard.myPools.length,
+                              itemBuilder: (context, index) {
+                                final String title =
+                                    dashboard.myPools[index].title;
+                                final String id = dashboard.myPools[index].id
+                                    .toString();
+                                final String image =
+                                    dashboard.myPools[index].imageUrl;
+                                return Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: CagnotteTilesDashboard9(
+                                    title: title,
+                                    poolId: id,
+                                    image: image,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                     Center(
                       child: AppButton(
                         text: "Créer une cagnotte",

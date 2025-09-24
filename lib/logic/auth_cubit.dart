@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
+import 'package:kotiz_app/core/services/pool_service.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
+import 'package:kotiz_app/data/models/dashboard_data.dart';
 import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:kotiz_app/data/models/user.dart';
@@ -25,10 +27,12 @@ class Unauthenticated extends AuthState {}
 class AuthSuccess extends AuthState {
   final User user;
   final ProfilUser? profil;
-  const AuthSuccess({required this.user, this.profil});
+  final DashboardData? dashboardData;
+
+  const AuthSuccess({required this.user, this.profil, this.dashboardData});
 
   @override
-  List<Object?> get props => [user, profil];
+  List<Object?> get props => [user, profil, dashboardData];
 }
 
 class AuthProfil extends AuthState {
@@ -60,9 +64,11 @@ class AuthFormInvalid extends AuthState {
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthService authService;
+  final PoolService _service;
+
   final _secureStorage = SecureStorage();
 
-  AuthCubit(this.authService) : super(AuthInitial());
+  AuthCubit(this.authService, this._service) : super(AuthInitial());
 
   void validateLoginForm(String email, String password) {
     final isValid = email.trim().isNotEmpty && password.trim().isNotEmpty;
@@ -91,10 +97,12 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final User user = await authService.login(email, password);
       final profil = await authService.fetchProfile();
+      final DashboardData dashboard = await _service.fetchDashboard();
+
       await _secureStorage.saveUser(user);
       await _secureStorage.saveProfil(profil);
 
-      emit(AuthSuccess(user: user, profil: profil));
+      emit(AuthSuccess(user: user, profil: profil, dashboardData: dashboard));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -131,6 +139,7 @@ class AuthCubit extends Cubit<AuthState> {
   void logout() async {
     authService.logout();
     await _secureStorage.deleteUser();
+    await _secureStorage.deleteProfil();
     emit(AuthInitial());
   }
 

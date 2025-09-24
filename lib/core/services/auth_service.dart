@@ -106,7 +106,7 @@ class AuthService {
   Future<void> firebaseSync(String idToken) async {
     try {
       final response = await _app.post<Map<String, dynamic>>(
-        "/auth/firebase-sync",
+        "auth/firebase-sync",
         headers: {'Authorization': 'Bearer $idToken'},
       );
       debugPrint('Réponse: $response');
@@ -119,7 +119,7 @@ class AuthService {
   Future<ProfilUser> fetchProfile() async {
     try {
       final Map<String, dynamic> data = await _app.get<Map<String, dynamic>>(
-        '/auth/me',
+        'auth/me',
       );
 
       return ProfilUser.fromJson(data);
