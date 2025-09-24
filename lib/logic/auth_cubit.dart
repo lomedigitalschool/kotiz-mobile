@@ -24,9 +24,11 @@ class Unauthenticated extends AuthState {}
 
 class AuthSuccess extends AuthState {
   final User user;
-  const AuthSuccess(this.user);
+  final ProfilUser? profil;
+  const AuthSuccess({required this.user, this.profil});
+
   @override
-  List<Object> get props => [user];
+  List<Object?> get props => [user, profil];
 }
 
 class AuthProfil extends AuthState {
@@ -88,8 +90,11 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final User user = await authService.login(email, password);
+      final profil = await authService.fetchProfile();
       await _secureStorage.saveUser(user);
-      emit(AuthSuccess(user));
+      await _secureStorage.saveProfil(profil);
+
+      emit(AuthSuccess(user: user, profil: profil));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -111,17 +116,17 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> getProfil() async {
-    emit(AuthLoading());
-    try {
-      final profil = await authService.fetchProfile();
-      // print(profil);
+  // Future<void> getProfil() async {
+  //   emit(AuthLoading());
+  //   try {
+  //     final ProfilUser profil = await authService.fetchProfile();
+  //     print("profil $profil");
 
-      emit(AuthProfil(profil));
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
+  //     emit(AuthProfil(profil));
+  //   } catch (e) {
+  //     emit(AuthError(e.toString()));
+  //   }
+  // }
 
   void logout() async {
     authService.logout();
@@ -137,8 +142,9 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (firebaseUser != null) {
         final User? storedUser = await _secureStorage.getUser();
+        final ProfilUser? storedProfil = await _secureStorage.getProfil();
         if (storedUser != null) {
-          emit(AuthSuccess(storedUser));
+          emit(AuthSuccess(user: storedUser, profil: storedProfil));
           return;
         }
       }

@@ -37,7 +37,7 @@ class AuthService {
       if (!doc.exists) {
         throw Exception('Profil Firestore manquant');
       }
-
+      // await fetchProfile();
       final extraData = doc.data()!;
 
       return User(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
@@ -19,13 +20,12 @@ class ProfilPage extends StatefulWidget {
 class _ProfilPageState extends State<ProfilPage> {
   @override
   void initState() {
+    context.read<AuthCubit>().checkAuthStatus();
     super.initState();
-    context.read<AuthCubit>().getProfil();
   }
 
-  String initialLetter(String name) {
-    final String initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
-    return initial;
+  String initialLetter(String? name) {
+    return name?.isNotEmpty == true ? name![0].toUpperCase() : '?';
   }
 
   bool isOn = false;
@@ -61,10 +61,7 @@ class _ProfilPageState extends State<ProfilPage> {
             ),
           );
         }
-        final dynamic profil;
-        if (state is AuthProfil) {
-          profil = state.profil;
-        }
+        final ProfilUser? profil = state.profil;
 
         return Scaffold(
           backgroundColor: ColorConstant.colorWhite,
@@ -83,7 +80,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     backgroundColor: Colors.grey,
                     radius: 56,
                     child: Text(
-                      initialLetter("fjkladsjfl"),
+                      initialLetter(profil?.name),
                       style: const TextStyle(
                         fontSize: 32,
                         color: Colors.white,
@@ -92,7 +89,10 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                   ),
 
-                  Text("hjhajdfjjjdsfha", style: TextStyle(fontSize: 19)),
+                  Text(
+                    profil?.name ?? 'Utilisateur',
+                    style: TextStyle(fontSize: 19),
+                  ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -112,17 +112,16 @@ class _ProfilPageState extends State<ProfilPage> {
                       ProfilTile(
                         type: "Email",
                         icon: Icon(LucideIcons.mail),
-                        content: "jafhjjadsjfhjkashfhjkdsah",
+                        content: profil?.email,
                       ),
                       ProfilTile(
                         type: "Telephone",
                         icon: Icon(LucideIcons.phone),
-                        content: "3244324343444442",
+                        content: profil?.phone,
                       ),
                       ProfilTile(
                         type: "Modifier le mot de passe",
                         icon: Icon(LucideIcons.lockKeyhole),
-                        showPen: true,
                       ),
                     ],
                   ),
@@ -185,6 +184,7 @@ class _ProfilPageState extends State<ProfilPage> {
                           showPen: false,
                         ),
                       ),
+
                       ProfilTile(
                         type: "Historique des Transactions",
                         icon: Icon(LucideIcons.history),

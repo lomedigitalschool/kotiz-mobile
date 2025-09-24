@@ -65,4 +65,25 @@ class ProfilUser {
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'role': role,
+      'avatarUrl': avatarUrl,
+      'isVerified': isVerified,
+      'isBlocked': isBlocked,
+      'lastLogin': lastLogin?.toIso8601String(),
+      'resetToken': resetToken,
+      'resetTokenExpiry': resetTokenExpiry?.toIso8601String(),
+      'firebaseUid': firebaseUid,
+      'isPhoneVerified': isPhoneVerified,
+      'phoneVerifiedAt': phoneVerifiedAt?.toIso8601String(),
+      'passwordResetAt': passwordResetAt?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
 }
