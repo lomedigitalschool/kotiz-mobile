@@ -15,8 +15,7 @@ class TextFieldComponent extends StatelessWidget {
   final int maxLines;
   final String? hintText;
 
-  @override
-  TextFieldComponent({
+  const TextFieldComponent({
     super.key,
     required this.labelTitle,
     this.controller,
@@ -33,6 +32,7 @@ class TextFieldComponent extends StatelessWidget {
     this.hintText,
   });
 
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

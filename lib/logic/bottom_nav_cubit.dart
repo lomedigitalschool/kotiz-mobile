@@ -13,7 +13,7 @@ class BottomNavState {
 class BottomNavCubit extends Cubit<BottomNavState> {
   BottomNavCubit() : super(BottomNavState(0));
 
-  setIndex(int index) {
+  void setIndex(int index) {
     emit(state.copyWith(currentIndex: index));
   }
 }

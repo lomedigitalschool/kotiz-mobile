@@ -35,13 +35,13 @@ class CagnotteTile extends StatelessWidget {
                   if (loadingProgress == null) {
                     return child;
                   }
-                  return Container(
+                  return const SizedBox(
                     width: 160,
                     height: 160,
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 },
-                errorBuilder: (_, __, ___) => Image.asset(
+                errorBuilder: (_, error, stackTrace) => Image.asset(
                   'assets/images/Logo.png',
                   width: 160,
                   height: 160,

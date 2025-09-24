@@ -40,7 +40,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key, required this.showHome});
+  const MyApp({super.key, required this.showHome});
   final bool showHome;
 
   @override
@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
       log('Uri: ${uri.toString()}' as num);
       if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'pool') {
         final id = uri.pathSegments[1];
-        if (id != null && int.tryParse(id) != null) {
+        if (int.tryParse(id) != null) {
           _router.go('/pool/$id');
         }
       }

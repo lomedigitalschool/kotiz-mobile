@@ -15,7 +15,7 @@ class _PoolPage2State extends State<PoolPage2> {
   String? _typeSelected;
   DateTime? _selectedDate;
 
-  List<String> _typeList = ["publique", "privée"];
+  final List<String> _typeList = ["publique", "privée"];
 
   final ImagePicker _picker = ImagePicker();
   XFile? _image;

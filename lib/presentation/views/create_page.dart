@@ -36,11 +36,12 @@ class _CreatePageState extends State<CreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        context.read<BottomNavCubit>().setIndex(0);
-
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          context.read<BottomNavCubit>().setIndex(0);
+        }
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,

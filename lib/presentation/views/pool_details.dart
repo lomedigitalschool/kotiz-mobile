@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
@@ -93,13 +91,9 @@ class _PoolDetailsState extends State<PoolDetails> {
                         if (loadingProgress == null) {
                           return child;
                         }
-                        return Container(
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+                        return const Center(child: CircularProgressIndicator());
                       },
-                      errorBuilder: (_, __, ___) => Image.asset(
+                      errorBuilder: (_, error, stackTrace) => Image.asset(
                         'assets/images/Logo.png',
 
                         fit: BoxFit.fill,

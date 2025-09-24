@@ -4,7 +4,6 @@ import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/page_builder.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -98,9 +97,13 @@ class _OnBoardingState extends State<OnBoarding> {
                         onPressed: () async {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setBool("showHome", true);
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => HomePage()),
-                          );
+                          if (mounted) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(),
+                              ),
+                            );
+                          }
                         },
                         child: Text(
                           "Passer",
@@ -124,11 +127,13 @@ class _OnBoardingState extends State<OnBoarding> {
                                   final prefs =
                                       await SharedPreferences.getInstance();
                                   await prefs.setBool("showHome", true);
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => HomePage(),
-                                    ),
-                                  );
+                                  if (mounted) {
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(),
+                                      ),
+                                    );
+                                  }
                                 },
                           size: Size(200, 55),
                         ),
@@ -148,7 +153,9 @@ class _OnBoardingState extends State<OnBoarding> {
                               final prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.setBool("showHome", true);
-                              context.go('/main');
+                              if (mounted) {
+                                context.go('/main');
+                              }
                             },
                       size: Size(365, 55),
                     ),

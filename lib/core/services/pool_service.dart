@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
-import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/pool.dart';
-import 'package:kotiz_app/data/models/user.dart';
 
 class PoolService {
   final ApiConfig _app;

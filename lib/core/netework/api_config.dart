@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:kotiz_app/core/netework/Http_CLient.dart';
+import 'package:kotiz_app/core/netework/http_client.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
 
 class ApiConfig extends HttpCLient {
