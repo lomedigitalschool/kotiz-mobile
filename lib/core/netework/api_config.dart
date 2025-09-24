@@ -42,8 +42,17 @@ class ApiConfig extends HttpCLient {
   }
 
   @override
-  Future<T> post<T>(String url, {Map? data}) async {
-    final response = await _dio.post(url, data: data);
+  @override
+  Future<T> post<T>(
+    String url, {
+    Map? data,
+    Map<String, String>? headers,
+  }) async {
+    final response = await _dio.post(
+      url,
+      data: data,
+      options: Options(headers: headers),
+    );
     return response.data as T;
   }
 

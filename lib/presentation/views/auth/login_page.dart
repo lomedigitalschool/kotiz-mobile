@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                           title: const Text('Erreur de connexion'),
                           description: Text(state.message),
                           icon: const Icon(Icons.error, color: Colors.white),
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.red.shade200,
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );
@@ -123,14 +123,14 @@ class _LoginPageState extends State<LoginPage> {
                         toastification.show(
                           context: context,
                           type: ToastificationType.success,
-                          title: const Text('connexion reussie'),
-                          description: Text(state.user.name + "bienvenue"),
+                          title: const Text('connexion réussie'),
+                          description: Text("Bienvenue ${state.user.name}"),
                           icon: const Icon(Icons.error, color: Colors.white),
-                          backgroundColor: Colors.green,
+                          backgroundColor: Colors.green.shade200,
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );
-                        context.pop();
+                        context.go('/main');
                       }
                     },
                     child: BlocBuilder<AuthCubit, AuthState>(
