@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
+import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
@@ -23,9 +24,18 @@ class Unauthenticated extends AuthState {}
 
 class AuthSuccess extends AuthState {
   final User user;
-  const AuthSuccess(this.user);
+  final ProfilUser? profil;
+  const AuthSuccess({required this.user, this.profil});
+
   @override
-  List<Object> get props => [user];
+  List<Object?> get props => [user, profil];
+}
+
+class AuthProfil extends AuthState {
+  final ProfilUser profil;
+  const AuthProfil(this.profil);
+  @override
+  List<Object> get props => [profil];
 }
 
 class AuthLoading extends AuthState {}
@@ -80,8 +90,11 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final User user = await authService.login(email, password);
+      final profil = await authService.fetchProfile();
       await _secureStorage.saveUser(user);
-      emit(AuthSuccess(user));
+      await _secureStorage.saveProfil(profil);
+
+      emit(AuthSuccess(user: user, profil: profil));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -97,10 +110,23 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       await authService.register(email, password, name, phone);
       emit(AuthRegisterSucces());
+      emit(AuthInitial());
     } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
+
+  // Future<void> getProfil() async {
+  //   emit(AuthLoading());
+  //   try {
+  //     final ProfilUser profil = await authService.fetchProfile();
+  //     print("profil $profil");
+
+  //     emit(AuthProfil(profil));
+  //   } catch (e) {
+  //     emit(AuthError(e.toString()));
+  //   }
+  // }
 
   void logout() async {
     authService.logout();
@@ -116,8 +142,9 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (firebaseUser != null) {
         final User? storedUser = await _secureStorage.getUser();
+        final ProfilUser? storedProfil = await _secureStorage.getProfil();
         if (storedUser != null) {
-          emit(AuthSuccess(storedUser));
+          emit(AuthSuccess(user: storedUser, profil: storedProfil));
           return;
         }
       }

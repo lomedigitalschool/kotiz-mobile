@@ -38,14 +38,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
-  //   if (isCurrent) {
-  //     context.read<PoolCubit>().getAll();
-  //   }
-  // }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+    if (isCurrent) {
+      context.read<PoolCubit>().getAll();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +66,16 @@ class _HomePageState extends State<HomePage> {
                 if (state is AuthSuccess) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "${state.user.name}",
-                      style: TextStyle(
-                        color: ColorConstant.colorBlue,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    child: TextButton(
+                      onPressed: () =>
+                          context.read<BottomNavCubit>().setIndex(3),
+                      child: Text(
+                        "${state.user.name}",
+                        style: TextStyle(
+                          color: ColorConstant.colorBlue,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   );

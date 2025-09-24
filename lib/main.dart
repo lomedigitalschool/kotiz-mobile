@@ -30,7 +30,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   final prefs = await SharedPreferences.getInstance();
   final showHome = prefs.getBool("showHome") ?? false;
 
@@ -50,7 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   final secureStorage = SecureStorage();
 
-  late final authService = AuthService(secureStorage);
+  late final authService = AuthService(secureStorage, apiConfig);
 
   late final _poolService = PoolService(apiConfig);
   StreamSubscription<Uri>? sub;
@@ -78,7 +80,20 @@ class _MyAppState extends State<MyApp> {
         GoRoute(path: "/home", builder: (context, state) => HomePage()),
         GoRoute(path: "/explore", builder: (context, state) => DashboardPage()),
         GoRoute(path: "/create", builder: (context, state) => CreatePage()),
+
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
+
+        // GoRoute(
+        //   path: "/login",
+        //   pageBuilder: (context, state) => CustomTransitionPage(
+        //     key: state.pageKey,
+        //     child: const LoginPage(),
+        //     transitionDuration: const Duration(milliseconds: 600),
+        //     transitionsBuilder:
+        //         (context, animation, secondaryAnimation, child) =>
+        //             FadeTransition(opacity: animation, child: child),
+        //   ),
+        // ),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),
         GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
         // GoRoute(

@@ -11,16 +11,13 @@ import 'package:flutter/foundation.dart'
 /// import 'firebase_options.dart';
 /// // ...
 /// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
+/// options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -50,19 +47,26 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD56DmsplTCr9YFGy_QdC41A4rGtZjLovk',
-    appId: '1:908529151553:android:6f336a6349e5d3b93820c0',
-    messagingSenderId: '908529151553',
-    projectId: 'kotizapp-f1a01',
-    storageBucket: 'kotizapp-f1a01.firebasestorage.app',
+    apiKey: 'AIzaSyBcnUJycqbtDpv1ZdhA7KoDOza5A2Pj5B0',
+    appId: '1:725312163058:android:096a21e458125d3398546b',
+    messagingSenderId: '725312163058',
+    projectId: 'kotizpull',
+    storageBucket: 'kotizpull.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBgEAsNu5doqfKUyyfL9dJgZgIM9HPhQuQ',
-    appId: '1:908529151553:ios:9ac00229e9744c6b3820c0',
-    messagingSenderId: '908529151553',
-    projectId: 'kotizapp-f1a01',
-    storageBucket: 'kotizapp-f1a01.firebasestorage.app',
+    apiKey: 'AIzaSyDSxcp2Kj3wG-rP4YikPF_n-aeGNrxZnu0',
+    appId: '1:725312163058:ios:73d636c6ec8ef22298546b',
+    messagingSenderId: '725312163058',
+    projectId: 'kotizpull',
+    storageBucket: 'kotizpull.firebasestorage.app',
     iosBundleId: 'com.example.kotizApp',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDSxcp2Kj3wG-rP4YikPF_n-aeGNrxZnu0',
+    appId: '1:725312163058:web:73d636c6ec8ef22298546b',
+    messagingSenderId: '725312163058',
+    projectId: 'kotizpull',
+    authDomain: 'kotizpull.firebaseapp.com',
+    storageBucket: 'kotizpull.firebasestorage.app',
   );
 }
