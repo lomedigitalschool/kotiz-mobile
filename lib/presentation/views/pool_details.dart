@@ -6,6 +6,7 @@ import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/views/contribution_page.dart';
+import 'package:percent_indicator/flutter_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 
 class PoolDetails extends StatefulWidget {
@@ -31,6 +32,7 @@ class _PoolDetailsState extends State<PoolDetails> {
 
   String initialLetter(String name) {
     final String initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+
     return initial;
   }
 
@@ -122,12 +124,15 @@ class _PoolDetailsState extends State<PoolDetails> {
                             decoration: BoxDecoration(
                               color: Colors.green.shade200,
                               borderRadius: BorderRadius.circular(12),
-                              border: BoxBorder.all(width: 1),
+                              border: BoxBorder.all(
+                                width: 1,
+                                color: Colors.green.shade200,
+                              ),
                             ),
-                            padding: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(8),
                             child: Text(
                               pool.type,
-                              style: TextStyle(fontSize: 20),
+                              style: TextStyle(fontSize: 16),
                             ),
                           ),
                         ],
@@ -177,33 +182,49 @@ class _PoolDetailsState extends State<PoolDetails> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            pool.goalAmount.toString(),
+                            "${pool.goalAmount.toString()} ${pool.currency}",
                             style: TextStyle(fontSize: 14),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 07,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadiusGeometry.circular(12),
-                          child: LinearProgressIndicator(
-                            value: pool.progressPercentage.toDouble(),
-                            color: ColorConstant.colorGreen,
-                            backgroundColor: Colors.grey,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: LinearPercentIndicator(
+                        animation: true,
+                        animationDuration: 600,
+                        lineHeight: 20,
+                        percent: pool.progressPercentage / 100,
+                        progressColor: ColorConstant.colorGreen,
+                        backgroundColor: Colors.green.shade100,
+                        barRadius: Radius.circular(8),
+                        center: Text(
+                          "${(pool.progressPercentage).toStringAsFixed(0)}%",
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil().toString()} ${pool.currency}  collecté",
+                          ),
+                        ],
+                      ),
+                    ),
+
                     Padding(
                       padding: const EdgeInsets.only(left: 25, right: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 12,
                         children: [
-                          Text(pool.contributionCount.toString()),
                           Text(
                             "Description",
                             style: TextStyle(
@@ -242,7 +263,7 @@ class _PoolDetailsState extends State<PoolDetails> {
                                     ),
                                   ),
                                   Text(
-                                    "12",
+                                    pool.contributionCount.toString(),
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.black,
@@ -262,7 +283,7 @@ class _PoolDetailsState extends State<PoolDetails> {
                                     ),
                                   ),
                                   Text(
-                                    pool.contributionCount.toString(),
+                                    "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil().toString()} ${pool.currency} ",
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.black,
@@ -282,11 +303,16 @@ class _PoolDetailsState extends State<PoolDetails> {
                                     ),
                                   ),
                                   Text(
-                                    (now.difference(pool.deadline).inDays *
-                                            1 /
-                                            -1)
-                                        .toInt()
-                                        .toString(),
+                                    (now.difference(pool.deadline).inDays * -1)
+                                                .toInt() ==
+                                            0
+                                        ? "Aucune limites"
+                                        : (now
+                                                      .difference(pool.deadline)
+                                                      .inDays *
+                                                  -1)
+                                              .toInt()
+                                              .toString(),
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.black,
@@ -318,6 +344,7 @@ class _PoolDetailsState extends State<PoolDetails> {
                                   spacing: 16,
                                   children: [
                                     CircleAvatar(
+                                      backgroundColor: Colors.grey,
                                       radius: 25,
                                       child: url == null
                                           ? Text(
