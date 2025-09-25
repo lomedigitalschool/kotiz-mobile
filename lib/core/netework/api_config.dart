@@ -30,9 +30,6 @@ class ApiConfig extends HttpCLient {
         },
       ),
     );
-    // _dio.interceptors.add(
-    //   LogInterceptor(requestBody: true, responseBody: true),
-    // );
   }
 
   @override

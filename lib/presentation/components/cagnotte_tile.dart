@@ -64,7 +64,7 @@ class CagnotteTile extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
-              child: Text("$amount$currency atteint"),
+              child: Text("$amount $currency atteint"),
             ),
           ],
         ),

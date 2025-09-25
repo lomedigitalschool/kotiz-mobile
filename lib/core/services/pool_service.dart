@@ -12,6 +12,7 @@ class PoolService {
   Future<Pool> poolDetails(String id) async {
     try {
       final data = await _app.get<Map<String, dynamic>>("public/pulls/$id");
+      print(data);
 
       return Pool.fromJson(data['data']);
     } catch (e, s) {

@@ -72,7 +72,8 @@ class _PoolDetailsState extends State<PoolDetails> {
           if (state is PoolLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is PoolError) return Text('Erreur: ${state.message}');
+          if (state is PoolError)
+            return Center(child: Text('Erreur: ${state.message}'));
           if (state is PoolDetailsLoaded) {
             final pool = state.pool;
             final DateTime now = DateTime.now();
@@ -107,12 +108,29 @@ class _PoolDetailsState extends State<PoolDetails> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 16),
-                      child: Text(
-                        pool.title,
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            pool.title,
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade200,
+                              borderRadius: BorderRadius.circular(12),
+                              border: BoxBorder.all(width: 1),
+                            ),
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              pool.type,
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Padding(
@@ -185,7 +203,7 @@ class _PoolDetailsState extends State<PoolDetails> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 12,
                         children: [
-                          Text("12 contributeurs"),
+                          Text(pool.contributionCount.toString()),
                           Text(
                             "Description",
                             style: TextStyle(
@@ -264,9 +282,10 @@ class _PoolDetailsState extends State<PoolDetails> {
                                     ),
                                   ),
                                   Text(
-                                    now
-                                        .difference(pool.deadline)
-                                        .inDays
+                                    (now.difference(pool.deadline).inDays *
+                                            1 /
+                                            -1)
+                                        .toInt()
                                         .toString(),
                                     style: TextStyle(
                                       fontSize: 14,
@@ -287,6 +306,8 @@ class _PoolDetailsState extends State<PoolDetails> {
                               color: ColorConstant.colorGreen,
                             ),
                           ),
+                          // pool.recentContributions.isEmpty
+                          //     ? Text("Aucune contribution pour le moment ")
                           ListView.builder(
                             shrinkWrap: true,
                             itemCount: 4,

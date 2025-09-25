@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                     image: pool.imageUrl,
                                     title: pool.title,
                                     currency: pool.currency,
-                                    amount: pool.goalAmount.toString(),
+                                    amount: pool.contributionCount.toString(),
                                   ),
                                 ),
                                 // Padding(

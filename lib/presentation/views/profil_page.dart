@@ -35,8 +35,7 @@ class _ProfilPageState extends State<ProfilPage> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         if (state is! AuthSuccess) {
-          return Padding(
-            padding: const EdgeInsets.only(left: 20.0),
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,10 +51,13 @@ class _ProfilPageState extends State<ProfilPage> {
                   ],
                 ),
                 SizedBox(height: 12),
-                AppButton(
-                  text: "Se connecter",
-                  backgroundColor: ColorConstant.colorGreen,
-                  onPressed: () => context.push("/login"),
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  child: AppButton(
+                    text: "Se connecter",
+                    backgroundColor: ColorConstant.colorGreen,
+                    onPressed: () => context.push("/login"),
+                  ),
                 ),
               ],
             ),

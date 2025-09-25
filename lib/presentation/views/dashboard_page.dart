@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/data/models/dashboard_data.dart';
-import 'package:kotiz_app/data/models/pool.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
@@ -100,7 +99,7 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    dashboard == null || dashboard.myPools.isNotEmpty
+                    dashboard == null || dashboard.myPools.isEmpty
                         ? Center(
                             child: Text(
                               "Vous ne possédez aucunes cagnottes pour le moment",
@@ -143,8 +142,7 @@ class DashboardPage extends StatelessWidget {
               ),
             );
           }
-          return Padding(
-            padding: const EdgeInsets.only(left: 20.0),
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -160,10 +158,13 @@ class DashboardPage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12),
-                AppButton(
-                  text: "Se connecter",
-                  backgroundColor: ColorConstant.colorGreen,
-                  onPressed: () => context.push("/login"),
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  child: AppButton(
+                    text: "Se connecter",
+                    backgroundColor: ColorConstant.colorGreen,
+                    onPressed: () => context.push("/login"),
+                  ),
                 ),
               ],
             ),

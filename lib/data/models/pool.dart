@@ -16,11 +16,13 @@ class Pool {
   final int contributionCount;
   final int progressPercentage;
   final Map<String, dynamic> owner;
+  // final List<Map<String, dynamic>> recentContributions;
   // final String? shareLink;
   // final String? qrCodeUrl;
   // final bool? isApproved;
 
   Pool({
+    // required this.recentContributions,
     required this.contributionCount,
     required this.progressPercentage,
     required this.id,
@@ -55,6 +57,7 @@ class Pool {
       contributionCount: json["contributionCount"],
       progressPercentage: json["progressPercentage"],
       owner: json["owner"],
+      // recentContributions: json['recentContributions'],
 
       // shareLink: json["shareLink"],
       // qrCodeUrl: json["qrCodeUrl"],
