@@ -31,19 +31,22 @@ class ProfilTile extends StatelessWidget {
           ),
           child: Padding(padding: const EdgeInsets.all(28.0), child: icon),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              type,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
-            ),
-            if (content != null)
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(
-                content!,
-                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 19),
+                type,
+                softWrap: true,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
               ),
-          ],
+              if (content != null && content!.isNotEmpty)
+                Text(
+                  content!,
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 19),
+                ),
+            ],
+          ),
         ),
         const Spacer(),
         if (showPen) const Icon(LucideIcons.penLine),

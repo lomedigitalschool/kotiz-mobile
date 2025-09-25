@@ -35,31 +35,34 @@ class _ProfilPageState extends State<ProfilPage> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         if (state is! AuthSuccess) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.warning_amber),
-                    Text(
-                      "Vous n’êtes pas connecter",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12),
-                Padding(
-                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
-                  child: AppButton(
-                    text: "Se connecter",
-                    backgroundColor: ColorConstant.colorGreen,
-                    onPressed: () => context.push("/login"),
+          return Container(
+            color: ColorConstant.colorWhite,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.warning_amber),
+                      Text(
+                        "Vous n’êtes pas connecter",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  SizedBox(height: 12),
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                    child: AppButton(
+                      text: "Se connecter",
+                      backgroundColor: ColorConstant.colorGreen,
+                      onPressed: () => context.push("/login"),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }
