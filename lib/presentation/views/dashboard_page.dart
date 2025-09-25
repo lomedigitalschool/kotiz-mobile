@@ -103,6 +103,7 @@ class DashboardPage extends StatelessWidget {
                         ? Center(
                             child: Text(
                               "Vous ne possédez aucunes cagnottes pour le moment",
+                              textAlign: TextAlign.center,
                             ),
                           )
                         : Padding(
@@ -129,12 +130,15 @@ class DashboardPage extends StatelessWidget {
                               },
                             ),
                           ),
-                    Center(
-                      child: AppButton(
-                        text: "Créer une cagnotte",
-                        backgroundColor: ColorConstant.colorGreen,
-                        onPressed: () =>
-                            context.read<BottomNavCubit>().setIndex(2),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Center(
+                        child: AppButton(
+                          text: "Créer une cagnotte",
+                          backgroundColor: ColorConstant.colorGreen,
+                          onPressed: () =>
+                              context.read<BottomNavCubit>().setIndex(2),
+                        ),
                       ),
                     ),
                   ],
