@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage>
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
-                      vertical: 5,
+                      vertical: 16,
                     ),
                     child: TextField(
                       controller: _searchController,
@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage>
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 30, top: 64),
+                    padding: const EdgeInsets.only(left: 30, top: 20),
                     child: Text(
                       "Récentes cagnottes",
                       style: TextStyle(
