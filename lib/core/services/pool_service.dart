@@ -12,6 +12,7 @@ class PoolService {
   Future<Pool> poolDetails(String id) async {
     try {
       final data = await _app.get<Map<String, dynamic>>("public/pulls/$id");
+      print(data);
 
       return Pool.fromJson(data['data']);
     } catch (e, s) {
@@ -38,6 +39,7 @@ class PoolService {
       final Map<String, dynamic> json = await _app.get<Map<String, dynamic>>(
         'users/dashboard',
       );
+      print(json);
 
       return DashboardData.fromJson(json);
     } catch (e, s) {

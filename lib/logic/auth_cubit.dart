@@ -144,8 +144,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> checkAuthStatus() async {
-    final token = await _secureStorage.getToken();
-
+    final user = fb.FirebaseAuth.instance.currentUser;
+    final token = await user?.getIdToken(true);
     if (token != null && token.isNotEmpty) {
       final fb.User? firebaseUser = fb.FirebaseAuth.instance.currentUser;
 

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/core/utils/date_format.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/views/contribution_page.dart';
@@ -28,6 +29,12 @@ class _PoolDetailsState extends State<PoolDetails> {
   void sharePool(String poolId) {
     final url = 'https://kotiz.app/pool/$poolId';
     Share.share("Rejoins ma cagnotte $url");
+  }
+
+  int? toCeil({required String amount}) {
+    int? ceilNumber = int.tryParse(amount);
+
+    return ceilNumber;
   }
 
   String initialLetter(String name) {
@@ -340,50 +347,108 @@ class _PoolDetailsState extends State<PoolDetails> {
                                 color: ColorConstant.colorGreen,
                               ),
                             ),
-                            // pool.recentContributions.isEmpty
-                            //     ? Text("Aucune contribution pour le moment ")
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 4,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row(
-                                    spacing: 16,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundColor: Colors.grey,
-                                        radius: 25,
-                                        child: url == null
-                                            ? Text(
-                                                initialLetter("Zaibre"),
-                                                style: const TextStyle(
-                                                  fontSize: 32,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
+                            pool.recentContributions.isEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 9.0,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Aucune contribution pour le moment ",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 18.0,
+                                    ),
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount:
+                                          pool.recentContributions.length,
+                                      itemBuilder: (context, index) {
+                                        final contributor =
+                                            pool.recentContributions[index];
+                                        return Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Row(
+                                            spacing: 16,
+                                            children: [
+                                              CircleAvatar(
+                                                backgroundColor: Colors.grey,
+                                                radius: 30,
+                                                child: url == null
+                                                    ? Text(
+                                                        initialLetter(
+                                                          contributor["contributorName"] ??
+                                                              "Anonyme",
+                                                        ),
+                                                        style: const TextStyle(
+                                                          fontSize: 32,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      )
+                                                    : Image.asset("$url"),
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          contributor["contributorName"] ??
+                                                              "Anonyme",
+                                                          style: TextStyle(
+                                                            color: ColorConstant
+                                                                .colorBlue,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+
+                                                        Text(
+                                                          contributor["amount"] +
+                                                                  " ${pool.currency}" ??
+                                                              "*****",
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                      contributor["message"] ??
+                                                          "",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+
+                                                    Text(
+                                                      formatDate(
+                                                        contributor["createdAt"]
+                                                            .toString(),
+                                                      ),
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              )
-                                            : Image.asset("$url"),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Crée par Zaibre ",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                          Text('July 15,2021'),
-                                        ],
-                                      ),
-                                    ],
+                                        );
+                                      },
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
                           ],
                         ),
                       ),

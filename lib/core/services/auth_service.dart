@@ -27,10 +27,8 @@ class AuthService {
         throw Exception('Utilisateur introuvable');
       }
 
-      final idToken = await user.getIdToken();
+      final idToken = await user.getIdToken(true);
       await firebaseSync(idToken.toString());
-
-      await _secureStorage.saveToken(idToken.toString());
 
       final doc = await _db.collection('users').doc(user.uid).get();
 
@@ -99,7 +97,7 @@ class AuthService {
       }
     } catch (e, s) {
       debugPrint("Autre erreur: $e\n$s");
-      rethrow;
+      throw Exception('Une erreur inattendue est survenue.');
     }
   }
 
@@ -113,6 +111,7 @@ class AuthService {
     } on DioException catch (e) {
       debugPrint('Erreur ${e.response?.statusCode}');
       debugPrint('Body: ${e.response?.data}');
+      rethrow;
     }
   }
 

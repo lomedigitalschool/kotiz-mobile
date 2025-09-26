@@ -32,8 +32,6 @@ class _HomePageState extends State<HomePage>
   ];
 
   @override
-  bool get wantKeepAlive => false;
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -44,6 +42,19 @@ class _HomePageState extends State<HomePage>
       context.read<AuthCubit>().checkAuthStatus();
     });
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final route = ModalRoute.of(context);
+    if (route?.isCurrent ?? false) {
+      context.read<PoolCubit>().getAll();
+    }
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {

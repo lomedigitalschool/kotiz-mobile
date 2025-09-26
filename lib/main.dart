@@ -146,17 +146,13 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp.router(
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: "Roboto",
-          // colorSchemeSeed: ColorConstant.colorWhite,
-        ),
+        theme: ThemeData(fontFamily: "Roboto"),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [Locale('en', 'US'), Locale('fr', 'FR')],
-        // home: SplashScreen(showHome: showHome),
       ),
     );
   }
