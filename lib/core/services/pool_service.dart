@@ -12,7 +12,6 @@ class PoolService {
   Future<Pool> poolDetails(String id) async {
     try {
       final data = await _app.get<Map<String, dynamic>>("public/pulls/$id");
-      print(data);
 
       return Pool.fromJson(data['data']);
     } catch (e, s) {
@@ -26,6 +25,7 @@ class PoolService {
       final data = await _app.get<Map<String, dynamic>>('public/pulls');
 
       final list = data['data'] as List<dynamic>;
+
       return list.map((e) => Pool.fromJson(e as Map<String, dynamic>)).toList();
     } catch (e, s) {
       debugPrint('Erreur de récupération des cagnottes : $e\n$s');

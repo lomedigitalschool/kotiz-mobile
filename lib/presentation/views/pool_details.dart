@@ -51,341 +51,350 @@ class _PoolDetailsState extends State<PoolDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorConstant.colorWhite,
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              sharePool(widget.id);
-            },
-            icon: Icon(Icons.share, size: 32),
+    return WillPopScope(
+      onWillPop: () async {
+        context.pop();
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ColorConstant.colorWhite,
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                sharePool(widget.id);
+              },
+              icon: Icon(Icons.share, size: 32),
+            ),
+          ],
+          title: Padding(
+            padding: const EdgeInsets.only(top: 6.0),
+            child: Image.asset("assets/images/Logo-Text.png", width: 100),
           ),
-        ],
-        title: Padding(
-          padding: const EdgeInsets.only(top: 6.0),
-          child: Image.asset("assets/images/Logo-Text.png", width: 100),
         ),
-      ),
-      backgroundColor: ColorConstant.colorWhite,
-      body: BlocBuilder<PoolCubit, PoolState>(
-        builder: (context, state) {
-          if (state is PoolLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is PoolError)
-            return Center(child: Text('Erreur: ${state.message}'));
-          if (state is PoolDetailsLoaded) {
-            final pool = state.pool;
-            final DateTime now = DateTime.now();
-            return ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 15,
+        backgroundColor: ColorConstant.colorWhite,
+        body: BlocBuilder<PoolCubit, PoolState>(
+          builder: (context, state) {
+            if (state is PoolLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is PoolError)
+              return Center(child: Text('Erreur: ${state.message}'));
+            if (state is PoolDetailsLoaded) {
+              final pool = state.pool;
+              final DateTime now = DateTime.now();
+              return ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 15,
 
-                  children: [
-                    Image.network(
-                      pool.imageUrl,
+                    children: [
+                      Image.network(
+                        pool.imageUrl,
 
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-                        return Container(
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                      errorBuilder: (_, __, ___) => Image.asset(
-                        'assets/images/Logo.png',
-
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            pool.title,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return Container(
+                            child: const Center(
+                              child: CircularProgressIndicator(),
                             ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade200,
-                              borderRadius: BorderRadius.circular(12),
-                              border: BoxBorder.all(
-                                width: 1,
-                                color: Colors.green.shade200,
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => Image.asset(
+                          'assets/images/Logo.png',
+
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              pool.title,
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            padding: EdgeInsets.all(8),
-                            child: Text(
-                              pool.type,
-                              style: TextStyle(fontSize: 16),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade200,
+                                borderRadius: BorderRadius.circular(12),
+                                border: BoxBorder.all(
+                                  width: 1,
+                                  color: Colors.green.shade200,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                pool.type,
+                                style: TextStyle(fontSize: 16),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        spacing: 16,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: Colors.grey,
-                            radius: 36,
-                            child: pool.owner["url"] == null
-                                ? Text(
-                                    initialLetter(pool.owner["name"]),
-                                    style: const TextStyle(
-                                      fontSize: 32,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : Image.network("${pool.owner["url"]}"),
-                          ),
-                          Text(
-                            "Crée par ${pool.owner["name"]}",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          spacing: 16,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              radius: 36,
+                              child: pool.owner["url"] == null
+                                  ? Text(
+                                      initialLetter(pool.owner["name"]),
+                                      style: const TextStyle(
+                                        fontSize: 32,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : Image.network("${pool.owner["url"]}"),
                             ),
-                          ),
-                        ],
+                            Text(
+                              "Crée par ${pool.owner["name"]}",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: AppButton(
-                        backgroundColor: ColorConstant.colorGreen,
-                        text: "Contribuer",
-                        onPressed: () async {
-                          await showContributionBottomSheet(context);
-                        },
+                      Center(
+                        child: AppButton(
+                          backgroundColor: ColorConstant.colorGreen,
+                          text: "Contribuer",
+                          onPressed: () async {
+                            await showContributionBottomSheet(context);
+                          },
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 25.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            "${pool.goalAmount.toString()} ${pool.currency}",
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.only(right: 25.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              "${pool.goalAmount.toString()} ${pool.currency}",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: LinearPercentIndicator(
-                        animation: true,
-                        animationDuration: 600,
-                        lineHeight: 20,
-                        percent: pool.progressPercentage / 100,
-                        progressColor: ColorConstant.colorGreen,
-                        backgroundColor: Colors.green.shade100,
-                        barRadius: Radius.circular(8),
-                        center: Text(
-                          "${(pool.progressPercentage).toStringAsFixed(0)}%",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: LinearPercentIndicator(
+                          animation: true,
+                          animationDuration: 600,
+                          lineHeight: 20,
+                          percent: pool.progressPercentage / 100,
+                          progressColor: ColorConstant.colorGreen,
+                          backgroundColor: Colors.green.shade100,
+                          barRadius: Radius.circular(8),
+                          center: Text(
+                            "${(pool.progressPercentage).toStringAsFixed(0)}%",
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 25.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil().toString()} ${pool.currency}  collecté",
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.only(right: 25.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil().toString()} ${pool.currency}  collecté",
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25, right: 25),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 12,
-                        children: [
-                          Text(
-                            "Description",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: ColorConstant.colorGreen,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25, right: 25),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 12,
+                          children: [
+                            Text(
+                              "Description",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstant.colorGreen,
+                              ),
                             ),
-                          ),
 
-                          Text(
-                            pool.description,
-                            softWrap: true,
-                            maxLines: 4,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Text(
-                            "Details",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: ColorConstant.colorGreen,
+                            Text(
+                              pool.description,
+                              softWrap: true,
+                              maxLines: 4,
+                              style: TextStyle(fontSize: 16),
                             ),
-                          ),
-                          Column(
-                            spacing: 45,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Contributeurs",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    pool.contributionCount.toString(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
+                            Text(
+                              "Details",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstant.colorGreen,
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Total collecter",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil().toString()} ${pool.currency} ",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Jours restants ",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    (now.difference(pool.deadline).inDays * -1)
-                                                .toInt() ==
-                                            0
-                                        ? "Aucune limites"
-                                        : (now
-                                                      .difference(pool.deadline)
-                                                      .inDays *
-                                                  -1)
-                                              .toInt()
-                                              .toString(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 41),
-
-                          Text(
-                            "Contributeurs",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: ColorConstant.colorGreen,
                             ),
-                          ),
-                          // pool.recentContributions.isEmpty
-                          //     ? Text("Aucune contribution pour le moment ")
-                          ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: 4,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  spacing: 16,
+                            Column(
+                              spacing: 45,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    CircleAvatar(
-                                      backgroundColor: Colors.grey,
-                                      radius: 25,
-                                      child: url == null
-                                          ? Text(
-                                              initialLetter("Zaibre"),
-                                              style: const TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
-                                          : Image.asset("$url"),
+                                    Text(
+                                      "Contributeurs",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Crée par Zaibre ",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        Text('July 15,2021'),
-                                      ],
+                                    Text(
+                                      pool.contributionCount.toString(),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              );
-                            },
-                          ),
-                        ],
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Total collecter",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil().toString()} ${pool.currency} ",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Jours restants ",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      (now.difference(pool.deadline).inDays *
+                                                      -1)
+                                                  .toInt() ==
+                                              0
+                                          ? "Aucune limites"
+                                          : (now
+                                                        .difference(
+                                                          pool.deadline,
+                                                        )
+                                                        .inDays *
+                                                    -1)
+                                                .toInt()
+                                                .toString(),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 41),
+
+                            Text(
+                              "Contributeurs",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstant.colorGreen,
+                              ),
+                            ),
+                            // pool.recentContributions.isEmpty
+                            //     ? Text("Aucune contribution pour le moment ")
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: 4,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    spacing: 16,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.grey,
+                                        radius: 25,
+                                        child: url == null
+                                            ? Text(
+                                                initialLetter("Zaibre"),
+                                                style: const TextStyle(
+                                                  fontSize: 32,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            : Image.asset("$url"),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Crée par Zaibre ",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          Text('July 15,2021'),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }
-          return const SizedBox.shrink();
-        },
+                    ],
+                  ),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

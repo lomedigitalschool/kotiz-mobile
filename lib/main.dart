@@ -141,7 +141,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),
         BlocProvider(create: (_) => AuthCubit(authService, _poolService)),
-        BlocProvider(create: (_) => PoolCubit(_poolService)),
+        BlocProvider(create: (_) => PoolCubit(_poolService)..getAll()),
       ],
       child: MaterialApp.router(
         routerConfig: _router,

@@ -121,7 +121,7 @@ class AuthService {
       final Map<String, dynamic> data = await _app.get<Map<String, dynamic>>(
         'auth/me',
       );
-
+      print(data);
       return ProfilUser.fromJson(data);
     } catch (e) {
       rethrow;

@@ -73,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
           title: Text("Créer un compte", style: TextStyle(fontSize: 24)),
           centerTitle: true,
           leading: IconButton(
-            onPressed: () => context.go("/main"),
+            onPressed: () => context.pop(),
             icon: Icon(
               LucideIcons.arrowLeft400,
               size: 30.0,
