@@ -55,6 +55,7 @@ dependencies:
   firebase_auth: ^6.0.2
   cloud_firestore: ^6.0.1
   percent_indicator: ^4.2.5
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -8,6 +8,7 @@ import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/presentation/components/build_pool_loading_shimmer.dart';
 import 'package:kotiz_app/presentation/components/cagnotte_tile.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
 import 'package:kotiz_app/presentation/views/dashboard_page.dart';
@@ -159,13 +160,7 @@ class _HomePageState extends State<HomePage>
                   BlocBuilder<PoolCubit, PoolState>(
                     builder: (context, state) {
                       if (state is PoolLoading) {
-                        return Container(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: ColorConstant.colorGreen,
-                            ),
-                          ),
-                        );
+                        return buildPoolLoadingShimmer();
                       }
 
                       if (state is PoolLoaded) {
