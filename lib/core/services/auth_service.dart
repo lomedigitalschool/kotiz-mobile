@@ -12,7 +12,6 @@ class AuthService {
   final ApiConfig _app;
   final SecureStorage _secureStorage;
   final fb.FirebaseAuth _firebase = fb.FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   AuthService(this._secureStorage, this._app);
 
@@ -22,29 +21,17 @@ class AuthService {
         email: email,
         password: password,
       );
-      final user = cred.user;
-      if (user == null) {
+      final userFromFire = cred.user;
+      if (userFromFire == null) {
         throw Exception('Utilisateur introuvable');
       }
 
-      final idToken = await user.getIdToken(true);
-      await firebaseSync(idToken.toString());
+      final idToken = await userFromFire.getIdToken(true);
+      final user = await firebaseSync(idToken.toString());
 
-      final doc = await _db.collection('users').doc(user.uid).get();
+      await fetchProfile();
 
-      if (!doc.exists) {
-        throw Exception('Profil Firestore manquant');
-      }
-      // await fetchProfile();
-      final extraData = doc.data()!;
-
-      return User(
-        id: int.tryParse(user.uid),
-        email: user.email!,
-        name: extraData['name'],
-        phone: extraData['phone'],
-        // isVerified: extraData['isVerified'],
-      );
+      return User.fromJson(user["user"]);
     } on fb.FirebaseAuthException catch (e, s) {
       debugPrint("Firebase login error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
@@ -75,14 +62,10 @@ class AuthService {
       final cred = await fb.FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // 1. Enregistrer les infos de base dans Firestore
-      await _db.collection('users').doc(cred.user!.uid).set({
-        'name': name,
-        'phone': phone,
-      });
-
       final idToken = await cred.user!.getIdToken();
+      // synchronisation avec l'api du User en mettant a jour les infos de l utilisateur
       await firebaseSync(idToken.toString());
+      await updateProfile(name: name, email: email, phone: phone);
     } on fb.FirebaseAuthException catch (e, s) {
       debugPrint("Auth error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
@@ -101,12 +84,33 @@ class AuthService {
     }
   }
 
-  Future<void> firebaseSync(String idToken) async {
+  //Synchronisation avec l admin de l api
+  Future<Map<String, dynamic>> firebaseSync(String idToken) async {
     try {
       final response = await _app.post<Map<String, dynamic>>(
         "auth/firebase-sync",
         headers: {'Authorization': 'Bearer $idToken'},
       );
+      // debugPrint('Réponse: $response');
+      return response;
+    } on DioException catch (e) {
+      debugPrint('Erreur ${e.response?.statusCode}');
+      debugPrint('Body: ${e.response?.data}');
+      rethrow;
+    }
+  }
+
+  Future<void> updateProfile({
+    required String name,
+    required String email,
+    required String phone,
+  }) async {
+    try {
+      final response = await _app.put(
+        "auth/profile",
+        data: {"name": name, "email": email, "phone": phone},
+      );
+
       debugPrint('Réponse: $response');
     } on DioException catch (e) {
       debugPrint('Erreur ${e.response?.statusCode}');
@@ -120,7 +124,6 @@ class AuthService {
       final Map<String, dynamic> data = await _app.get<Map<String, dynamic>>(
         'auth/me',
       );
-      print(data);
       return ProfilUser.fromJson(data);
     } catch (e) {
       rethrow;
@@ -128,6 +131,11 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    await _firebase.signOut();
+    try {
+      await _app.post("auth/logout");
+      await _firebase.signOut();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

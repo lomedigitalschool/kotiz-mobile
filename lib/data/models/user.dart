@@ -19,8 +19,8 @@ class User {
     return User(
       id: (json['id']),
       email: json["email"],
-      name: json["name"],
-      phone: json["phone"],
+      name: json["name"] ?? "Utilisateur",
+      phone: json["phone"] ?? "",
       // isVerified: json["isVerified"],
       avatarUrl: json["avatarUrl"] ?? "",
     );

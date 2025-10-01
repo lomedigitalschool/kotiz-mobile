@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/data/models/pool.data.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/pool_page1.dart';
@@ -18,18 +19,25 @@ class _CreatePageState extends State<CreatePage> {
   int currentStep = 0;
 
   final formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>()];
+  PoolData poolData = PoolData();
 
   List<Step> getSteps() => [
     Step(
       state: currentStep > 0 ? StepState.complete : StepState.indexed,
       title: Text(""),
-      content: Form(key: formKeys[0], child: PoolPage1()),
+      content: Form(
+        key: formKeys[0],
+        child: PoolPage1(poolData: poolData),
+      ),
       isActive: currentStep >= 0,
     ),
     Step(
       state: currentStep > 1 ? StepState.complete : StepState.indexed,
       title: Text(""),
-      content: Form(key: formKeys[1], child: PoolPage2()),
+      content: Form(
+        key: formKeys[1],
+        child: PoolPage2(poolData: poolData),
+      ),
       isActive: currentStep >= 1,
     ),
   ];

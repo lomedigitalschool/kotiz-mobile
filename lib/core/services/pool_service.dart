@@ -1,8 +1,12 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/dashboard_data.dart';
 import 'package:kotiz_app/data/models/pool.dart';
+import 'package:kotiz_app/data/models/pool.data.dart';
 import 'package:kotiz_app/data/models/user.dart';
 
 class PoolService {
@@ -39,11 +43,37 @@ class PoolService {
       final Map<String, dynamic> json = await _app.get<Map<String, dynamic>>(
         'users/dashboard',
       );
-      print(json);
 
       return DashboardData.fromJson(json);
     } catch (e, s) {
       debugPrint('Erreur lors de la récupération du dashboard : $e\n$s');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> createPool(PoolData poolData) async {
+    final jsonString = jsonEncode(poolData.toJson());
+
+    final formData = FormData.fromMap({
+      "data": jsonString,
+      if (poolData.image != null)
+        "image": await MultipartFile.fromFile(
+          poolData.image!.path,
+          filename: poolData.image!.path.split('/').last,
+        ),
+    });
+
+    try {
+      final Map<String, dynamic> response = await _app.post(
+        "https://mon-api.com/pool",
+        data: formData,
+        headers: {"Content-Type": "multipart/form-data"},
+      );
+
+      print("✅ Réponse: ${response["message"]}");
+      return response;
+    } catch (e) {
+      print("❌ Erreur: $e");
       rethrow;
     }
   }

@@ -7,6 +7,7 @@ import 'package:kotiz_app/core/services/pool_service.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/dashboard_data.dart';
 import 'package:kotiz_app/data/models/pool.dart';
+import 'package:kotiz_app/data/models/pool.data.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 
@@ -24,6 +25,13 @@ class PoolLoaded extends PoolState {
   PoolLoaded(this.pools);
   @override
   List<Object?> get props => [pools];
+}
+
+class PoolCreated extends PoolState {
+  final Map<String, dynamic> poolCreated;
+  PoolCreated(this.poolCreated);
+  @override
+  List<Object?> get props => [poolCreated];
 }
 
 class PoolDetailsLoaded extends PoolState {
@@ -63,6 +71,16 @@ class PoolCubit extends Cubit<PoolState> {
       emit(PoolLoaded(pools));
     } catch (e) {
       emit(PoolError("Erreur lors de la  récupération des cagnottes"));
+    }
+  }
+
+  Future<void> create(PoolData poolData) async {
+    emit(PoolLoading());
+    try {
+      final Map<String, dynamic> response = await _service.createPool(poolData);
+      emit(PoolCreated(response));
+    } catch (e) {
+      emit(PoolError("Erreur lors de la  creation de la cagnotte"));
     }
   }
 }

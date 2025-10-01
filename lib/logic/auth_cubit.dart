@@ -96,7 +96,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final User user = await authService.login(email, password);
-      final profil = await authService.fetchProfile();
+      final ProfilUser profil = await authService.fetchProfile();
       final DashboardData dashboard = await _service.fetchDashboard();
 
       await _secureStorage.saveUser(user);
@@ -137,7 +137,7 @@ class AuthCubit extends Cubit<AuthState> {
   // }
 
   void logout() async {
-    authService.logout();
+    await authService.logout();
     await _secureStorage.deleteUser();
     await _secureStorage.deleteProfil();
     emit(AuthInitial());

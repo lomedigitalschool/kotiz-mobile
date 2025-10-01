@@ -24,6 +24,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  String currentDialCode = '+228';
   bool password1View = true;
   bool password2View = true;
   final formKey = GlobalKey<FormState>();
@@ -134,15 +135,26 @@ class _RegisterPageState extends State<RegisterPage> {
                     ],
                   ),
                   IntlPhoneField(
-                    controller: _phoneController,
                     initialCountryCode: "TG",
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    // decoration: ,
+                    onChanged: (phone) {
+                      _phoneController.text =
+                          "${phone.countryCode}${phone.number}";
+                    },
+                    onCountryChanged: (country) {
+                      setState(() {
+                        currentDialCode = country.dialCode;
+                      });
+                      _phoneController.text =
+                          "$currentDialCode${_phoneController.text.replaceAll(RegExp(r'^\+\d+'), '')}";
+                    },
                   ),
+
+                  // decoration: ,
                   TextFieldComponent(
                     controller: _passwordController,
                     labelTitle: "Mot de passe",
