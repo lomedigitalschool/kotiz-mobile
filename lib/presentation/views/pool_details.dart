@@ -125,27 +125,50 @@ class _PoolDetailsState extends State<PoolDetails> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              pool.title,
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade200,
-                                borderRadius: BorderRadius.circular(12),
-                                border: BoxBorder.all(
-                                  width: 1,
-                                  color: Colors.green.shade200,
+                            Flexible(
+                              child: Text(
+                                softWrap: true,
+                                pool.title,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              padding: EdgeInsets.all(8),
-                              child: Text(
-                                pool.type,
-                                style: TextStyle(fontSize: 16),
-                              ),
+                            ),
+                            Row(
+                              spacing: 5,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: BoxBorder.all(
+                                      width: 1,
+                                      color: Colors.green.shade200,
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(
+                                    pool.status,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: BoxBorder.all(
+                                      width: 1,
+                                      color: Colors.green.shade200,
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(
+                                    pool.type,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

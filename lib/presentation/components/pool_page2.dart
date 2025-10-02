@@ -94,13 +94,14 @@ class _PoolPage2State extends State<PoolPage2> {
             items: _typeList.map((String value) {
               return DropdownMenuItem<String>(value: value, child: Text(value));
             }).toList(),
-            onChanged: (v) => widget.poolData.type = v,
+            onChanged: (v) =>
+                widget.poolData.type = v == "publique" ? "public" : "private",
           ),
           Row(
             spacing: 5,
             children: [
               Text(
-                "Image(s) descriptif(s)",
+                "Image descriptif",
                 style: TextStyle(fontSize: 24, color: Colors.black45),
               ),
 
@@ -118,14 +119,41 @@ class _PoolPage2State extends State<PoolPage2> {
             borderRadius: 12,
           ),
           if (_image != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(
-                File(_image!.path),
-                fit: BoxFit.cover,
-                height:
-                    200, // tu peux définir une taille pour éviter qu'elle explose l'écran
-                width: double.infinity,
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      File(_image!.path),
+                      fit: BoxFit.cover,
+                      height: 120,
+                      width: double.infinity,
+                    ),
+                  ),
+
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _image = null;
+                          widget.poolData.image = null;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Icon(Icons.close, color: Colors.white, size: 20),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
