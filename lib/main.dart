@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   final secureStorage = SecureStorage();
 
-  late final authService = AuthService(secureStorage, apiConfig);
+  late final authService = AuthService(apiConfig);
 
   late final _poolService = PoolService(apiConfig);
   StreamSubscription<Uri>? sub;

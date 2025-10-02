@@ -177,7 +177,7 @@ class _ProfilPageState extends State<ProfilPage> {
                             context: context,
                             type: ToastificationType.success,
                             title: const Text('Déconnexion effectué'),
-                            backgroundColor: Colors.green,
+                            backgroundColor: Colors.green.shade100,
                             autoCloseDuration: Duration(seconds: 3),
                             animationDuration: Duration(milliseconds: 600),
                           );

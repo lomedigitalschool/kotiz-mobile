@@ -138,8 +138,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void logout() async {
     await authService.logout();
-    await _secureStorage.deleteUser();
-    await _secureStorage.deleteProfil();
+
     emit(AuthInitial());
   }
 

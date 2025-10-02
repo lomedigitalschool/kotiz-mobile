@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage>
                         return buildPoolLoadingShimmer();
                       }
 
-                      if (state is PoolLoaded) {
+                      if (state is PoolLoaded && state.pools.isNotEmpty) {
                         final filteredPools = _searchQuery.isEmpty
                             ? state.pools
                             : state.pools
@@ -249,29 +249,49 @@ class _HomePageState extends State<HomePage>
                           ],
                         );
                       }
+                      if (state is PoolLoaded && state.pools.isEmpty) {
+                        return SizedBox(
+                          height: 500,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Aucune cagnottes disponibles  pour le moment ",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 22),
+                                ),
+                                SizedBox(height: 8),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
                       if (state is PoolError) {
-                        return Center(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                state.message,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 22),
-                              ),
-                              SizedBox(height: 8),
-                              TextButton(
-                                onPressed: () =>
-                                    context.read<PoolCubit>().getAll(),
-                                child: Text(
-                                  "Ressayer",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: ColorConstant.colorBlue,
+                        return SizedBox(
+                          height: 500,
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                  state.message,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 22),
+                                ),
+                                SizedBox(height: 8),
+                                TextButton(
+                                  onPressed: () =>
+                                      context.read<PoolCubit>().getAll(),
+                                  child: Text(
+                                    "Ressayer",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: ColorConstant.colorBlue,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       }

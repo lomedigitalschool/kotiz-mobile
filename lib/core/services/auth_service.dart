@@ -10,10 +10,9 @@ import 'package:dio/dio.dart';
 
 class AuthService {
   final ApiConfig _app;
-  final SecureStorage _secureStorage;
   final fb.FirebaseAuth _firebase = fb.FirebaseAuth.instance;
 
-  AuthService(this._secureStorage, this._app);
+  AuthService(this._app);
 
   Future<User> login(String email, String password) async {
     try {
@@ -36,15 +35,15 @@ class AuthService {
       debugPrint("Firebase login error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
         case 'user-not-found':
-          throw Exception('Aucun compte ne correspond à cet e-mail.');
+          throw Exception('Aucun compte ne correspond à cet e-mail');
         case 'wrong-password':
-          throw Exception('Mot de passe incorrect.');
+          throw Exception('Email ou mot de passe incorrect');
         case 'invalid-email':
-          throw Exception('Adresse e-mail invalide.');
+          throw Exception('Email ou mot de passe incorrect');
         case 'user-disabled':
-          throw Exception('Ce compte a été désactivé.');
+          throw Exception('Ce compte a été désactivé');
         default:
-          throw Exception(e.message ?? 'Erreur de connexion.');
+          throw Exception("Erreur lors de la connexion");
       }
     } catch (e, s) {
       debugPrint("Autre erreur de connexion: $e\n$s");
@@ -76,7 +75,7 @@ class AuthService {
         case 'weak-password':
           throw Exception('Mot de passe trop faible.');
         default:
-          throw Exception(e.message ?? 'Erreur d’authentification.');
+          throw Exception('Erreur d’authentification.');
       }
     } catch (e, s) {
       debugPrint("Autre erreur: $e\n$s");

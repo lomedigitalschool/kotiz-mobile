@@ -20,15 +20,21 @@ class _PoolPage2State extends State<PoolPage2> {
   List<String> _typeList = ["publique", "privée"];
 
   final ImagePicker _picker = ImagePicker();
-  XFile? _image;
+  File? _image;
 
   Future<void> _pickImages() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
 
-    if (image!.path.isNotEmpty) {
+    if (pickedImage != null) {
+      final File imageFile = File(pickedImage.path);
+
       setState(() {
-        _image = image;
+        _image = imageFile;
       });
+
+      widget.poolData.image = _image;
     }
   }
 
@@ -43,8 +49,9 @@ class _PoolPage2State extends State<PoolPage2> {
 
     if (picked != null) {
       setState(() {
-        widget.poolData.deadline = picked.toString();
+        _selectedDate = picked;
       });
+      widget.poolData.deadline = picked.toString();
     }
   }
 

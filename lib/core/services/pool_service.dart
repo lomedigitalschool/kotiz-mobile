@@ -3,11 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
-import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/dashboard_data.dart';
 import 'package:kotiz_app/data/models/pool.dart';
 import 'package:kotiz_app/data/models/pool.data.dart';
-import 'package:kotiz_app/data/models/user.dart';
 
 class PoolService {
   final ApiConfig _app;
@@ -65,7 +63,7 @@ class PoolService {
 
     try {
       final Map<String, dynamic> response = await _app.post(
-        "https://mon-api.com/pool",
+        "/pulls",
         data: formData,
         headers: {"Content-Type": "multipart/form-data"},
       );
