@@ -51,10 +51,10 @@ class _HomePageState extends State<HomePage>
     if (route?.isCurrent ?? false) {
       context.read<PoolCubit>().getAll();
     }
-
-    @override
-    bool get wantKeepAlive => true;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {

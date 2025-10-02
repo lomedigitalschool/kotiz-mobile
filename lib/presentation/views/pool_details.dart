@@ -58,7 +58,7 @@ class _PoolDetailsState extends State<PoolDetails> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.pop();
+        Navigator.pop(context);
         return false;
       },
       child: Scaffold(
