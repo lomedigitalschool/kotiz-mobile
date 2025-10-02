@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/services/pool_service.dart';
 import 'package:kotiz_app/data/models/pool.dart';
+import 'package:kotiz_app/data/models/pool.data.dart';
 
 // les States
 abstract class PoolState extends Equatable {
@@ -13,9 +14,17 @@ class PoolLoading extends PoolState {}
 
 class PoolLoaded extends PoolState {
   final List<Pool> pools;
+
   PoolLoaded(this.pools);
   @override
   List<Object?> get props => [pools];
+}
+
+class PoolCreated extends PoolState {
+  final Map<String, dynamic> poolCreated;
+  PoolCreated(this.poolCreated);
+  @override
+  List<Object?> get props => [poolCreated];
 }
 
 class PoolDetailsLoaded extends PoolState {
@@ -55,6 +64,16 @@ class PoolCubit extends Cubit<PoolState> {
       emit(PoolLoaded(pools));
     } catch (e) {
       emit(PoolError("Erreur lors de la  récupération des cagnottes"));
+    }
+  }
+
+  Future<void> create(PoolData poolData) async {
+    emit(PoolLoading());
+    try {
+      final Map<String, dynamic> response = await _service.createPool(poolData);
+      emit(PoolCreated(response));
+    } catch (e) {
+      emit(PoolError("Erreur lors de la  creation de la cagnotte"));
     }
   }
 }

@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   final secureStorage = SecureStorage();
 
-  late final authService = AuthService(secureStorage, apiConfig);
+  late final authService = AuthService(apiConfig);
 
   late final _poolService = PoolService(apiConfig);
   StreamSubscription<Uri>? sub;
@@ -140,23 +140,19 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),
-        BlocProvider(create: (_) => AuthCubit(authService)),
-        BlocProvider(create: (_) => PoolCubit(_poolService)),
+        BlocProvider(create: (_) => AuthCubit(authService, _poolService)),
+        BlocProvider(create: (_) => PoolCubit(_poolService)..getAll()),
       ],
       child: MaterialApp.router(
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: "Roboto",
-          // colorSchemeSeed: ColorConstant.colorWhite,
-        ),
+        theme: ThemeData(fontFamily: "Roboto"),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [Locale('en', 'US'), Locale('fr', 'FR')],
-        // home: SplashScreen(showHome: showHome),
       ),
     );
   }

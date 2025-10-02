@@ -10,11 +10,9 @@ import 'package:dio/dio.dart';
 
 class AuthService {
   final ApiConfig _app;
-  final SecureStorage _secureStorage;
   final fb.FirebaseAuth _firebase = fb.FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  AuthService(this._secureStorage, this._app);
+  AuthService(this._app);
 
   Future<User> login(String email, String password) async {
     try {
@@ -22,44 +20,30 @@ class AuthService {
         email: email,
         password: password,
       );
-      final user = cred.user;
-      if (user == null) {
+      final userFromFire = cred.user;
+      if (userFromFire == null) {
         throw Exception('Utilisateur introuvable');
       }
 
-      final idToken = await user.getIdToken();
-      await firebaseSync(idToken.toString());
+      final idToken = await userFromFire.getIdToken(true);
+      final user = await firebaseSync(idToken.toString());
 
-      await _secureStorage.saveToken(idToken.toString());
+      await fetchProfile();
 
-      final doc = await _db.collection('users').doc(user.uid).get();
-
-      if (!doc.exists) {
-        throw Exception('Profil Firestore manquant');
-      }
-      // await fetchProfile();
-      final extraData = doc.data()!;
-
-      return User(
-        id: int.tryParse(user.uid),
-        email: user.email!,
-        name: extraData['name'],
-        phone: extraData['phone'],
-        // isVerified: extraData['isVerified'],
-      );
+      return User.fromJson(user["user"]);
     } on fb.FirebaseAuthException catch (e, s) {
       debugPrint("Firebase login error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
         case 'user-not-found':
-          throw Exception('Aucun compte ne correspond à cet e-mail.');
+          throw Exception('Aucun compte ne correspond à cet e-mail');
         case 'wrong-password':
-          throw Exception('Mot de passe incorrect.');
+          throw Exception('Email ou mot de passe incorrect');
         case 'invalid-email':
-          throw Exception('Adresse e-mail invalide.');
+          throw Exception('Email ou mot de passe incorrect');
         case 'user-disabled':
-          throw Exception('Ce compte a été désactivé.');
+          throw Exception('Ce compte a été désactivé');
         default:
-          throw Exception(e.message ?? 'Erreur de connexion.');
+          throw Exception("Erreur lors de la connexion");
       }
     } catch (e, s) {
       debugPrint("Autre erreur de connexion: $e\n$s");
@@ -77,14 +61,10 @@ class AuthService {
       final cred = await fb.FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // 1. Enregistrer les infos de base dans Firestore
-      await _db.collection('users').doc(cred.user!.uid).set({
-        'name': name,
-        'phone': phone,
-      });
-
       final idToken = await cred.user!.getIdToken();
+      // synchronisation avec l'api du User en mettant a jour les infos de l utilisateur
       await firebaseSync(idToken.toString());
+      await updateProfile(name: name, email: email, phone: phone);
     } on fb.FirebaseAuthException catch (e, s) {
       debugPrint("Auth error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
@@ -95,31 +75,53 @@ class AuthService {
         case 'weak-password':
           throw Exception('Mot de passe trop faible.');
         default:
-          throw Exception(e.message ?? 'Erreur d’authentification.');
+          throw Exception('Erreur d’authentification.');
       }
     } catch (e, s) {
       debugPrint("Autre erreur: $e\n$s");
+      throw Exception('Une erreur inattendue est survenue.');
+    }
+  }
+
+  //Synchronisation avec l admin de l api
+  Future<Map<String, dynamic>> firebaseSync(String idToken) async {
+    try {
+      final response = await _app.post<Map<String, dynamic>>(
+        "auth/firebase-sync",
+        headers: {'Authorization': 'Bearer $idToken'},
+      );
+      // debugPrint('Réponse: $response');
+      return response;
+    } on DioException catch (e) {
+      debugPrint('Erreur ${e.response?.statusCode}');
+      debugPrint('Body: ${e.response?.data}');
       rethrow;
     }
   }
 
-  Future<void> firebaseSync(String idToken) async {
+  Future<void> updateProfile({
+    required String name,
+    required String email,
+    required String phone,
+  }) async {
     try {
-      final response = await _app.post<Map<String, dynamic>>(
-        "/auth/firebase-sync",
-        headers: {'Authorization': 'Bearer $idToken'},
+      final response = await _app.put(
+        "auth/profile",
+        data: {"name": name, "email": email, "phone": phone},
       );
+
       debugPrint('Réponse: $response');
     } on DioException catch (e) {
       debugPrint('Erreur ${e.response?.statusCode}');
       debugPrint('Body: ${e.response?.data}');
+      rethrow;
     }
   }
 
   Future<ProfilUser> fetchProfile() async {
     try {
       final Map<String, dynamic> data = await _app.get<Map<String, dynamic>>(
-        '/auth/me',
+        'auth/me',
       );
 
       return ProfilUser.fromJson(data);
@@ -129,6 +131,11 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    await _firebase.signOut();
+    try {
+      await _app.post("auth/logout");
+      await _firebase.signOut();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

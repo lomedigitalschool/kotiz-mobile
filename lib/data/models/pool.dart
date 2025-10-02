@@ -1,64 +1,58 @@
-// import 'dart:io';
-
-// import 'package:flutter/foundation.dart';
-
 class Pool {
   final int id;
   final String title;
   final String description;
   final int goalAmount;
+  final int currentAmount;
   final String currency;
   final DateTime deadline;
   final String type;
   final String imageUrl;
-  // final int participantLimit;
   final String status;
   final int contributionCount;
   final int progressPercentage;
   final Map<String, dynamic> owner;
-  // final String? shareLink;
-  // final String? qrCodeUrl;
-  // final bool? isApproved;
+  final List<Map<String, dynamic>> recentContributions;
 
   Pool({
-    required this.contributionCount,
-    required this.progressPercentage,
     required this.id,
     required this.title,
     required this.description,
     required this.goalAmount,
+    required this.currentAmount,
     required this.currency,
     required this.deadline,
     required this.type,
     required this.imageUrl,
-    // required this.participantLimit,
     required this.status,
+    required this.contributionCount,
+    required this.progressPercentage,
     required this.owner,
-    // this.shareLink,
-    // this.qrCodeUrl,
-    // this.isApproved,
+    required this.recentContributions,
   });
+
   factory Pool.fromJson(Map<String, dynamic> json) {
     return Pool(
-      id: json["id"],
-      title: json["title"],
+      id: json["id"] ?? 0,
+      title: json["title"] ?? "",
       description: json["description"] ?? "",
       goalAmount: json["goalAmount"] ?? 0,
+      currentAmount: json["currentAmount"] ?? 0,
       currency: json["currency"] ?? "XOF",
-      deadline: json["deadline"] == null
-          ? DateTime.now()
-          : DateTime.parse(json["deadline"]),
+      deadline: json["deadline"] != null
+          ? DateTime.parse(json["deadline"])
+          : DateTime.now(),
       type: json["type"] ?? "public",
       imageUrl: json["imageUrl"] ?? "",
-      // participantLimit: json["participantLimit"],
       status: json["status"] ?? "active",
-      contributionCount: json["contributionCount"],
-      progressPercentage: json["progressPercentage"],
-      owner: json["owner"],
-
-      // shareLink: json["shareLink"],
-      // qrCodeUrl: json["qrCodeUrl"],
-      // isApproved: json["isApproved"],
+      contributionCount: json["contributionCount"] ?? 0,
+      progressPercentage: json["progressPercentage"] ?? 0,
+      owner: Map<String, dynamic>.from(json["owner"] ?? {}),
+      recentContributions:
+          (json['recentContributions'] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e))
+              .toList() ??
+          [],
     );
   }
 }

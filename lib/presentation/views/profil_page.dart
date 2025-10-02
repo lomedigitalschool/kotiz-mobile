@@ -35,29 +35,34 @@ class _ProfilPageState extends State<ProfilPage> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         if (state is! AuthSuccess) {
-          return Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.warning_amber),
-                    Text(
-                      "Vous n’êtes pas connecter",
-                      style: TextStyle(fontSize: 20),
+          return Container(
+            color: ColorConstant.colorWhite,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.warning_amber),
+                      Text(
+                        "Vous n’êtes pas connecter",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: AppButton(
+                      text: "Se connecter",
+                      backgroundColor: ColorConstant.colorGreen,
+                      onPressed: () => context.push("/login"),
                     ),
-                  ],
-                ),
-                SizedBox(height: 12),
-                AppButton(
-                  text: "Se connecter",
-                  backgroundColor: ColorConstant.colorGreen,
-                  onPressed: () => context.push("/login"),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -172,7 +177,7 @@ class _ProfilPageState extends State<ProfilPage> {
                             context: context,
                             type: ToastificationType.success,
                             title: const Text('Déconnexion effectué'),
-                            backgroundColor: Colors.green,
+                            backgroundColor: Colors.green.shade100,
                             autoCloseDuration: Duration(seconds: 3),
                             animationDuration: Duration(milliseconds: 600),
                           );

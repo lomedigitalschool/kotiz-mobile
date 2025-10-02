@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kotiz_app/data/models/pool.data.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 
 class PoolPage2 extends StatefulWidget {
-  const PoolPage2({super.key});
+  final PoolData poolData;
+  const PoolPage2({super.key, required this.poolData});
 
   @override
   State<PoolPage2> createState() => _PoolPage2State();
@@ -18,15 +20,21 @@ class _PoolPage2State extends State<PoolPage2> {
   final List<String> _typeList = ["publique", "privée"];
 
   final ImagePicker _picker = ImagePicker();
-  XFile? _image;
+  File? _image;
 
   Future<void> _pickImages() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
 
-    if (image!.path.isNotEmpty) {
+    if (pickedImage != null) {
+      final File imageFile = File(pickedImage.path);
+
       setState(() {
-        _image = image;
+        _image = imageFile;
       });
+
+      widget.poolData.image = _image;
     }
   }
 
@@ -43,6 +51,7 @@ class _PoolPage2State extends State<PoolPage2> {
       setState(() {
         _selectedDate = picked;
       });
+      widget.poolData.deadline = picked.toString();
     }
   }
 
@@ -85,11 +94,7 @@ class _PoolPage2State extends State<PoolPage2> {
             items: _typeList.map((String value) {
               return DropdownMenuItem<String>(value: value, child: Text(value));
             }).toList(),
-            onChanged: (newValue) {
-              setState(() {
-                _typeSelected = newValue;
-              });
-            },
+            onChanged: (v) => widget.poolData.type = v,
           ),
           Row(
             spacing: 5,
@@ -136,7 +141,6 @@ class _PoolPage2State extends State<PoolPage2> {
             ],
           ),
 
-          // SizedBox(height: 2),
           GestureDetector(
             onTap: () {
               _selectDate(context);

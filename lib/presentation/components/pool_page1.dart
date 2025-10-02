@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:kotiz_app/data/models/pool.data.dart';
 import 'package:kotiz_app/presentation/components/text_field.dart';
 
 class PoolPage1 extends StatefulWidget {
-  const PoolPage1({super.key});
+  final PoolData poolData;
+
+  const PoolPage1({super.key, required this.poolData});
 
   @override
   State<PoolPage1> createState() => _PoolPage1State();
@@ -27,10 +31,12 @@ class _PoolPage1State extends State<PoolPage1> {
               }
               return null;
             },
+            onChanged: (v) => widget.poolData.title = v,
           ),
           TextFieldComponent(
             labelTitle: "Description",
             keyboardType: TextInputType.multiline,
+            onChanged: (v) => widget.poolData.description = v,
 
             maxLines: 5,
           ),
@@ -44,6 +50,7 @@ class _PoolPage1State extends State<PoolPage1> {
               }
               return null;
             },
+            onChanged: (v) => widget.poolData.goalAmount = double.parse(v),
           ),
 
           Column(
@@ -74,6 +81,8 @@ class _PoolPage1State extends State<PoolPage1> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                onChanged: (newValue) => widget.poolData.currency = newValue,
+
                 hint: Text("Choisissez la devise"),
                 items: currencyList.map((String value) {
                   return DropdownMenuItem<String>(
@@ -81,11 +90,6 @@ class _PoolPage1State extends State<PoolPage1> {
                     child: Text(value),
                   );
                 }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedValue = newValue;
-                  });
-                },
               ),
             ],
           ),
