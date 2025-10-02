@@ -167,11 +167,13 @@ class _PoolDetailsState extends State<PoolDetails> {
                                     )
                                   : Image.network("${pool.owner["url"]}"),
                             ),
-                            Text(
-                              "Crée par ${pool.owner["name"]}",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                            Expanded(
+                              child: Text(
+                                "Crée par ${pool.owner["name"]}",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],

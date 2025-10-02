@@ -61,6 +61,8 @@ class CagnotteTile extends StatelessWidget {
                   title,
                   textAlign: TextAlign.left,
                   softWrap: true,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
