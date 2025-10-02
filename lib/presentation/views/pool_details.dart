@@ -123,11 +123,15 @@ class _PoolDetailsState extends State<PoolDetails> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              pool.title,
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                pool.title,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Container(
