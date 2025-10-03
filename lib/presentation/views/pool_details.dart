@@ -43,7 +43,7 @@ class _PoolDetailsState extends State<PoolDetails> {
     return initial;
   }
 
-  Future<double?> showContributionBottomSheet(BuildContext context) {
+  Future<double?> showContributionBottomSheet(BuildContext context, id) {
     return showModalBottomSheet(
       context: context,
       isDismissible: true,
@@ -52,7 +52,7 @@ class _PoolDetailsState extends State<PoolDetails> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => const ContributionPage(),
+      builder: (_) => ContributionPage(poolId: widget.id),
     );
   }
 
@@ -207,7 +207,10 @@ class _PoolDetailsState extends State<PoolDetails> {
                           backgroundColor: ColorConstant.colorGreen,
                           text: "Contribuer",
                           onPressed: () async {
-                            await showContributionBottomSheet(context);
+                            await showContributionBottomSheet(
+                              context,
+                              widget.id,
+                            );
                           },
                         ),
                       ),

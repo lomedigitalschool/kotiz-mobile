@@ -62,9 +62,14 @@ class AuthService {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       final idToken = await cred.user!.getIdToken();
+      await updateProfile(
+        name: name,
+        email: email,
+        phone: phone,
+        idToken: idToken.toString(),
+      );
       // synchronisation avec l'api du User en mettant a jour les infos de l utilisateur
       await firebaseSync(idToken.toString());
-      await updateProfile(name: name, email: email, phone: phone);
     } on fb.FirebaseAuthException catch (e, s) {
       debugPrint("Auth error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
@@ -103,11 +108,13 @@ class AuthService {
     required String name,
     required String email,
     required String phone,
+    required String idToken,
   }) async {
     try {
       final response = await _app.put(
         "auth/profile",
         data: {"name": name, "email": email, "phone": phone},
+        headers: {'Authorization': 'Bearer $idToken'},
       );
 
       debugPrint('Réponse: $response');

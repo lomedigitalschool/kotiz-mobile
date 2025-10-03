@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kotiz_app/core/netework/Http_CLient.dart';
+import 'package:kotiz_app/core/netework/Http_Client.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
 
-class ApiConfig extends HttpCLient {
+class ApiConfig extends HttpClient {
   final Dio _dio;
-  final SecureStorage _secureStorage = SecureStorage();
+  // final SecureStorage _secureStorage = SecureStorage();
 
   String? _cachedToken;
   DateTime? _tokenExpiry;
@@ -106,8 +106,16 @@ class ApiConfig extends HttpCLient {
   }
 
   @override
-  Future<T> put<T>(String url, {Map? data}) async {
-    final response = await _dio.put(url, data: data);
+  Future<T> put<T>(
+    String url, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? headers,
+  }) async {
+    final response = await _dio.put(
+      url,
+      data: data,
+      options: Options(headers: headers),
+    );
     return response.data as T;
   }
 

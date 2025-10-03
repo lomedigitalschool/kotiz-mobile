@@ -113,7 +113,6 @@ class _CreatePageState extends State<CreatePage> {
               final form = formKeys[currentStep].currentState!;
               if (form.validate()) {
                 if (currentStep == 1) {
-                  // Dernier step -> appel API
                   _submit();
                 } else {
                   setState(() => currentStep += 1);

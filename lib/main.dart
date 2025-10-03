@@ -8,11 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
+import 'package:kotiz_app/core/services/contribution_service.dart';
 import 'package:kotiz_app/core/services/pool_service.dart';
 import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/firebase_options.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
+import 'package:kotiz_app/logic/contribution_cubit.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/views/auth/register_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
@@ -55,6 +57,7 @@ class _MyAppState extends State<MyApp> {
   late final authService = AuthService(apiConfig);
 
   late final _poolService = PoolService(apiConfig);
+  late final _contributionService = ContributionService(apiConfig);
   StreamSubscription<Uri>? sub;
 
   final _appLinks = AppLinks();
@@ -142,6 +145,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => BottomNavCubit()),
         BlocProvider(create: (_) => AuthCubit(authService, _poolService)),
         BlocProvider(create: (_) => PoolCubit(_poolService)..getAll()),
+        BlocProvider(create: (_) => ContributionCubit(_contributionService)),
       ],
       child: MaterialApp.router(
         routerConfig: _router,
