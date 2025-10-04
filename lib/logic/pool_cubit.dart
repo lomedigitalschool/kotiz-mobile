@@ -58,8 +58,8 @@ class PoolCubit extends Cubit<PoolState> {
   }
 
   Future<void> getAll() async {
-    emit(PoolLoading());
     try {
+      emit(PoolLoading());
       final pools = await _service.fetchPools();
       emit(PoolLoaded(pools));
     } catch (e) {
@@ -68,8 +68,8 @@ class PoolCubit extends Cubit<PoolState> {
   }
 
   Future<void> create(PoolData poolData) async {
-    emit(PoolLoading());
     try {
+      emit(PoolLoading());
       final Map<String, dynamic> response = await _service.createPool(poolData);
       emit(PoolCreated(response));
     } catch (e) {
