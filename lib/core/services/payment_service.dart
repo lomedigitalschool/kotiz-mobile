@@ -8,7 +8,7 @@ class PaymentService {
   /// Initier un paiement pour utilisateur connecté
   Future<Map<String, dynamic>> initiatePayment({
     required String pullId,
-    required double amount,
+    required String amount,
     required String phoneNumber,
     required String paymentMethod,
     String? message,
@@ -17,14 +17,14 @@ class PaymentService {
     String? cancelUrl,
   }) async {
     try {
-      final data = {
+      final data = <String, dynamic>{
         'pullId': pullId,
         'amount': amount,
         'phoneNumber': phoneNumber,
         'paymentMethod': paymentMethod,
-        'message': message ?? '',
         'isAnonymous': isAnonymous,
       };
+      if (message != null && message.isNotEmpty) data['message'] = message;
       if (successUrl != null) data['successUrl'] = successUrl;
       if (cancelUrl != null) data['cancelUrl'] = cancelUrl;
 
@@ -50,7 +50,7 @@ class PaymentService {
   /// Traiter une contribution anonyme
   Future<Map<String, dynamic>> processAnonymousContribution({
     required String pullId,
-    required double amount,
+    required String amount,
     required String phoneNumber,
     required String paymentMethod,
     required String contributorName,
@@ -60,14 +60,14 @@ class PaymentService {
     String? cancelUrl,
   }) async {
     try {
-      final data = {
+      final data = <String, dynamic>{
         'amount': amount,
         'contributorName': contributorName,
         'phoneNumber': phoneNumber,
         'contributorEmail': contributorEmail,
         'paymentMethod': paymentMethod,
-        'message': message ?? '',
       };
+      if (message != null && message.isNotEmpty) data['message'] = message;
       if (successUrl != null) data['successUrl'] = successUrl;
       if (cancelUrl != null) data['cancelUrl'] = cancelUrl;
 

@@ -30,7 +30,7 @@ class _ContributionPageState extends State<ContributionPage> {
   final _emailController = TextEditingController();
 
   bool _isAnonymous = false;
-  String _paymentMethod = 'orange_money';
+  String _paymentMethod = 'orange';
   bool _isSubmitting = false;
 
   @override
@@ -57,8 +57,11 @@ class _ContributionPageState extends State<ContributionPage> {
         // Utilisateur connecté - utiliser l'API de paiement
         final response = await paymentService.initiatePayment(
           pullId: widget.poolId,
-          amount: double.parse(_amountController.text),
-          phoneNumber: _phoneController.text.trim(),
+          amount: _amountController.text.trim(),
+          phoneNumber: _phoneController.text.trim().replaceAll(
+            RegExp(r'[^0-9]'),
+            '',
+          ), // Remove non-digits
           paymentMethod: _paymentMethod,
           message: _messageController.text.trim(),
           isAnonymous: _isAnonymous,
@@ -94,8 +97,11 @@ class _ContributionPageState extends State<ContributionPage> {
         // Utilisateur anonyme - contribution publique
         final response = await paymentService.processAnonymousContribution(
           pullId: widget.poolId,
-          amount: double.parse(_amountController.text),
-          phoneNumber: _phoneController.text.trim(),
+          amount: _amountController.text.trim(),
+          phoneNumber: _phoneController.text.trim().replaceAll(
+            RegExp(r'[^0-9]'),
+            '',
+          ), // Remove non-digits
           paymentMethod: _paymentMethod,
           contributorName: _nameController.text.trim(),
           contributorEmail: _emailController.text.trim(),
@@ -301,21 +307,21 @@ class _ContributionPageState extends State<ContributionPage> {
                     children: [
                       RadioListTile<String>(
                         title: const Text('Orange Money'),
-                        value: 'orange_money',
+                        value: 'orange',
                         groupValue: _paymentMethod,
                         onChanged: (value) =>
                             setState(() => _paymentMethod = value!),
                       ),
                       RadioListTile<String>(
                         title: const Text('MTN Mobile Money'),
-                        value: 'mtn_money',
+                        value: 'mtn',
                         groupValue: _paymentMethod,
                         onChanged: (value) =>
                             setState(() => _paymentMethod = value!),
                       ),
                       RadioListTile<String>(
                         title: const Text('Moov Money'),
-                        value: 'moov_money',
+                        value: 'moov',
                         groupValue: _paymentMethod,
                         onChanged: (value) =>
                             setState(() => _paymentMethod = value!),
