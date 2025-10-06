@@ -41,6 +41,13 @@ class PoolError extends PoolState {
   List<Object?> get props => [message];
 }
 
+class PoolSuccess extends PoolState {
+  final String message;
+  PoolSuccess(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+
 // cubit
 
 class PoolCubit extends Cubit<PoolState> {
@@ -74,6 +81,45 @@ class PoolCubit extends Cubit<PoolState> {
       emit(PoolCreated(response));
     } catch (e) {
       emit(PoolError("Erreur lors de la  creation de la cagnotte"));
+    }
+  }
+
+  Future<void> updatePool(Pool pool) async {
+    emit(PoolLoading());
+    try {
+      // Simuler la mise à jour (à remplacer par l'appel API réel)
+      await Future.delayed(const Duration(seconds: 2));
+      // await _service.updatePool(pool);
+      emit(PoolSuccess("Cagnotte modifiée avec succès"));
+    } catch (e) {
+      emit(PoolError("Erreur lors de la modification de la cagnotte"));
+    }
+  }
+
+  Future<void> createContribution(Map<String, dynamic> contributionData) async {
+    emit(PoolLoading());
+    try {
+      await _service.createContribution(contributionData);
+      emit(PoolSuccess("Contribution créée avec succès"));
+    } catch (e) {
+      emit(PoolError("Erreur lors de la création de la contribution"));
+    }
+  }
+
+  Future<void> requestWithdraw({
+    required String poolId,
+    required double amount,
+    required String method,
+    required String reason,
+  }) async {
+    emit(PoolLoading());
+    try {
+      // Simuler la demande de retrait (à remplacer par l'appel API réel)
+      await Future.delayed(const Duration(seconds: 2));
+      // await _service.requestWithdraw(poolId, amount, method, reason);
+      emit(PoolSuccess("Demande de retrait envoyée avec succès"));
+    } catch (e) {
+      emit(PoolError("Erreur lors de la demande de retrait"));
     }
   }
 }

@@ -33,6 +33,7 @@ class AppButton extends StatelessWidget {
         fixedSize: WidgetStatePropertyAll(size),
         backgroundColor: WidgetStatePropertyAll(backgroundColor),
         foregroundColor: WidgetStatePropertyAll(foregroundColor),
+        side: WidgetStatePropertyAll(BorderSide.none),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),

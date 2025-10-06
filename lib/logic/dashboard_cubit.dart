@@ -22,6 +22,7 @@ class DashboardError extends DashboardState {
 class DashboardLoaded extends DashboardState {
   final DashboardData dashboardData;
   DashboardLoaded(this.dashboardData);
+  @override
   List<Object?> get props => [dashboardData];
 }
 

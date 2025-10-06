@@ -55,4 +55,8 @@ class SecureStorage {
   Future<void> deleteProfil() async {
     await _storage.delete(key: _keyProfil);
   }
+
+  Future<void> clearAll() async {
+    await _storage.deleteAll();
+  }
 }

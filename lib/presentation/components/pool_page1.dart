@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kotiz_app/data/models/pool.data.dart';
 import 'package:kotiz_app/presentation/components/text_field.dart';
 

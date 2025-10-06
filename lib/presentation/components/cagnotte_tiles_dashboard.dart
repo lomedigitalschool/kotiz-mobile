@@ -20,27 +20,37 @@ class CagnotteTilesDashboard9 extends StatelessWidget {
         spacing: 8,
         children: [
           Card(
-            child: Image.network(
-              image!,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) {
-                  return child;
-                }
-                return Container(
-                  width: 100,
-                  height: 100,
-                  child: const Center(child: CircularProgressIndicator()),
-                );
-              },
-              errorBuilder: (_, __, ___) => Image.asset(
-                'assets/images/Logo.png',
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: image != null && image!.isNotEmpty
+                  ? Image.network(
+                      image!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
+                        return SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        'assets/images/Logo.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Image.asset(
+                      'assets/images/Logo.png',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           Padding(

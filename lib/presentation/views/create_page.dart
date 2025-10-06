@@ -53,7 +53,7 @@ class _CreatePageState extends State<CreatePage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           context.read<BottomNavCubit>().setIndex(0);
         }
@@ -80,7 +80,7 @@ class _CreatePageState extends State<CreatePage> {
               context: context,
               type: ToastificationType.success,
               title: Text(message),
-              icon: const Icon(Icons.error, color: Colors.white),
+              icon: const Icon(Icons.check, color: Colors.white),
               backgroundColor: Colors.green.shade200,
               autoCloseDuration: Duration(seconds: 3),
               animationDuration: Duration(milliseconds: 600),
@@ -97,58 +97,72 @@ class _CreatePageState extends State<CreatePage> {
             leading: IconButton(
               onPressed: () => context.read<BottomNavCubit>().setIndex(0),
               icon: Icon(
-                LucideIcons.chevronLeft400,
-                size: 50.0,
+                LucideIcons.arrowLeft,
+                size: 24.0,
                 color: ColorConstant.colorBlue,
               ),
             ),
           ),
-          body: Stepper(
-            steps: getSteps(),
-            currentStep: currentStep,
-            type: StepperType.horizontal,
-            margin: EdgeInsetsGeometry.all(50),
-            elevation: 0,
-            stepIconMargin: EdgeInsets.all(0),
-            onStepContinue: () {
-              final form = formKeys[currentStep].currentState!;
-              if (form.validate()) {
-                if (currentStep == 1) {
-                  // Dernier step -> appel API
-                  _submit();
-                } else {
-                  setState(() => currentStep += 1);
-                }
-              }
-            },
-            onStepCancel: currentStep > 0
-                ? () {
-                    setState(() {
-                      currentStep -= 1;
-                    });
+          body: BlocBuilder<PoolCubit, PoolState>(
+            builder: (context, state) {
+              return Stepper(
+                steps: getSteps(),
+                currentStep: currentStep,
+                type: StepperType.horizontal,
+                margin: EdgeInsetsGeometry.all(50),
+                elevation: 0,
+                stepIconMargin: EdgeInsets.all(0),
+                onStepContinue: () {
+                  final form = formKeys[currentStep].currentState!;
+                  if (state is! PoolLoading) {
+                    if (form.validate()) {
+                      if (currentStep == 1) {
+                        _submit();
+                      } else {
+                        setState(() => currentStep += 1);
+                      }
+                    }
                   }
-                : null,
-            controlsBuilder: (context, details) {
-              return Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 15,
-                  children: [
-                    SizedBox(height: 10),
-                    AppButton(
-                      onPressed: details.onStepContinue,
-                      text: currentStep == 1 ? "Créer " : "Suivant",
-                      backgroundColor: ColorConstant.colorGreen,
-                    ),
-                    currentStep == 1
-                        ? AppButton(
-                            onPressed: details.onStepCancel,
-                            backgroundColor: Colors.grey,
-                            text: "Retour",
-                          )
-                        : Text(""),
-                  ],
-                ),
+                },
+                onStepCancel: currentStep > 0
+                    ? () {
+                        setState(() {
+                          currentStep -= 1;
+                        });
+                      }
+                    : null,
+                controlsBuilder: (context, details) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 15,
+                    children: [
+                      SizedBox(height: 10),
+                      AppButton(
+                        widget: state is PoolLoading
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : null,
+                        onPressed: details.onStepContinue,
+                        text: currentStep == 1 ? "Créer " : "Suivant",
+                        backgroundColor: state is PoolLoading
+                            ? Colors.grey
+                            : ColorConstant.colorGreen,
+                      ),
+                      currentStep == 1
+                          ? AppButton(
+                              onPressed: details.onStepCancel,
+                              backgroundColor: Colors.grey,
+                              text: "Retour",
+                            )
+                          : Text(""),
+                    ],
+                  );
+                },
               );
             },
           ),

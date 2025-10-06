@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage>
                       onPressed: () =>
                           context.read<BottomNavCubit>().setIndex(3),
                       child: Text(
-                        "${state.user.name}",
+                        state.profil?.name ?? state.user.name,
                         style: TextStyle(
                           color: ColorConstant.colorBlue,
                           fontSize: 16,
@@ -306,18 +306,53 @@ class _HomePageState extends State<HomePage>
                         Center(
                           child: Column(
                             children: [
-                              AppButton(
-                                text: "Créer une cagnotte",
-                                onPressed: () {
-                                  context.read<BottomNavCubit>().setIndex(2);
-                                },
-                                backgroundColor: ColorConstant.colorGreen,
-                              ),
-                              SizedBox(height: 12),
-                              AppButton(
-                                text: "Créer un compte",
-                                onPressed: () {
-                                  context.push("/register");
+                              BlocBuilder<AuthCubit, AuthState>(
+                                builder: (context, authState) {
+                                  if (authState is AuthSuccess) {
+                                    return Column(
+                                      children: [
+                                        AppButton(
+                                          text: "Créer une cagnotte",
+                                          onPressed: () {
+                                            context
+                                                .read<BottomNavCubit>()
+                                                .setIndex(2);
+                                          },
+                                          backgroundColor:
+                                              ColorConstant.colorGreen,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        AppButton(
+                                          text: "Créer un compte",
+                                          onPressed: () {
+                                            context.push("/register");
+                                          },
+                                          backgroundColor:
+                                              ColorConstant.colorGreen,
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Column(
+                                      children: [
+                                        AppButton(
+                                          text: "Créer un compte",
+                                          onPressed: () {
+                                            context.push("/register");
+                                          },
+                                          backgroundColor:
+                                              ColorConstant.colorGreen,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        AppButton(
+                                          text: "Se connecter",
+                                          onPressed: () {
+                                            context.push("/login");
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  }
                                 },
                               ),
                             ],

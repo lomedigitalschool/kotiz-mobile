@@ -2,11 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
-import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/data/models/user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 
 class AuthService {
   final ApiConfig _app;
@@ -127,6 +124,41 @@ class AuthService {
       return ProfilUser.fromJson(data);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      final user = _firebase.currentUser;
+      if (user == null || user.email == null) {
+        throw Exception('Utilisateur non connecté');
+      }
+
+      // Réauthentifier avec le mot de passe actuel
+      final cred = fb.EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(cred);
+
+      // Changer le mot de passe
+      await user.updatePassword(newPassword);
+    } on fb.FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'wrong-password':
+          throw Exception('Mot de passe actuel incorrect');
+        case 'weak-password':
+          throw Exception('Le nouveau mot de passe est trop faible');
+        case 'requires-recent-login':
+          throw Exception('Réauthentification requise');
+        default:
+          throw Exception('Erreur lors du changement de mot de passe');
+      }
+    } catch (e) {
+      throw Exception('Erreur inattendue: $e');
     }
   }
 

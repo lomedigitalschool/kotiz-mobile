@@ -93,6 +93,9 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> login({required String email, required String password}) async {
     emit(AuthLoading());
     try {
+      // Nettoyer les anciennes données
+      await _secureStorage.clearAll();
+      
       final User user = await authService.login(email, password);
       final ProfilUser profil = await authService.fetchProfile();
       final DashboardData dashboard = await _service.fetchDashboard();
@@ -101,6 +104,10 @@ class AuthCubit extends Cubit<AuthState> {
       await _secureStorage.saveProfil(profil);
 
       emit(AuthSuccess(user: user, profil: profil, dashboardData: dashboard));
+      
+      // Charger les notifications après la connexion réussie
+      // Note: Ceci nécessiterait l'injection du NotificationCubit, 
+      // mais pour simplifier, on le fera dans l'UI
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -136,8 +143,42 @@ class AuthCubit extends Cubit<AuthState> {
 
   void logout() async {
     await authService.logout();
+    await _secureStorage.clearAll();
+    emit(Unauthenticated());
+  }
 
-    emit(AuthInitial());
+  Future<void> refreshProfile() async {
+    final currentState = state;
+    if (currentState is AuthSuccess) {
+      try {
+        final profil = await authService.fetchProfile();
+        final dashboard = await _service.fetchDashboard();
+        await _secureStorage.saveProfil(profil);
+        emit(AuthSuccess(
+          user: currentState.user,
+          profil: profil,
+          dashboardData: dashboard,
+        ));
+      } catch (e) {
+        emit(AuthError(e.toString()));
+      }
+    }
+  }
+
+  Future<void> refreshDashboard() async {
+    final currentState = state;
+    if (currentState is AuthSuccess) {
+      try {
+        final dashboard = await _service.fetchDashboard();
+        emit(AuthSuccess(
+          user: currentState.user,
+          profil: currentState.profil,
+          dashboardData: dashboard,
+        ));
+      } catch (e) {
+        emit(AuthError(e.toString()));
+      }
+    }
   }
 
   Future<void> checkAuthStatus() async {
@@ -147,11 +188,34 @@ class AuthCubit extends Cubit<AuthState> {
       final fb.User? firebaseUser = fb.FirebaseAuth.instance.currentUser;
 
       if (firebaseUser != null) {
-        final User? storedUser = await _secureStorage.getUser();
-        final ProfilUser? storedProfil = await _secureStorage.getProfil();
-        if (storedUser != null) {
-          emit(AuthSuccess(user: storedUser, profil: storedProfil));
+        try {
+          // Toujours récupérer les données fraîches depuis l'API
+          final ProfilUser profil = await authService.fetchProfile();
+          final DashboardData dashboard = await _service.fetchDashboard();
+          
+          // Créer un utilisateur à partir des données Firebase et du profil
+          final User currentUser = User(
+            id: null, // L'ID sera dans le profil
+            email: firebaseUser.email ?? '',
+            name: profil.name ?? firebaseUser.displayName ?? 'Utilisateur',
+            phone: profil.phone ?? '',
+          );
+          
+          // Sauvegarder les données
+          await _secureStorage.saveUser(currentUser);
+          await _secureStorage.saveProfil(profil);
+          
+          emit(AuthSuccess(user: currentUser, profil: profil, dashboardData: dashboard));
           return;
+        } catch (e) {
+          print('Erreur lors de la récupération du profil: $e');
+          // Fallback avec les données stockées
+          final User? storedUser = await _secureStorage.getUser();
+          final ProfilUser? storedProfil = await _secureStorage.getProfil();
+          if (storedUser != null) {
+            emit(AuthSuccess(user: storedUser, profil: storedProfil));
+            return;
+          }
         }
       }
     }

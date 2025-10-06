@@ -25,17 +25,21 @@ class Contribution {
   });
   factory Contribution.fromJson(Map<String, dynamic> json) {
     return Contribution(
-      id: json['id'],
+      id: json['id'] ?? 0,
       userId: json['userId'],
-      pullId: json['pullId'],
+      pullId: json['pullId'] ?? 0,
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] ?? 'XOF',
       status: json['status'] ?? 'pending',
       contributorName: json['contributorName'],
       contributorEmail: json['contributorEmail'],
       message: json['message'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt'] != null 
+          ? DateTime.parse(json['createdAt']) 
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null 
+          ? DateTime.parse(json['updatedAt']) 
+          : DateTime.now(),
     );
   }
 }

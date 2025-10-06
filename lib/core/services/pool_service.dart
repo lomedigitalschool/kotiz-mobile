@@ -14,7 +14,7 @@ class PoolService {
   Future<Pool> poolDetails(String id) async {
     try {
       final data = await _app.get<Map<String, dynamic>>("public/pulls/$id");
-      print(data);
+      debugPrint('Pool details: $data');
 
       return Pool.fromJson(data['data']);
     } catch (e, s) {
@@ -42,9 +42,31 @@ class PoolService {
         'users/dashboard',
       );
 
+      debugPrint('Dashboard JSON reçu: $json');
       return DashboardData.fromJson(json);
     } catch (e, s) {
       debugPrint('Erreur lors de la récupération du dashboard : $e\n$s');
+      // Retourner un dashboard vide plutôt que de faire planter l'app
+      return DashboardData(
+        totalCollected: 0.0,
+        activePullsCount: 0,
+        contributorsCount: 0,
+        myPools: [],
+        myContributions: [],
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> createContribution(Map<String, dynamic> contributionData) async {
+    try {
+      final Map<String, dynamic> response = await _app.post(
+        "/contributions",
+        data: contributionData,
+      );
+      debugPrint("✅ Contribution créée: ${response["message"]}");
+      return response;
+    } catch (e) {
+      debugPrint("❌ Erreur contribution: $e");
       rethrow;
     }
   }
@@ -68,10 +90,10 @@ class PoolService {
         headers: {"Content-Type": "multipart/form-data"},
       );
 
-      print("✅ Réponse: ${response["message"]}");
+      debugPrint("✅ Réponse: ${response["message"]}");
       return response;
     } catch (e) {
-      print("❌ Erreur: $e");
+      debugPrint("❌ Erreur: $e");
       rethrow;
     }
   }

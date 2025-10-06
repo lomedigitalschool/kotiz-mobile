@@ -64,7 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           context.pop();
         }
@@ -78,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
           leading: IconButton(
             onPressed: () => context.pop(),
             icon: Icon(
-              LucideIcons.arrowLeft400,
+              LucideIcons.arrowLeft,
               size: 30.0,
               color: ColorConstant.colorBlue,
             ),
@@ -240,8 +240,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         return Padding(
                           padding: const EdgeInsets.only(top: 30.0),
-                          child: Flexible(
-                            child: AppButton(
+                          child: AppButton(
                               widget: state is AuthLoading
                                   ? Row(
                                       mainAxisAlignment:
@@ -270,9 +269,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 } else if (form.validate()) {
                                   _onSubmit();
                                 }
-                              },
-                            ),
-                          ),
+                              }),
                         );
                       },
                     ),
@@ -291,11 +288,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          context.push("/login");
-                        },
-                        child: Flexible(
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            context.push("/login");
+                          },
                           child: Text(
                             "Se connecter",
                             softWrap: true,

@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           context.pop();
         }
@@ -186,11 +186,11 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          context.push("/register");
-                        },
-                        child: Flexible(
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            context.push("/register");
+                          },
                           child: Text(
                             "Créer un compte",
                             softWrap: true,

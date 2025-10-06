@@ -7,7 +7,7 @@ class ProfilTile extends StatelessWidget {
     required this.type,
     required this.icon,
     this.content,
-    this.endIcon = const Icon(LucideIcons.penLine400),
+    this.endIcon = const Icon(LucideIcons.penLine),
     this.showPen = true,
     this.widget = const SizedBox(),
   });

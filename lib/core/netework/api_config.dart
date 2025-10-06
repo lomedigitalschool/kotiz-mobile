@@ -1,11 +1,13 @@
-import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kotiz_app/core/netework/Http_CLient.dart';
-import 'package:kotiz_app/core/utils/secure_storage.dart';
+import 'dart:io';
 
-class ApiConfig extends HttpCLient {
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:kotiz_app/core/netework/http_client.dart';
+
+class ApiConfig extends HttpClient {
   final Dio _dio;
-  final SecureStorage _secureStorage = SecureStorage();
 
   String? _cachedToken;
   DateTime? _tokenExpiry;
@@ -17,6 +19,14 @@ class ApiConfig extends HttpCLient {
           headers: {"Content-Type": "application/json"},
         ),
       ) {
+    if (!kIsWeb) {
+      (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
+          (client) {
+            client.badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+            return client;
+          };
+    }
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
