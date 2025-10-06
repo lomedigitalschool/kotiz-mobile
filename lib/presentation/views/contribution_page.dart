@@ -63,8 +63,6 @@ class _ContributionPageState extends State<ContributionPage> {
           paymentMethod: _paymentMethod,
           message: _messageController.text.trim(),
           isAnonymous: _isAnonymous,
-          successUrl: 'https://kotiz.app/success',
-          cancelUrl: 'https://kotiz.app/cancel',
         );
 
         if (mounted) {
@@ -106,8 +104,6 @@ class _ContributionPageState extends State<ContributionPage> {
           contributorName: _nameController.text.trim(),
           contributorEmail: _emailController.text.trim(),
           message: _messageController.text.trim(),
-          successUrl: 'https://kotiz.app/success',
-          cancelUrl: 'https://kotiz.app/cancel',
         );
 
         if (mounted) {
@@ -338,6 +334,20 @@ class _ContributionPageState extends State<ContributionPage> {
                       RadioListTile<String>(
                         title: const Text('Wave'),
                         value: 'wave',
+                        groupValue: _paymentMethod,
+                        onChanged: (value) =>
+                            setState(() => _paymentMethod = value!),
+                      ),
+                      RadioListTile<String>(
+                        title: const Text('Flooz'),
+                        value: 'flooz',
+                        groupValue: _paymentMethod,
+                        onChanged: (value) =>
+                            setState(() => _paymentMethod = value!),
+                      ),
+                      RadioListTile<String>(
+                        title: const Text('T-Money'),
+                        value: 't_money',
                         groupValue: _paymentMethod,
                         onChanged: (value) =>
                             setState(() => _paymentMethod = value!),

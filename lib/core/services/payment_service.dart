@@ -13,10 +13,6 @@ class PaymentService {
     required String paymentMethod,
     String? message,
     bool isAnonymous = false,
-    String? contributorName,
-    String? contributorEmail,
-    String? successUrl,
-    String? cancelUrl,
   }) async {
     try {
       final data = <String, dynamic>{
@@ -27,12 +23,6 @@ class PaymentService {
         'isAnonymous': isAnonymous,
       };
       if (message != null && message.isNotEmpty) data['message'] = message;
-      if (contributorName != null && contributorName.isNotEmpty)
-        data['contributorName'] = contributorName;
-      if (contributorEmail != null && contributorEmail.isNotEmpty)
-        data['contributorEmail'] = contributorEmail;
-      if (successUrl != null) data['successUrl'] = successUrl;
-      if (cancelUrl != null) data['cancelUrl'] = cancelUrl;
 
       final response = await _apiConfig.post<Map<String, dynamic>>(
         '/contributions',
@@ -62,8 +52,6 @@ class PaymentService {
     required String contributorName,
     required String contributorEmail,
     String? message,
-    String? successUrl,
-    String? cancelUrl,
   }) async {
     try {
       final data = <String, dynamic>{
@@ -74,8 +62,6 @@ class PaymentService {
         'paymentMethod': paymentMethod,
       };
       if (message != null && message.isNotEmpty) data['message'] = message;
-      if (successUrl != null) data['successUrl'] = successUrl;
-      if (cancelUrl != null) data['cancelUrl'] = cancelUrl;
 
       final response = await _apiConfig.post<Map<String, dynamic>>(
         '/public/contributions/anonymous/$pullId',

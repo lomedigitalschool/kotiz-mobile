@@ -232,42 +232,20 @@ class _ProfilPageState extends State<ProfilPage> {
                           content: profil?.name,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          // TODO: Implémenter la modification de l'email
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Modification de l\'email bientôt disponible',
-                              ),
-                            ),
-                          );
-                        },
-                        child: ProfilTile(
-                          type: "Email",
-                          icon: Icon(LucideIcons.mail),
-                          content: profil?.email,
-                        ),
+                      ProfilTile(
+                        type: "Email",
+                        icon: Icon(LucideIcons.mail),
+                        content: profil?.email,
+                        showPen: false,
+                      ),
+                      ProfilTile(
+                        type: "Telephone",
+                        icon: Icon(LucideIcons.phone),
+                        content: profil?.phone,
+                        showPen: false,
                       ),
                       GestureDetector(
-                        onTap: () {
-                          // TODO: Implémenter la modification du téléphone
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Modification du téléphone bientôt disponible',
-                              ),
-                            ),
-                          );
-                        },
-                        child: ProfilTile(
-                          type: "Telephone",
-                          icon: Icon(LucideIcons.phone),
-                          content: profil?.phone,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => context.push("/change-password"),
+                        onTap: () => context.push("/reset-password"),
                         child: ProfilTile(
                           type: "Modifier le mot de passe",
                           icon: Icon(LucideIcons.lockKeyhole),
