@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
@@ -57,7 +55,9 @@ class PoolService {
     }
   }
 
-  Future<Map<String, dynamic>> createContribution(Map<String, dynamic> contributionData) async {
+  Future<Map<String, dynamic>> createContribution(
+    Map<String, dynamic> contributionData,
+  ) async {
     try {
       final Map<String, dynamic> response = await _app.post(
         "/contributions",
@@ -72,29 +72,45 @@ class PoolService {
   }
 
   Future<Map<String, dynamic>> createPool(PoolData poolData) async {
-    final jsonString = jsonEncode(poolData.toJson());
-
-    final formData = FormData.fromMap({
-      "data": jsonString,
-      if (poolData.image != null)
+    if (poolData.image != null) {
+      // Si il y a une image, utiliser FormData mais avec les champs séparés
+      final formData = FormData.fromMap({
+        "title": poolData.title,
+        "description": poolData.description,
+        "goalAmount": poolData.goalAmount.toString(),
+        "deadline": poolData.deadline?.toIso8601String(),
+        "type": poolData.type,
         "image": await MultipartFile.fromFile(
           poolData.image!.path,
           filename: poolData.image!.path.split('/').last,
         ),
-    });
+      });
 
-    try {
-      final Map<String, dynamic> response = await _app.post(
-        "/pulls",
-        data: formData,
-        headers: {"Content-Type": "multipart/form-data"},
-      );
-
-      debugPrint("✅ Réponse: ${response["message"]}");
-      return response;
-    } catch (e) {
-      debugPrint("❌ Erreur: $e");
-      rethrow;
+      try {
+        final Map<String, dynamic> response = await _app.post(
+          "/pulls",
+          data: formData,
+          headers: {"Content-Type": "multipart/form-data"},
+        );
+        debugPrint("✅ Réponse: ${response["message"]}");
+        return response;
+      } catch (e) {
+        debugPrint("❌ Erreur: $e");
+        rethrow;
+      }
+    } else {
+      // Si pas d'image, envoyer directement en JSON
+      try {
+        final Map<String, dynamic> response = await _app.post(
+          "/pulls",
+          data: poolData.toJson(),
+        );
+        debugPrint("✅ Réponse: ${response["message"]}");
+        return response;
+      } catch (e) {
+        debugPrint("❌ Erreur: $e");
+        rethrow;
+      }
     }
   }
 }

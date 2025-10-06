@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/data/models/pool.data.dart';
+import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
@@ -85,6 +86,10 @@ class _CreatePageState extends State<CreatePage> {
               autoCloseDuration: Duration(seconds: 3),
               animationDuration: Duration(milliseconds: 600),
             );
+            // Rafraîchir le dashboard après création
+            context.read<AuthCubit>().refreshDashboard();
+            // Rediriger vers le dashboard
+            context.read<BottomNavCubit>().setIndex(1);
           }
         },
         child: Scaffold(

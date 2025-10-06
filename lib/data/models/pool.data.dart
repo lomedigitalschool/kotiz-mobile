@@ -4,7 +4,7 @@ class PoolData {
   String? title;
   String? description;
   double? goalAmount;
-  String? deadline;
+  DateTime? deadline;
   String? type;
   int? participantLimit;
   String? currency;
@@ -15,7 +15,7 @@ class PoolData {
     "description": description,
     "goalAmount": goalAmount,
     "currency": currency,
-    "deadline": deadline,
+    "deadline": deadline?.toIso8601String(),
     "type": type,
     "participantLimit": participantLimit,
   };

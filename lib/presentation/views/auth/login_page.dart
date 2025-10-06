@@ -173,7 +173,21 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
+                  Center(
+                    child: TextButton(
+                      onPressed: () => context.push("/reset-password"),
+                      child: Text(
+                        "Mot de passe oublié ?",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: ColorConstant.colorBlue,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   Row(
                     spacing: 4,
                     mainAxisAlignment: MainAxisAlignment.start,

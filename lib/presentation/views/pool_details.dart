@@ -373,43 +373,9 @@ class _PoolDetailsState extends State<PoolDetails> {
                                     pool.owner["id"].toString();
                               }
 
-                              if (isOwner) {
-                                // Boutons pour le propriétaire
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: AppButton(
-                                        backgroundColor: Colors.orange,
-                                        text: "Retirer les fonds",
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  WithdrawPoolPage(pool: pool),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: AppButton(
-                                        backgroundColor:
-                                            ColorConstant.colorGreen,
-                                        text: "Partager ma cagnotte",
-                                        onPressed: () {
-                                          sharePool(widget.id);
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                // Bouton pour les autres utilisateurs
-                                return SizedBox(
+                              // Bouton contribuer toujours visible
+                              List<Widget> buttons = [
+                                SizedBox(
                                   width: double.infinity,
                                   child: AppButton(
                                     backgroundColor: ColorConstant.colorGreen,
@@ -418,8 +384,44 @@ class _PoolDetailsState extends State<PoolDetails> {
                                       context.push('/contribute/${widget.id}');
                                     },
                                   ),
-                                );
+                                ),
+                              ];
+
+                              if (isOwner) {
+                                // Boutons supplémentaires pour le propriétaire
+                                buttons.addAll([
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: AppButton(
+                                      backgroundColor: Colors.orange,
+                                      text: "Retirer les fonds",
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                WithdrawPoolPage(pool: pool),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: AppButton(
+                                      backgroundColor: ColorConstant.colorGreen,
+                                      text: "Partager ma cagnotte",
+                                      onPressed: () {
+                                        sharePool(widget.id);
+                                      },
+                                    ),
+                                  ),
+                                ]);
                               }
+
+                              return Column(children: buttons);
                             },
                           ),
                         ],

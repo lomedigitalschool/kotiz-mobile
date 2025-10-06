@@ -17,7 +17,10 @@ class _PoolPage2State extends State<PoolPage2> {
   String? _typeSelected;
   DateTime? _selectedDate;
 
-  final List<String> _typeList = ["publique", "privée"];
+  final List<Map<String, String>> _typeList = [
+    {"value": "public", "label": "Publique"},
+    {"value": "private", "label": "Privée"},
+  ];
 
   final ImagePicker _picker = ImagePicker();
   File? _image;
@@ -51,7 +54,7 @@ class _PoolPage2State extends State<PoolPage2> {
       setState(() {
         _selectedDate = picked;
       });
-      widget.poolData.deadline = picked.toString();
+      widget.poolData.deadline = picked;
     }
   }
 
@@ -91,8 +94,11 @@ class _PoolPage2State extends State<PoolPage2> {
               "Choisissez le type de cagnotte",
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-            items: _typeList.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
+            items: _typeList.map((Map<String, String> item) {
+              return DropdownMenuItem<String>(
+                value: item["value"],
+                child: Text(item["label"]!),
+              );
             }).toList(),
             onChanged: (v) => widget.poolData.type = v,
           ),

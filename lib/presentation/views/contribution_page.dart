@@ -30,8 +30,9 @@ class _ContributionPageState extends State<ContributionPage> {
   final _emailController = TextEditingController();
 
   bool _isAnonymous = false;
-  String _paymentMethod = 'orange';
+  String _paymentMethod = 'orange_money';
   bool _isSubmitting = false;
+  String _completePhoneNumber = '';
 
   @override
   void dispose() {
@@ -58,10 +59,7 @@ class _ContributionPageState extends State<ContributionPage> {
         final response = await paymentService.initiatePayment(
           pullId: widget.poolId,
           amount: _amountController.text.trim(),
-          phoneNumber: _phoneController.text.trim().replaceAll(
-            RegExp(r'[^0-9]'),
-            '',
-          ), // Remove non-digits
+          phoneNumber: _completePhoneNumber,
           paymentMethod: _paymentMethod,
           message: _messageController.text.trim(),
           isAnonymous: _isAnonymous,
@@ -98,10 +96,7 @@ class _ContributionPageState extends State<ContributionPage> {
         final response = await paymentService.processAnonymousContribution(
           pullId: widget.poolId,
           amount: _amountController.text.trim(),
-          phoneNumber: _phoneController.text.trim().replaceAll(
-            RegExp(r'[^0-9]'),
-            '',
-          ), // Remove non-digits
+          phoneNumber: _completePhoneNumber,
           paymentMethod: _paymentMethod,
           contributorName: _nameController.text.trim(),
           contributorEmail: _emailController.text.trim(),
@@ -245,6 +240,9 @@ class _ContributionPageState extends State<ContributionPage> {
                           ),
                           hintText: "Numéro pour le paiement",
                         ),
+                        onChanged: (phone) {
+                          _completePhoneNumber = phone?.completeNumber ?? '';
+                        },
                         validator: (phone) {
                           if (phone == null || phone.number.isEmpty) {
                             return 'Le numéro de téléphone est requis';
@@ -307,21 +305,21 @@ class _ContributionPageState extends State<ContributionPage> {
                     children: [
                       RadioListTile<String>(
                         title: const Text('Orange Money'),
-                        value: 'orange',
+                        value: 'orange_money',
                         groupValue: _paymentMethod,
                         onChanged: (value) =>
                             setState(() => _paymentMethod = value!),
                       ),
                       RadioListTile<String>(
                         title: const Text('MTN Mobile Money'),
-                        value: 'mtn',
+                        value: 'mtn_money',
                         groupValue: _paymentMethod,
                         onChanged: (value) =>
                             setState(() => _paymentMethod = value!),
                       ),
                       RadioListTile<String>(
                         title: const Text('Moov Money'),
-                        value: 'moov',
+                        value: 'moov_money',
                         groupValue: _paymentMethod,
                         onChanged: (value) =>
                             setState(() => _paymentMethod = value!),

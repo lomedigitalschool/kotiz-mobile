@@ -29,6 +29,7 @@ import 'package:kotiz_app/presentation/views/dashboard_page.dart';
 import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:kotiz_app/presentation/views/auth/change_password_page.dart';
 import 'package:kotiz_app/presentation/views/auth/login_page.dart';
+import 'package:kotiz_app/presentation/views/auth/reset_password_page.dart';
 import 'package:kotiz_app/presentation/views/main_page.dart';
 import 'package:kotiz_app/presentation/views/onboarding.dart';
 import 'package:kotiz_app/presentation/views/pool_details.dart';
@@ -123,6 +124,10 @@ class _MyAppState extends State<MyApp> {
         // ),
         GoRoute(path: "/main", builder: (context, state) => MainPage()),
         GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
+        GoRoute(
+          path: "/reset-password",
+          builder: (context, state) => ResetPasswordPage(),
+        ),
         GoRoute(
           path: "/change-password",
           builder: (context, state) => ChangePasswordPage(),

@@ -13,7 +13,11 @@ class PoolPage1 extends StatefulWidget {
 
 class _PoolPage1State extends State<PoolPage1> {
   String? _selectedValue;
-  final List<String> currencyList = ["EUR", "DOLLAR", "XOF"];
+  final List<Map<String, String>> currencyList = [
+    {"value": "XOF", "label": "XOF (Franc CFA)"},
+    {"value": "EUR", "label": "EUR (Euro)"},
+    {"value": "USD", "label": "USD (Dollar)"},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -83,10 +87,10 @@ class _PoolPage1State extends State<PoolPage1> {
                 onChanged: (newValue) => widget.poolData.currency = newValue,
 
                 hint: Text("Choisissez la devise"),
-                items: currencyList.map((String value) {
+                items: currencyList.map((Map<String, String> item) {
                   return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
+                    value: item["value"],
+                    child: Text(item["label"]!),
                   );
                 }).toList(),
               ),

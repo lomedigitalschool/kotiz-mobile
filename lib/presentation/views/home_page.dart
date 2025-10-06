@@ -336,9 +336,9 @@ class _HomePageState extends State<HomePage>
                                     return Column(
                                       children: [
                                         AppButton(
-                                          text: "Créer un compte",
+                                          text: "Créer une cagnotte",
                                           onPressed: () {
-                                            context.push("/register");
+                                            context.push("/create");
                                           },
                                           backgroundColor:
                                               ColorConstant.colorGreen,

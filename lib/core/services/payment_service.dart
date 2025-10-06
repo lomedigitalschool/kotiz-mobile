@@ -5,7 +5,7 @@ class PaymentService {
 
   PaymentService(this._apiConfig);
 
-  /// Initier un paiement pour utilisateur connecté
+  /// Initier un paiement pour utilisateur connecté ou anonyme
   Future<Map<String, dynamic>> initiatePayment({
     required String pullId,
     required String amount,
@@ -13,6 +13,8 @@ class PaymentService {
     required String paymentMethod,
     String? message,
     bool isAnonymous = false,
+    String? contributorName,
+    String? contributorEmail,
     String? successUrl,
     String? cancelUrl,
   }) async {
@@ -25,6 +27,10 @@ class PaymentService {
         'isAnonymous': isAnonymous,
       };
       if (message != null && message.isNotEmpty) data['message'] = message;
+      if (contributorName != null && contributorName.isNotEmpty)
+        data['contributorName'] = contributorName;
+      if (contributorEmail != null && contributorEmail.isNotEmpty)
+        data['contributorEmail'] = contributorEmail;
       if (successUrl != null) data['successUrl'] = successUrl;
       if (cancelUrl != null) data['cancelUrl'] = cancelUrl;
 
