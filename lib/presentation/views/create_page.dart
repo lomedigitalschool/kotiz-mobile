@@ -50,6 +50,24 @@ class _CreatePageState extends State<CreatePage> {
     await context.read<PoolCubit>().create(poolData);
   }
 
+  Future<void> _refreshAndNavigate() async {
+    try {
+      // Attendre que le dashboard soit rafraîchi
+      await context.read<AuthCubit>().refreshDashboard();
+      // Petite pause pour s'assurer que l'état est mis à jour
+      await Future.delayed(const Duration(milliseconds: 500));
+      // Rediriger vers le dashboard
+      if (mounted) {
+        context.read<BottomNavCubit>().setIndex(1);
+      }
+    } catch (e) {
+      // En cas d'erreur, aller quand même au dashboard
+      if (mounted) {
+        context.read<BottomNavCubit>().setIndex(1);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -86,10 +104,8 @@ class _CreatePageState extends State<CreatePage> {
               autoCloseDuration: Duration(seconds: 3),
               animationDuration: Duration(milliseconds: 600),
             );
-            // Rafraîchir le dashboard après création
-            context.read<AuthCubit>().refreshDashboard();
-            // Rediriger vers le dashboard
-            context.read<BottomNavCubit>().setIndex(1);
+            // Rafraîchir le dashboard après création et rediriger
+            _refreshAndNavigate();
           }
         },
         child: Scaffold(

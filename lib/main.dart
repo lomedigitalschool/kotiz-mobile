@@ -36,6 +36,7 @@ import 'package:kotiz_app/presentation/views/pool_details.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
 import 'package:kotiz_app/presentation/views/splash_screen.dart';
 import 'package:kotiz_app/presentation/views/supported_pools_page.dart';
+import 'package:kotiz_app/presentation/views/payment_status_page.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
@@ -97,7 +98,7 @@ class _MyAppState extends State<MyApp> {
 
   GoRouter _buildRouter() {
     return GoRouter(
-      initialLocation: kDebugMode ? "/main" : "/",
+      initialLocation: "/home",
       routes: [
         GoRoute(
           path: "/",
@@ -151,6 +152,14 @@ class _MyAppState extends State<MyApp> {
           },
         ),
         GoRoute(path: "/kyc", builder: (context, state) => const KycPage()),
+        GoRoute(
+          path: "/payment-status/:contributionId",
+          builder: (context, state) {
+            final String contributionId =
+                state.pathParameters["contributionId"]!;
+            return PaymentStatusPage(contributionId: contributionId);
+          },
+        ),
         GoRoute(
           path: "/transactions",
           builder: (context, state) => const TransactionListPage(),

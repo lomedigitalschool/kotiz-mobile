@@ -172,7 +172,9 @@ class DashboardPage extends StatelessWidget {
                                     height: 90,
                                     padding: EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: Colors.blue.shade50,
+                                      color: ColorConstant.colorBlue.withValues(
+                                        alpha: 0.1,
+                                      ),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Column(
@@ -185,7 +187,7 @@ class DashboardPage extends StatelessWidget {
                                           "Contributeurs",
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.blue.shade700,
+                                            color: ColorConstant.colorBlue,
                                           ),
                                         ),
                                         SizedBox(height: 4),
@@ -263,7 +265,7 @@ class DashboardPage extends StatelessWidget {
                                 Expanded(
                                   child: AppButton(
                                     text: "Cagnottes Soutenues",
-                                    backgroundColor: Colors.blue,
+                                    backgroundColor: ColorConstant.colorBlue,
                                     onPressed: () =>
                                         context.push("/supported-pools"),
                                   ),

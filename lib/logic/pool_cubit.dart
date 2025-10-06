@@ -87,9 +87,14 @@ class PoolCubit extends Cubit<PoolState> {
   Future<void> updatePool(Pool pool) async {
     emit(PoolLoading());
     try {
-      // Simuler la mise à jour (à remplacer par l'appel API réel)
-      await Future.delayed(const Duration(seconds: 2));
-      // await _service.updatePool(pool);
+      final updateData = {
+        'title': pool.title,
+        'description': pool.description,
+        'goalAmount': pool.goalAmount,
+        'deadline': pool.deadline.toIso8601String(),
+        'type': pool.type,
+      };
+      await _service.updatePool(pool.id.toString(), updateData);
       emit(PoolSuccess("Cagnotte modifiée avec succès"));
     } catch (e) {
       emit(PoolError("Erreur lors de la modification de la cagnotte"));
@@ -103,6 +108,16 @@ class PoolCubit extends Cubit<PoolState> {
       emit(PoolSuccess("Contribution créée avec succès"));
     } catch (e) {
       emit(PoolError("Erreur lors de la création de la contribution"));
+    }
+  }
+
+  Future<void> deletePool(String poolId) async {
+    emit(PoolLoading());
+    try {
+      await _service.deletePool(poolId);
+      emit(PoolSuccess("Cagnotte supprimée avec succès"));
+    } catch (e) {
+      emit(PoolError("Erreur lors de la suppression de la cagnotte"));
     }
   }
 

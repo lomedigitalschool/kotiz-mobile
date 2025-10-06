@@ -1,303 +1,359 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kotiz_app/core/netework/api_config.dart';
+import 'package:kotiz_app/core/services/payment_service.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
-import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/logic/auth_cubit.dart';
+import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:toastification/toastification.dart';
 
-class PaymentStatusPage extends StatelessWidget {
-  final String transactionId;
-  final String status;
-  final double amount;
-  final String method;
-  final String? poolTitle;
+class PaymentStatusPage extends StatefulWidget {
+  final String contributionId;
 
-  const PaymentStatusPage({
-    super.key,
-    required this.transactionId,
-    required this.status,
-    required this.amount,
-    required this.method,
-    this.poolTitle,
-  });
+  const PaymentStatusPage({super.key, required this.contributionId});
+
+  @override
+  State<PaymentStatusPage> createState() => _PaymentStatusPageState();
+}
+
+class _PaymentStatusPageState extends State<PaymentStatusPage> {
+  String _status = 'checking';
+  Map<String, dynamic>? _contribution;
+  Map<String, dynamic>? _transaction;
+  String? _error;
+  int _countdown = 300; // 5 minutes
+  Timer? _pollingTimer;
+  Timer? _countdownTimer;
+
+  final PaymentService _paymentService = PaymentService(ApiConfig());
+
+  @override
+  void initState() {
+    super.initState();
+    _startPolling();
+    _startCountdown();
+  }
+
+  @override
+  void dispose() {
+    _pollingTimer?.cancel();
+    _countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startPolling() {
+    // Vérification initiale
+    _checkPaymentStatus();
+
+    // Polling toutes les 5 secondes
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_status == 'pending' || _status == 'checking') {
+        _checkPaymentStatus();
+      }
+    });
+  }
+
+  void _startCountdown() {
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _countdown--;
+      });
+
+      if (_countdown <= 0) {
+        _handleTimeout();
+      }
+    });
+  }
+
+  Future<void> _checkPaymentStatus() async {
+    try {
+      final response = await _paymentService.checkContributionStatus(
+        widget.contributionId,
+      );
+
+      if (response['success'] == true) {
+        final contribution = response['contribution'];
+        final transaction = response['transaction'];
+
+        setState(() {
+          _contribution = contribution;
+          _transaction = transaction;
+        });
+
+        if (contribution['status'] == 'completed') {
+          setState(() {
+            _status = 'success';
+          });
+          _handleSuccess();
+        } else if (contribution['status'] == 'failed') {
+          setState(() {
+            _status = 'failed';
+          });
+        } else {
+          setState(() {
+            _status = 'pending';
+          });
+        }
+      } else {
+        setState(() {
+          _error = response['message'] ?? 'Erreur lors de la vérification';
+          _status = 'error';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Erreur de connexion: $e';
+        _status = 'error';
+      });
+    }
+  }
+
+  void _handleSuccess() {
+    // Arrêter les timers
+    _pollingTimer?.cancel();
+    _countdownTimer?.cancel();
+
+    // Refresh dashboard and pools
+    context.read<AuthCubit>().refreshDashboard();
+    context.read<PoolCubit>().getAll();
+
+    // Afficher message de succès
+    toastification.show(
+      context: context,
+      type: ToastificationType.success,
+      title: const Text('Paiement réussi'),
+      description: const Text(
+        'Votre contribution a été enregistrée avec succès',
+      ),
+      backgroundColor: Colors.green.shade200,
+      autoCloseDuration: const Duration(seconds: 3),
+    );
+
+    // Rediriger vers le dashboard après 3 secondes
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        context.go('/dashboard');
+      }
+    });
+  }
+
+  void _handleTimeout() {
+    // Arrêter les timers
+    _pollingTimer?.cancel();
+    _countdownTimer?.cancel();
+
+    // Afficher message d'avertissement
+    toastification.show(
+      context: context,
+      type: ToastificationType.warning,
+      title: const Text('Délai dépassé'),
+      description: const Text('Vérifiez vos transactions dans l\'historique'),
+      backgroundColor: Colors.orange.shade200,
+      autoCloseDuration: const Duration(seconds: 3),
+    );
+
+    // Rediriger vers le dashboard
+    if (mounted) {
+      context.go('/dashboard');
+    }
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Widget _buildStatusIcon() {
+    switch (_status) {
+      case 'checking':
+      case 'pending':
+        return Container(
+          width: 80,
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Color(
+              0xFF4CA2601A,
+            ), // ColorConstant.colorBlue.withOpacity(0.1)
+            shape: BoxShape.circle,
+          ),
+          child: const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(ColorConstant.colorBlue),
+            strokeWidth: 3,
+          ),
+        );
+
+      case 'success':
+        return Container(
+          width: 80,
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Colors.green,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(LucideIcons.check, color: Colors.white, size: 40),
+        );
+
+      case 'failed':
+        return Container(
+          width: 80,
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Colors.red,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(LucideIcons.x, color: Colors.white, size: 40),
+        );
+
+      case 'error':
+        return Container(
+          width: 80,
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Colors.orange,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.warning, color: Colors.white, size: 40),
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  String _getStatusTitle() {
+    switch (_status) {
+      case 'checking':
+        return 'Vérification du paiement...';
+      case 'pending':
+        return 'Paiement en cours...';
+      case 'success':
+        return 'Paiement réussi !';
+      case 'failed':
+        return 'Paiement échoué';
+      case 'error':
+        return 'Erreur de vérification';
+      default:
+        return 'Statut inconnu';
+    }
+  }
+
+  String _getStatusMessage() {
+    switch (_status) {
+      case 'checking':
+        return 'Nous vérifions le statut de votre paiement.';
+      case 'pending':
+        return 'Votre paiement est en cours de traitement. Cela peut prendre quelques instants.';
+      case 'success':
+        return 'Votre contribution a été enregistrée avec succès.';
+      case 'failed':
+        return 'Le paiement n\'a pas pu être traité. Veuillez réessayer.';
+      case 'error':
+        return _error ?? 'Une erreur est survenue lors de la vérification.';
+      default:
+        return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final bool isSuccess = status.toLowerCase() == 'success' || status.toLowerCase() == 'completed';
-    final bool isPending = status.toLowerCase() == 'pending' || status.toLowerCase() == 'processing';
-    final bool isFailed = status.toLowerCase() == 'failed' || status.toLowerCase() == 'error';
-
     return Scaffold(
-      backgroundColor: ColorConstant.colorWhite,
       appBar: AppBar(
-        title: const Text("Statut du paiement"),
+        title: const Text('Statut du paiement'),
         backgroundColor: ColorConstant.colorWhite,
         leading: IconButton(
+          onPressed: () => context.go('/dashboard'),
           icon: const Icon(LucideIcons.arrowLeft),
-          onPressed: () => context.pop(),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icône de statut
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSuccess 
-                    ? Colors.green.shade100
-                    : isPending 
-                        ? Colors.orange.shade100
-                        : Colors.red.shade100,
+      backgroundColor: ColorConstant.colorWhite,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildStatusIcon(),
+              const SizedBox(height: 24),
+
+              Text(
+                _getStatusTitle(),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
               ),
-              child: Icon(
-                isSuccess 
-                    ? LucideIcons.check
-                    : isPending 
-                        ? LucideIcons.clock
-                        : LucideIcons.x,
-                size: 60,
-                color: isSuccess 
-                    ? Colors.green
-                    : isPending 
-                        ? Colors.orange
-                        : Colors.red,
+              const SizedBox(height: 16),
+
+              Text(
+                _getStatusMessage(),
+                style: const TextStyle(fontSize: 16, color: Colors.black54),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 24),
-            
-            // Titre du statut
-            Text(
-              isSuccess 
-                  ? "Paiement réussi !"
-                  : isPending 
-                      ? "Paiement en cours"
-                      : "Paiement échoué",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isSuccess 
-                    ? Colors.green
-                    : isPending 
-                        ? Colors.orange
-                        : Colors.red,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            
-            // Message de statut
-            Text(
-              isSuccess 
-                  ? "Votre contribution a été enregistrée avec succès"
-                  : isPending 
-                      ? "Votre paiement est en cours de traitement"
-                      : "Une erreur est survenue lors du paiement",
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            
-            // Détails de la transaction
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Détails de la transaction",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+
+              if (_contribution != null) ...[
+                const SizedBox(height: 32),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200),
                   ),
-                  const SizedBox(height: 16),
-                  
-                  _buildDetailRow("ID Transaction", transactionId),
-                  _buildDetailRow("Montant", "${amount.toStringAsFixed(0)} FCFA"),
-                  _buildDetailRow("Méthode", _getMethodName(method)),
-                  if (poolTitle != null) _buildDetailRow("Cagnotte", poolTitle!),
-                  _buildDetailRow("Statut", _getStatusText(status)),
-                  _buildDetailRow("Date", _getCurrentDate()),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            
-            // Messages spécifiques selon le statut
-            if (isPending) ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  border: Border.all(color: Colors.orange.shade200),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(LucideIcons.info, color: Colors.orange),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "Veuillez patienter pendant que nous traitons votre paiement. Vous recevrez une notification une fois terminé.",
-                        style: TextStyle(fontSize: 12),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Montant: ${_contribution!['amount']} ${_contribution!['currency'] ?? 'FCFA'}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                      if (_transaction != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Référence: ${_transaction!['providerReference'] ?? 'N/A'}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
+              ],
+
+              if (_status == 'pending' || _status == 'checking') ...[
+                const SizedBox(height: 32),
+                Text(
+                  'Temps restant: ${_formatTime(_countdown)}',
+                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Veuillez patienter pendant que nous vérifions votre paiement...',
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+
+              if (_status == 'success') ...[
+                const SizedBox(height: 32),
+                const Text(
+                  'Redirection vers le dashboard...',
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              ],
             ],
-            
-            if (isFailed) ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  border: Border.all(color: Colors.red.shade200),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(LucideIcons.info, color: Colors.red),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "Le paiement a échoué. Veuillez vérifier vos informations et réessayer.",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-            
-            // Boutons d'action
-            if (isSuccess) ...[
-              AppButton(
-                text: "Retour à l'accueil",
-                backgroundColor: ColorConstant.colorGreen,
-                onPressed: () => context.go('/'),
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => context.pop(),
-                child: const Text(
-                  "Voir la cagnotte",
-                  style: TextStyle(color: ColorConstant.colorGreen),
-                ),
-              ),
-            ] else if (isFailed) ...[
-              AppButton(
-                text: "Réessayer le paiement",
-                backgroundColor: ColorConstant.colorGreen,
-                onPressed: () => context.pop(),
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => context.go('/'),
-                child: const Text(
-                  "Retour à l'accueil",
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-            ] else ...[
-              AppButton(
-                text: "Vérifier le statut",
-                backgroundColor: ColorConstant.colorGreen,
-                onPressed: () {
-                  // Actualiser le statut
-                  // context.read<TransactionCubit>().checkTransactionStatus(transactionId);
-                },
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => context.go('/'),
-                child: const Text(
-                  "Retour à l'accueil",
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getMethodName(String method) {
-    switch (method.toLowerCase()) {
-      case 'orange_money':
-        return 'Orange Money';
-      case 'mtn_money':
-        return 'MTN Mobile Money';
-      case 'moov_money':
-        return 'Moov Money';
-      case 'bank_transfer':
-        return 'Virement bancaire';
-      case 'semoa':
-        return 'SEMOA';
-      default:
-        return method;
-    }
-  }
-
-  String _getStatusText(String status) {
-    switch (status.toLowerCase()) {
-      case 'success':
-      case 'completed':
-        return 'Réussi';
-      case 'pending':
-      case 'processing':
-        return 'En cours';
-      case 'failed':
-      case 'error':
-        return 'Échoué';
-      default:
-        return status;
-    }
-  }
-
-  String _getCurrentDate() {
-    final now = DateTime.now();
-    return "${now.day}/${now.month}/${now.year} à ${now.hour}:${now.minute.toString().padLeft(2, '0')}";
   }
 }

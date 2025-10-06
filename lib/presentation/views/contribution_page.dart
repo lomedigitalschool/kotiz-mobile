@@ -69,24 +69,29 @@ class _ContributionPageState extends State<ContributionPage> {
 
         if (mounted) {
           if (response['success'] == true) {
-            toastification.show(
-              context: context,
-              type: ToastificationType.success,
-              title: const Text('Paiement initié'),
-              description: const Text(
-                'Votre paiement a été initié avec succès',
-              ),
-              backgroundColor: Colors.green.shade200,
-              autoCloseDuration: const Duration(seconds: 3),
-            );
             // Ouvrir l'URL de paiement si disponible
             if (response['paymentUrl'] != null) {
               launchUrl(Uri.parse(response['paymentUrl']));
             }
-            // Refresh dashboard and pools for real-time updates
-            await context.read<AuthCubit>().refreshDashboard();
-            await context.read<PoolCubit>().getAll();
-            context.pop();
+
+            // Rediriger vers la page de statut de paiement
+            final contributionId = response['contribution']?['id']?.toString();
+            if (contributionId != null) {
+              context.go('/payment-status/$contributionId');
+            } else {
+              // Fallback si pas d'ID de contribution
+              toastification.show(
+                context: context,
+                type: ToastificationType.success,
+                title: const Text('Paiement initié'),
+                description: const Text(
+                  'Votre paiement a été initié avec succès',
+                ),
+                backgroundColor: Colors.green.shade200,
+                autoCloseDuration: const Duration(seconds: 3),
+              );
+              context.pop();
+            }
           } else {
             throw Exception(response['message'] ?? 'Erreur lors du paiement');
           }
@@ -107,23 +112,29 @@ class _ContributionPageState extends State<ContributionPage> {
 
         if (mounted) {
           if (response['success'] == true) {
-            toastification.show(
-              context: context,
-              type: ToastificationType.success,
-              title: const Text('Contribution créée'),
-              description: const Text(
-                'Votre contribution a été enregistrée avec succès',
-              ),
-              backgroundColor: Colors.green.shade200,
-              autoCloseDuration: const Duration(seconds: 3),
-            );
             // Ouvrir l'URL de paiement si disponible
             if (response['paymentUrl'] != null) {
               launchUrl(Uri.parse(response['paymentUrl']));
             }
-            // Refresh pools for real-time updates
-            await context.read<PoolCubit>().getAll();
-            context.pop();
+
+            // Rediriger vers la page de statut de paiement
+            final contributionId = response['contribution']?['id']?.toString();
+            if (contributionId != null) {
+              context.go('/payment-status/$contributionId');
+            } else {
+              // Fallback si pas d'ID de contribution
+              toastification.show(
+                context: context,
+                type: ToastificationType.success,
+                title: const Text('Contribution créée'),
+                description: const Text(
+                  'Votre contribution a été enregistrée avec succès',
+                ),
+                backgroundColor: Colors.green.shade200,
+                autoCloseDuration: const Duration(seconds: 3),
+              );
+              context.pop();
+            }
           } else {
             throw Exception(
               response['message'] ?? 'Erreur lors de la contribution',

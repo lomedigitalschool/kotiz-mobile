@@ -8,7 +8,9 @@ import 'package:kotiz_app/presentation/views/payment_status_page.dart';
 
 void main() {
   group('Pages Tests', () {
-    testWidgets('EditPoolPage should build without errors', (WidgetTester tester) async {
+    testWidgets('EditPoolPage should build without errors', (
+      WidgetTester tester,
+    ) async {
       final mockPool = Pool(
         id: 1,
         title: 'Test Pool',
@@ -26,28 +28,24 @@ void main() {
         recentContributions: [],
       );
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: EditPoolPage(pool: mockPool),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: EditPoolPage(pool: mockPool)));
 
       expect(find.text('Modifier la cagnotte'), findsOneWidget);
       expect(find.text('Test Pool'), findsOneWidget);
     });
 
-    testWidgets('ResetPasswordPage should build without errors', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ResetPasswordPage(),
-        ),
-      );
+    testWidgets('ResetPasswordPage should build without errors', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: ResetPasswordPage()));
 
       expect(find.text('Réinitialiser le mot de passe'), findsOneWidget);
       expect(find.text('Mot de passe oublié ?'), findsOneWidget);
     });
 
-    testWidgets('WithdrawPoolPage should build without errors', (WidgetTester tester) async {
+    testWidgets('WithdrawPoolPage should build without errors', (
+      WidgetTester tester,
+    ) async {
       final mockPool = Pool(
         id: 2,
         title: 'Test Pool',
@@ -66,30 +64,24 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: WithdrawPoolPage(pool: mockPool),
-        ),
+        MaterialApp(home: WithdrawPoolPage(pool: mockPool)),
       );
 
       expect(find.text('Retirer des fonds'), findsOneWidget);
       expect(find.text('Test Pool'), findsOneWidget);
     });
 
-    testWidgets('PaymentStatusPage should build without errors', (WidgetTester tester) async {
+    testWidgets('PaymentStatusPage should build without errors', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: PaymentStatusPage(
-            transactionId: 'TXN123456',
-            status: 'success',
-            amount: 25000.0,
-            method: 'orange_money',
-            poolTitle: 'Test Pool',
-          ),
+          home: PaymentStatusPage(contributionId: 'CONTRIB123456'),
         ),
       );
 
       expect(find.text('Statut du paiement'), findsOneWidget);
-      expect(find.text('Paiement réussi !'), findsOneWidget);
+      expect(find.text('Vérification du paiement...'), findsOneWidget);
     });
   });
 
@@ -117,12 +109,12 @@ void main() {
 
       // Cette partie nécessiterait l'import du modèle ProfilUser
       // final profil = ProfilUser.fromJson(json);
-      
+
       // expect(profil.name, equals('John Doe'));
       // expect(profil.email, equals('john@example.com'));
       // expect(profil.phone, equals('+221771234567'));
       // expect(profil.isVerified, isTrue);
-      
+
       // Test réussi si aucune exception n'est levée
       expect(json['name'], equals('John Doe'));
     });

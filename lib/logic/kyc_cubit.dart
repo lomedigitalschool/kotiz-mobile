@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/services/kyc_service.dart';
@@ -32,39 +33,40 @@ class KycCubit extends Cubit<KycState> {
   final KycService _service;
   KycCubit(this._service) : super(KycLoading());
 
-  Future<void> getKycSubmissions() async {
+  Future<void> submitKyc({
+    required String nomLegal,
+    required String dateNaissance,
+    required String adresse,
+    required String nationalite,
+    required String typePiece,
+    required String numeroPiece,
+    required String dateExpiration,
+    required File photoRecto,
+    required File photoVerso,
+  }) async {
     emit(KycLoading());
     try {
-      final submissions = await _service.fetchKycSubmissions();
-      emit(KycLoaded(submissions));
-    } catch (e) {
-      emit(KycError("Erreur lors de la récupération des soumissions KYC"));
-    }
-  }
-
-  Future<void> submitKyc(
-    String legalName,
-    DateTime birthDate,
-    String address,
-    String documentType,
-  ) async {
-    emit(KycLoading());
-    try {
-      final submission = KycSubmission(
-        id: '', // Will be set by server
-        legalName: legalName,
-        birthDate: birthDate,
-        address: address,
-        documentType: documentType,
-        status: 'In Review', // Default status
-        submittedAt: DateTime.now(),
+      final response = await _service.submitKyc(
+        nomLegal: nomLegal,
+        dateNaissance: dateNaissance,
+        adresse: adresse,
+        nationalite: nationalite,
+        typePiece: typePiece,
+        numeroPiece: numeroPiece,
+        dateExpiration: dateExpiration,
+        photoRecto: photoRecto,
+        photoVerso: photoVerso,
       );
-      await _service.submitKyc(submission);
-      emit(KycSubmitted());
-      // Refresh submissions after submit
-      await getKycSubmissions();
+
+      if (response['success'] == true) {
+        emit(KycSubmitted());
+      } else {
+        emit(
+          KycError(response['message'] ?? "Erreur lors de la soumission KYC"),
+        );
+      }
     } catch (e) {
-      emit(KycError("Erreur lors de la soumission KYC"));
+      emit(KycError("Erreur lors de la soumission KYC: $e"));
     }
   }
 }

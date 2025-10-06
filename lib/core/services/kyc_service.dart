@@ -1,35 +1,58 @@
 import 'package:kotiz_app/core/netework/api_config.dart';
-import 'package:kotiz_app/data/models/kyc.dart';
+import 'package:dio/dio.dart';
+import 'dart:io';
 
 class KycService {
   final ApiConfig _apiConfig;
-  
+
   KycService(this._apiConfig);
 
-  Future<List<KycSubmission>> fetchKycSubmissions() async {
+  Future<Map<String, dynamic>> submitKyc({
+    required String nomLegal,
+    required String dateNaissance,
+    required String adresse,
+    required String nationalite,
+    required String typePiece,
+    required String numeroPiece,
+    required String dateExpiration,
+    required File photoRecto,
+    required File photoVerso,
+  }) async {
     try {
-      final response = await _apiConfig.get<Map<String, dynamic>>('/kyc/history');
-      final List<dynamic> data = response['data'] ?? [];
-      return data.map((json) => KycSubmission.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Erreur lors de la récupération des soumissions KYC: $e');
-    }
-  }
+      final formData = FormData.fromMap({
+        'nomLegal': nomLegal,
+        'dateNaissance': dateNaissance,
+        'adresse': adresse,
+        'nationalite': nationalite,
+        'typePiece': typePiece,
+        'numeroPiece': numeroPiece,
+        'dateExpiration': dateExpiration,
+        'photoRecto': await MultipartFile.fromFile(
+          photoRecto.path,
+          filename: 'recto_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        ),
+        'photoVerso': await MultipartFile.fromFile(
+          photoVerso.path,
+          filename: 'verso_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        ),
+      });
 
-  Future<void> submitKyc(KycSubmission submission) async {
-    try {
-      await _apiConfig.post('/kyc/submit', data: submission.toJson());
-    } catch (e) {
-      throw Exception('Erreur lors de la soumission KYC: $e');
-    }
-  }
+      final response = await _apiConfig.post<Map<String, dynamic>>(
+        '/kyc/submit',
+        data: formData,
+        headers: {'Content-Type': 'multipart/form-data'},
+      );
 
-  Future<Map<String, dynamic>> getKycStatus() async {
-    try {
-      final response = await _apiConfig.get<Map<String, dynamic>>('/kyc/status');
-      return response;
+      return {
+        'success': true,
+        'message': response['message'] ?? 'KYC soumis avec succès',
+        'data': response,
+      };
     } catch (e) {
-      throw Exception('Erreur lors de la récupération du statut KYC: $e');
+      return {
+        'success': false,
+        'message': 'Erreur lors de la soumission KYC: $e',
+      };
     }
   }
 }

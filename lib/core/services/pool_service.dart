@@ -113,4 +113,32 @@ class PoolService {
       }
     }
   }
+
+  Future<Map<String, dynamic>> updatePool(
+    String poolId,
+    Map<String, dynamic> poolData,
+  ) async {
+    try {
+      final Map<String, dynamic> response = await _app.put(
+        "/pulls/$poolId",
+        data: poolData,
+      );
+      debugPrint("✅ Cagnotte mise à jour: ${response["message"]}");
+      return response;
+    } catch (e) {
+      debugPrint("❌ Erreur lors de la mise à jour: $e");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> deletePool(String poolId) async {
+    try {
+      final Map<String, dynamic> response = await _app.delete("/pulls/$poolId");
+      debugPrint("✅ Cagnotte supprimée: ${response["message"]}");
+      return response;
+    } catch (e) {
+      debugPrint("❌ Erreur lors de la suppression: $e");
+      rethrow;
+    }
+  }
 }
