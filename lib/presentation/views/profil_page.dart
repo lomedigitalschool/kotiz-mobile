@@ -45,7 +45,7 @@ class _ProfilPageState extends State<ProfilPage> {
     final TextEditingController nameController = TextEditingController(
       text: currentName,
     );
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     return showDialog(
       context: context,
@@ -53,7 +53,7 @@ class _ProfilPageState extends State<ProfilPage> {
         return AlertDialog(
           title: const Text('Modifier le nom'),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: TextFormField(
               controller: nameController,
               decoration: const InputDecoration(
@@ -75,7 +75,7 @@ class _ProfilPageState extends State<ProfilPage> {
             ),
             TextButton(
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
+                if (formKey.currentState!.validate()) {
                   try {
                     final authState = context.read<AuthCubit>().state;
                     if (authState is AuthSuccess) {
@@ -85,29 +85,30 @@ class _ProfilPageState extends State<ProfilPage> {
                         phone: authState.profil?.phone ?? '',
                       );
                       await _refreshProfile();
-                      if (mounted) {
-                        Navigator.of(context).pop();
-                        toastification.show(
-                          context: context,
-                          type: ToastificationType.success,
-                          title: const Text('Nom modifié'),
-                          description: const Text('Votre nom a été mis à jour'),
-                          backgroundColor: Colors.green.shade100,
-                          autoCloseDuration: const Duration(seconds: 3),
-                        );
-                      }
-                    }
-                  } catch (e) {
-                    if (mounted) {
+                      if (!mounted) return;
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                      // ignore: use_build_context_synchronously
                       toastification.show(
                         context: context,
-                        type: ToastificationType.error,
-                        title: const Text('Erreur'),
-                        description: Text('Erreur: $e'),
-                        backgroundColor: Colors.red.shade100,
+                        type: ToastificationType.success,
+                        title: const Text('Nom modifié'),
+                        description: const Text('Votre nom a été mis à jour'),
+                        backgroundColor: Colors.green.shade100,
                         autoCloseDuration: const Duration(seconds: 3),
                       );
                     }
+                  } catch (e) {
+                    if (!mounted) return;
+                    // ignore: use_build_context_synchronously
+                    toastification.show(
+                      context: context,
+                      type: ToastificationType.error,
+                      title: const Text('Erreur'),
+                      description: Text('Erreur: $e'),
+                      backgroundColor: Colors.red.shade100,
+                      autoCloseDuration: const Duration(seconds: 3),
+                    );
                   }
                 }
               },
@@ -191,12 +192,12 @@ class _ProfilPageState extends State<ProfilPage> {
                 spacing: 8,
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    radius: 56,
+                    backgroundColor: ColorConstant.colorBlue,
+                    radius: 40,
                     child: Text(
                       initialLetter(profil?.name),
                       style: const TextStyle(
-                        fontSize: 32,
+                        fontSize: 24,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -205,7 +206,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
                   Text(
                     profil?.name ?? state.user.name,
-                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -214,7 +215,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       child: Text(
                         "Compte",
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: ColorConstant.colorGreen,
                         ),
@@ -290,7 +291,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       child: Text(
                         "Notifications",
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: ColorConstant.colorGreen,
                         ),
@@ -314,7 +315,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       child: Text(
                         "Autres",
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: ColorConstant.colorGreen,
                         ),
@@ -348,7 +349,7 @@ class _ProfilPageState extends State<ProfilPage> {
                         onTap: () => context.push("/transactions"),
                         child: ProfilTile(
                           type: "Historique des Transactions",
-                          icon: Icon(LucideIcons.history),
+                          icon: Icon(LucideIcons.fileText),
                           showPen: false,
                         ),
                       ),

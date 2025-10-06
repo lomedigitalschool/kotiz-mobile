@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
+import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/text_field.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -126,12 +127,19 @@ class _LoginPageState extends State<LoginPage> {
                           type: ToastificationType.success,
                           title: const Text('connexion réussie'),
                           description: Text("Bienvenue ${state.user.name}"),
-                          icon: const Icon(Icons.error, color: Colors.white),
+                          icon: const Icon(Icons.check, color: Colors.white),
                           backgroundColor: Colors.green.shade200,
                           autoCloseDuration: Duration(seconds: 3),
                           animationDuration: Duration(milliseconds: 600),
                         );
+                        // Rediriger vers le dashboard après connexion
                         context.go('/main');
+                        // Puis naviguer vers le dashboard (index 1)
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            context.read<BottomNavCubit>().setIndex(1);
+                          }
+                        });
                       }
                     },
                     child: BlocBuilder<AuthCubit, AuthState>(

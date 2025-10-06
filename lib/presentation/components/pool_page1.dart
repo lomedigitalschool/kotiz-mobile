@@ -53,7 +53,12 @@ class _PoolPage1State extends State<PoolPage1> {
               }
               return null;
             },
-            onChanged: (v) => widget.poolData.goalAmount = double.parse(v),
+            onChanged: (v) {
+              final parsed = double.tryParse(v);
+              if (parsed != null) {
+                widget.poolData.goalAmount = parsed;
+              }
+            },
           ),
 
           Column(

@@ -114,7 +114,7 @@ class DashboardPage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0),
                         child: Text(
-                          "BIENVENU SUR VOTRE \nDASHBOARD ${state.user.name.toUpperCase()}",
+                          "BIENVENU SUR VOTRE \nDASHBOARD ${(state.profil?.name ?? state.user.name).toUpperCase()}",
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,

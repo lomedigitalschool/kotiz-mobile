@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
 
   GoRouter _buildRouter() {
     return GoRouter(
-      initialLocation: "/home",
+      initialLocation: "/main",
       routes: [
         GoRoute(
           path: "/",
@@ -111,6 +111,7 @@ class _MyAppState extends State<MyApp> {
         GoRoute(path: "/create", builder: (context, state) => CreatePage()),
 
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
+        GoRoute(path: "/main", builder: (context, state) => MainPage()),
 
         // GoRoute(
         //   path: "/login",

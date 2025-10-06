@@ -25,12 +25,6 @@ class _HomePageState extends State<HomePage>
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
 
-  final List<Widget> pages = const [
-    DashboardPage(),
-    CreatePage(),
-    ProfilPage(),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -300,7 +294,6 @@ class _HomePageState extends State<HomePage>
                   // SizedBox(height: 189),
                   Padding(
                     padding: const EdgeInsets.all(32),
-
                     child: Column(
                       children: [
                         Center(
@@ -338,7 +331,9 @@ class _HomePageState extends State<HomePage>
                                         AppButton(
                                           text: "Créer une cagnotte",
                                           onPressed: () {
-                                            context.push("/create");
+                                            context
+                                                .read<BottomNavCubit>()
+                                                .setIndex(2);
                                           },
                                           backgroundColor:
                                               ColorConstant.colorGreen,
@@ -358,7 +353,6 @@ class _HomePageState extends State<HomePage>
                             ],
                           ),
                         ),
-
                         SizedBox(height: 72),
                       ],
                     ),
