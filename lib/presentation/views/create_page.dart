@@ -111,6 +111,9 @@ class _CreatePageState extends State<CreatePage> {
                 margin: EdgeInsetsGeometry.all(50),
                 elevation: 0,
                 stepIconMargin: EdgeInsets.all(0),
+                connectorColor: WidgetStatePropertyAll(
+                  ColorConstant.colorGreen,
+                ),
                 onStepContinue: () {
                   final form = formKeys[currentStep].currentState!;
                   if (state is! PoolLoading) {
