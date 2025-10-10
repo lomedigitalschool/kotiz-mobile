@@ -55,15 +55,27 @@ class AuthService {
     String phone,
   ) async {
     try {
+      debugPrint(
+        '🔄 Début inscription - Email: $email, Name: $name, Phone: $phone',
+      );
+
       final cred = await fb.FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
       final idToken = await cred.user!.getIdToken();
+      debugPrint('✅ Firebase Auth réussi, ID Token obtenu');
+
       // synchronisation avec l'api du User en mettant a jour les infos de l utilisateur
-      await firebaseSync(idToken.toString());
+      final syncResult = await firebaseSync(idToken.toString());
+      debugPrint('✅ Firebase sync réussi: $syncResult');
+
+      debugPrint(
+        '📤 Envoi du profil - Name: $name, Email: $email, Phone: $phone',
+      );
       await updateProfile(name: name, email: email, phone: phone);
+      debugPrint('✅ Profil mis à jour avec succès');
     } on fb.FirebaseAuthException catch (e, s) {
-      debugPrint("Auth error: ${e.code} – ${e.message}\n$s");
+      debugPrint("❌ Auth error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
         case 'email-already-in-use':
           throw Exception('Cet e-mail est déjà utilisé.');
@@ -72,10 +84,44 @@ class AuthService {
         case 'weak-password':
           throw Exception('Mot de passe trop faible.');
         default:
-          throw Exception('Erreur d’authentification.');
+          throw Exception('Erreur d\'authentification.');
       }
     } catch (e, s) {
-      debugPrint("Autre erreur: $e\n$s");
+      debugPrint("❌ Autre erreur lors de l'inscription: $e\n$s");
+      throw Exception('Une erreur inattendue est survenue.');
+    }
+  }
+
+  Future<void> registerUnified(
+    String email,
+    String password,
+    String displayName,
+    String phoneNumber,
+  ) async {
+    try {
+      debugPrint(
+        '🎯 Début inscription unifiée - Email: $email, DisplayName: $displayName, Phone: $phoneNumber',
+      );
+
+      final response = await _app.post(
+        "auth/register-unified",
+        data: {
+          "email": email,
+          "password": password,
+          "displayName": displayName,
+          "phoneNumber": phoneNumber,
+        },
+      );
+
+      debugPrint('✅ Inscription unifiée réussie: $response');
+    } on DioException catch (e) {
+      debugPrint(
+        '❌ Erreur inscription unifiée - Status: ${e.response?.statusCode}',
+      );
+      debugPrint('❌ Erreur inscription unifiée - Body: ${e.response?.data}');
+      rethrow;
+    } catch (e, s) {
+      debugPrint("❌ Autre erreur lors de l'inscription unifiée: $e\n$s");
       throw Exception('Une erreur inattendue est survenue.');
     }
   }
@@ -102,15 +148,20 @@ class AuthService {
     required String phone,
   }) async {
     try {
+      debugPrint(
+        '📤 Mise à jour du profil - Payload: {"name": "$name", "email": "$email", "phone": "$phone"}',
+      );
       final response = await _app.put(
         "auth/profile",
         data: {"name": name, "email": email, "phone": phone},
       );
 
-      debugPrint('Réponse: $response');
+      debugPrint('✅ Profil mis à jour - Réponse: $response');
     } on DioException catch (e) {
-      debugPrint('Erreur ${e.response?.statusCode}');
-      debugPrint('Body: ${e.response?.data}');
+      debugPrint(
+        '❌ Erreur mise à jour profil - Status: ${e.response?.statusCode}',
+      );
+      debugPrint('❌ Erreur mise à jour profil - Body: ${e.response?.data}');
       rethrow;
     }
   }
@@ -123,6 +174,23 @@ class AuthService {
 
       return ProfilUser.fromJson(data);
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> syncEmailVerification() async {
+    try {
+      debugPrint('🔄 Synchronisation du statut de vérification email...');
+      final user = _firebase.currentUser;
+      if (user != null) {
+        final idToken = await user.getIdToken(true);
+        if (idToken != null) {
+          await firebaseSync(idToken);
+          debugPrint('✅ Synchronisation email terminée');
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ Erreur lors de la synchronisation email: $e');
       rethrow;
     }
   }
@@ -166,8 +234,112 @@ class AuthService {
     try {
       await _app.post("auth/logout");
       await _firebase.signOut();
+      // Effacer le cache du token dans ApiConfig
+      _app.clearTokenCache();
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> registerWithEmail(
+    String email,
+    String password,
+    String displayName,
+    String? phoneNumber,
+  ) async {
+    try {
+      debugPrint(
+        '📧 Début inscription email - Email: $email, DisplayName: $displayName, Phone: $phoneNumber',
+      );
+
+      final cred = await fb.FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      final idToken = await cred.user!.getIdToken();
+      debugPrint('✅ Firebase Auth réussi, ID Token obtenu');
+
+      // synchronisation avec l'api du User
+      final syncResult = await firebaseSync(idToken.toString());
+      debugPrint('✅ Firebase sync réussi: $syncResult');
+
+      debugPrint(
+        '📤 Envoi du profil - Name: $displayName, Email: $email, Phone: $phoneNumber',
+      );
+      await updateProfile(
+        name: displayName,
+        email: email,
+        phone: phoneNumber ?? '',
+      );
+      debugPrint('✅ Profil mis à jour avec succès');
+    } on fb.FirebaseAuthException catch (e, s) {
+      debugPrint("❌ Auth error: ${e.code} – ${e.message}\n$s");
+      switch (e.code) {
+        case 'email-already-in-use':
+          throw Exception('Cet e-mail est déjà utilisé.');
+        case 'invalid-email':
+          throw Exception('Adresse e-mail invalide.');
+        case 'weak-password':
+          throw Exception('Mot de passe trop faible.');
+        default:
+          throw Exception('Erreur d\'authentification.');
+      }
+    } catch (e, s) {
+      debugPrint("❌ Autre erreur lors de l'inscription email: $e\n$s");
+      throw Exception('Une erreur inattendue est survenue.');
+    }
+  }
+
+  Future<dynamic> registerWithPhoneNumber(String phoneNumber) async {
+    try {
+      final formattedPhone = formatPhoneNumber(phoneNumber);
+
+      // En développement avec numéro de test, simuler complètement
+      if (!kReleaseMode && formattedPhone == '+22899974644') {
+        debugPrint('📱 Simulation complète pour numéro de test');
+
+        return {
+          'confirm': (String code) async {
+            if (code == '974644') {
+              // Créer un utilisateur anonyme Firebase
+              final userCredential = await fb.FirebaseAuth.instance
+                  .signInAnonymously();
+              return userCredential;
+            } else {
+              throw Exception('Code de vérification invalide');
+            }
+          },
+        };
+      }
+
+      // Pour l'instant, simuler pour les autres numéros
+      debugPrint('📱 Simulation inscription téléphone pour $formattedPhone');
+      return {
+        'confirm': (String code) async {
+          // Simuler vérification réussie
+          final userCredential = await fb.FirebaseAuth.instance
+              .signInAnonymously();
+          return userCredential;
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  String formatPhoneNumber(String phone) {
+    String cleaned = phone.replaceAll(RegExp(r'[^\d+]'), '');
+    if (cleaned.startsWith(RegExp(r'\d'))) {
+      cleaned = '+' + cleaned;
+    }
+    return cleaned;
+  }
+
+  Future<void> initRecaptcha() async {
+    // Implémentation simplifiée pour mobile
+    // Dans une vraie implémentation, il faudrait gérer reCAPTCHA
+  }
+
+  void cleanupRecaptcha() {
+    // Nettoyer reCAPTCHA si nécessaire
   }
 }

@@ -11,6 +11,12 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+test/pages_test.dart
+test/simple_test.
+CORRECTIONS_FINALES_MOBILE.md
+CORRECTIONS_MOBILE_APP.md
+CORRECTIONS_STATISTIQUES_MOBILE.md
+CORRECTION_ISOLATION_ETATS.md
 
 # IntelliJ related
 *.iml

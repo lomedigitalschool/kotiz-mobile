@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/data/models/contribution.dart';
 import 'package:kotiz_app/data/models/pool.dart';
 
@@ -15,16 +16,24 @@ class DashboardData {
     required this.myContributions,
   });
   factory DashboardData.fromJson(Map<String, dynamic> json) {
+    debugPrint('DashboardData.fromJson: $json');
     try {
       return DashboardData(
-        totalCollected: (json['totalCollected'] as num?)?.toDouble() ?? 0.0,
-        activePullsCount: json['activePullsCount'] ?? 0,
-        contributorsCount: json['contributorsCount'] ?? 0,
-        myPools: _parsePoolsList(json['myPulls']),
-        myContributions: _parseContributionsList(json['myContributions']),
+        totalCollected:
+            (json['total_collected'] as num?)?.toDouble() ??
+            (json['totalCollected'] as num?)?.toDouble() ??
+            0.0,
+        activePullsCount:
+            json['active_pulls_count'] ?? json['activePullsCount'] ?? 0,
+        contributorsCount:
+            json['contributors_count'] ?? json['contributorsCount'] ?? 0,
+        myPools: _parsePoolsList(json['my_pulls'] ?? json['myPulls']),
+        myContributions: _parseContributionsList(
+          json['my_contributions'] ?? json['myContributions'],
+        ),
       );
     } catch (e) {
-      print('Erreur parsing dashboard: $e');
+      debugPrint('Erreur parsing dashboard: $e');
       return DashboardData(
         totalCollected: 0.0,
         activePullsCount: 0,
@@ -45,7 +54,7 @@ class DashboardData {
             try {
               return Pool.fromJson(item as Map<String, dynamic>);
             } catch (e) {
-              print('Erreur parsing pool: $e');
+              debugPrint('Erreur parsing pool: $e');
               return null;
             }
           })
@@ -53,7 +62,7 @@ class DashboardData {
           .cast<Pool>()
           .toList();
     } catch (e) {
-      print('Erreur parsing pools list: $e');
+      debugPrint('Erreur parsing pools list: $e');
       return [];
     }
   }
@@ -68,7 +77,7 @@ class DashboardData {
             try {
               return Contribution.fromJson(item as Map<String, dynamic>);
             } catch (e) {
-              print('Erreur parsing contribution: $e');
+              debugPrint('Erreur parsing contribution: $e');
               return null;
             }
           })
@@ -76,7 +85,7 @@ class DashboardData {
           .cast<Contribution>()
           .toList();
     } catch (e) {
-      print('Erreur parsing contributions list: $e');
+      debugPrint('Erreur parsing contributions list: $e');
       return [];
     }
   }

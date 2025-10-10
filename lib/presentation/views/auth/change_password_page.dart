@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kotiz_app/core/services/auth_service.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';

@@ -33,6 +33,8 @@ class PaymentService {
         'success': true,
         'contribution': response['contribution'],
         'payment': response['payment'],
+        'paymentUrl':
+            response['payment']?['paymentUrl'] ?? response['statusUrl'],
         'message': response['message'] ?? 'Paiement initié avec succès',
       };
     } catch (e) {
@@ -60,6 +62,7 @@ class PaymentService {
         'phoneNumber': phoneNumber,
         'contributorEmail': contributorEmail,
         'paymentMethod': paymentMethod,
+        'pullId': int.parse(pullId),
       };
       if (message != null && message.isNotEmpty) data['message'] = message;
 
@@ -71,6 +74,7 @@ class PaymentService {
       return {
         'success': true,
         'contribution': response['contribution'],
+        'paymentUrl': response['paymentUrl'] ?? response['statusUrl'],
         'message': response['message'] ?? 'Contribution créée avec succès',
       };
     } catch (e) {

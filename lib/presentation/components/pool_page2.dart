@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kotiz_app/data/models/pool.data.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
+import 'package:kotiz_app/presentation/components/text_field.dart';
 
 class PoolPage2 extends StatefulWidget {
   final PoolData poolData;
@@ -102,6 +103,18 @@ class _PoolPage2State extends State<PoolPage2> {
             }).toList(),
             onChanged: (v) => widget.poolData.type = v,
           ),
+
+          TextFieldComponent(
+            labelTitle: "Limite de participants (optionnel)",
+            keyboardType: TextInputType.number,
+            onChanged: (v) {
+              final parsed = int.tryParse(v);
+              if (parsed != null) {
+                widget.poolData.participantLimit = parsed;
+              }
+            },
+          ),
+
           Row(
             spacing: 5,
             children: [
@@ -109,8 +122,6 @@ class _PoolPage2State extends State<PoolPage2> {
                 "Image(s) descriptif(s)",
                 style: TextStyle(fontSize: 24, color: Colors.black45),
               ),
-
-              Text("*", style: TextStyle(color: Colors.red, fontSize: 24)),
             ],
           ),
 

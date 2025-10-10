@@ -119,6 +119,8 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
     // Refresh dashboard and pools
     context.read<AuthCubit>().refreshDashboard();
     context.read<PoolCubit>().getAll();
+    // Forcer le refresh des pools publiques aussi
+    context.read<PoolCubit>().getAllPools();
 
     // Afficher message de succès
     toastification.show(
@@ -135,7 +137,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
     // Rediriger vers le dashboard après 3 secondes
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        context.go('/dashboard');
+        context.go('/explore');
       }
     });
   }
@@ -157,7 +159,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
 
     // Rediriger vers le dashboard
     if (mounted) {
-      context.go('/dashboard');
+      context.go('/explore');
     }
   }
 
@@ -174,10 +176,8 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
         return Container(
           width: 80,
           height: 80,
-          decoration: const BoxDecoration(
-            color: Color(
-              0xFF4CA2601A,
-            ), // ColorConstant.colorBlue.withOpacity(0.1)
+          decoration: BoxDecoration(
+            color: ColorConstant.colorBlue.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: const CircularProgressIndicator(
@@ -265,7 +265,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
         title: const Text('Statut du paiement'),
         backgroundColor: ColorConstant.colorWhite,
         leading: IconButton(
-          onPressed: () => context.go('/dashboard'),
+          onPressed: () => context.go('/explore'),
           icon: const Icon(LucideIcons.arrowLeft),
         ),
       ),

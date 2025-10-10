@@ -21,11 +21,16 @@ class _PoolDetailsState extends State<PoolDetails> {
   @override
   void initState() {
     super.initState();
-    context.read<PoolCubit>().getPoolDetails(widget.id);
+    // Charger les détails de la cagnotte
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('🔍 Chargement des détails de la cagnotte ID: ${widget.id}');
+      context.read<PoolCubit>().getPoolDetails(widget.id);
+    });
   }
 
   void sharePool(String poolId) {
     final url = 'https://kotiz.app/pool/$poolId';
+    // ignore: deprecated_member_use
     Share.share("Rejoins ma cagnotte $url");
   }
 
@@ -38,6 +43,26 @@ class _PoolDetailsState extends State<PoolDetails> {
   String initialLetter(String name) {
     final String initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return initial;
+  }
+
+  String _getContributorDisplayName(Map<String, dynamic> contributor) {
+    // Si le contributeur a un nom défini et n'est pas anonyme, l'utiliser
+    if (contributor["contributorName"] != null &&
+        contributor["contributorName"].toString().isNotEmpty &&
+        contributor["contributorName"] != "Anonyme") {
+      return contributor["contributorName"];
+    }
+
+    // Sinon, vérifier si c'est l'utilisateur connecté qui a contribué
+    final authState = context.read<AuthCubit>().state;
+    if (authState is AuthSuccess) {
+      // Si l'utilisateur connecté a contribué et que ce n'était pas anonyme
+      // On peut vérifier si le contributorId correspond à l'utilisateur actuel
+      // Pour l'instant, on suppose que si contributorName est null/vide, c'est l'utilisateur connecté
+      return authState.profil?.name ?? authState.user.name;
+    }
+
+    return "Anonyme";
   }
 
   Widget _buildDetailRow(String label, String value, IconData icon) {
@@ -97,16 +122,44 @@ class _PoolDetailsState extends State<PoolDetails> {
           ),
         ),
         backgroundColor: ColorConstant.colorWhite,
-        body: BlocBuilder<PoolCubit, PoolState>(
+        body: BlocConsumer<PoolCubit, PoolState>(
+          listener: (context, state) {
+            debugPrint('📊 PoolDetails - Nouvel état: ${state.runtimeType}');
+            if (state is PoolError) {
+              debugPrint('❌ PoolDetails - Erreur: ${state.message}');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Erreur: ${state.message}'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            } else if (state is PoolDetailsLoaded) {
+              debugPrint(
+                '✅ PoolDetails - Cagnotte chargée: ${state.pool.title} (ID: ${state.pool.id})',
+              );
+            }
+          },
           builder: (context, state) {
             if (state is PoolLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Chargement des détails...'),
+                  ],
+                ),
+              );
             }
-            if (state is PoolError) {
-              return Center(child: Text('Erreur: ${state.message}'));
-            }
+
             if (state is PoolDetailsLoaded) {
               final pool = state.pool;
+              debugPrint('🎯 Affichage de la cagnotte: ${pool.title}');
+              debugPrint(
+                '📊 Données: ID=${pool.id}, Montant=${pool.currentAmount}, Objectif=${pool.goalAmount}',
+              );
+
               final DateTime now = DateTime.now();
               return SingleChildScrollView(
                 child: Column(
@@ -261,7 +314,8 @@ class _PoolDetailsState extends State<PoolDetails> {
                                         ),
                                       ),
                                       Text(
-                                        pool.owner["name"],
+                                        pool.owner["name"] ??
+                                            "Utilisateur anonyme",
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -309,7 +363,7 @@ class _PoolDetailsState extends State<PoolDetails> {
                                     ),
                                   ),
                                   Text(
-                                    "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil()} ${pool.currency}",
+                                    "${pool.currentAmount.toInt()} ${pool.currency}",
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -346,17 +400,18 @@ class _PoolDetailsState extends State<PoolDetails> {
                             animation: true,
                             animationDuration: 800,
                             lineHeight: 12,
-                            percent: (pool.progressPercentage / 100).clamp(
-                              0.0,
-                              1.0,
-                            ),
+                            percent:
+                                (pool.goalAmount > 0
+                                        ? (pool.currentAmount / pool.goalAmount)
+                                        : 0.0)
+                                    .clamp(0.0, 1.0),
                             progressColor: ColorConstant.colorGreen,
                             backgroundColor: Colors.grey.shade200,
                             barRadius: const Radius.circular(6),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "${pool.progressPercentage.toStringAsFixed(1)}% de l'objectif atteint",
+                            "${(pool.goalAmount > 0 ? (pool.currentAmount / pool.goalAmount * 100) : 0.0).toStringAsFixed(1)}% de l'objectif atteint",
                             style: const TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
@@ -503,7 +558,7 @@ class _PoolDetailsState extends State<PoolDetails> {
                           const SizedBox(height: 12),
                           _buildDetailRow(
                             "Total collecté",
-                            "${(((pool.progressPercentage / 100) * pool.goalAmount)).ceil()} ${pool.currency}",
+                            "${pool.currentAmount.toInt()} ${pool.currency}",
                             Icons.account_balance_wallet,
                           ),
                           const SizedBox(height: 12),
@@ -627,8 +682,9 @@ class _PoolDetailsState extends State<PoolDetails> {
                                             radius: 20,
                                             child: Text(
                                               initialLetter(
-                                                contributor["contributorName"] ??
-                                                    "Anonyme",
+                                                _getContributorDisplayName(
+                                                  contributor,
+                                                ),
                                               ),
                                               style: const TextStyle(
                                                 fontSize: 16,
@@ -649,8 +705,9 @@ class _PoolDetailsState extends State<PoolDetails> {
                                                           .spaceBetween,
                                                   children: [
                                                     Text(
-                                                      contributor["contributorName"] ??
-                                                          "Anonyme",
+                                                      _getContributorDisplayName(
+                                                        contributor,
+                                                      ),
                                                       style: const TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:
@@ -742,7 +799,28 @@ class _PoolDetailsState extends State<PoolDetails> {
                 ),
               );
             }
-            return const SizedBox.shrink();
+
+            // État par défaut ou erreur
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Impossible de charger les détails',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<PoolCubit>().getPoolDetails(widget.id);
+                    },
+                    child: const Text('Réessayer'),
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ),

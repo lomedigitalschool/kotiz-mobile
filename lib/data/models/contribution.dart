@@ -26,19 +26,25 @@ class Contribution {
   factory Contribution.fromJson(Map<String, dynamic> json) {
     return Contribution(
       id: json['id'] ?? 0,
-      userId: json['userId'],
-      pullId: json['pullId'] ?? 0,
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      userId: json['userId'] ?? json['user_id'],
+      pullId: json['pullId'] ?? json['pull_id'] ?? 0,
+      amount: json['amount'] is String
+          ? double.tryParse(json['amount']) ?? 0.0
+          : (json['amount'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] ?? 'XOF',
       status: json['status'] ?? 'pending',
-      contributorName: json['contributorName'],
-      contributorEmail: json['contributorEmail'],
+      contributorName: json['contributorName'] ?? json['contributor_name'],
+      contributorEmail: json['contributorEmail'] ?? json['contributor_email'],
       message: json['message'],
-      createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
           : DateTime.now(),
-      updatedAt: json['updatedAt'] != null 
-          ? DateTime.parse(json['updatedAt']) 
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
           : DateTime.now(),
     );
   }

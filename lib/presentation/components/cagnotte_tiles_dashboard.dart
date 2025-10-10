@@ -38,23 +38,27 @@ class CagnotteTilesDashboard9 extends StatelessWidget {
                 try {
                   await context.read<PoolCubit>().deletePool(poolId);
                   // Refresh dashboard after deletion
-                  context.read<AuthCubit>().refreshDashboard();
-                  toastification.show(
-                    context: context,
-                    type: ToastificationType.success,
-                    title: const Text('Cagnotte supprimée'),
-                    backgroundColor: Colors.green.shade200,
-                    autoCloseDuration: const Duration(seconds: 3),
-                  );
+                  if (context.mounted) {
+                    context.read<AuthCubit>().refreshDashboard();
+                    toastification.show(
+                      context: context,
+                      type: ToastificationType.success,
+                      title: const Text('Cagnotte supprimée'),
+                      backgroundColor: Colors.green.shade200,
+                      autoCloseDuration: const Duration(seconds: 3),
+                    );
+                  }
                 } catch (e) {
-                  toastification.show(
-                    context: context,
-                    type: ToastificationType.error,
-                    title: const Text('Erreur'),
-                    description: Text('Erreur lors de la suppression: $e'),
-                    backgroundColor: Colors.red.shade200,
-                    autoCloseDuration: const Duration(seconds: 3),
-                  );
+                  if (context.mounted) {
+                    toastification.show(
+                      context: context,
+                      type: ToastificationType.error,
+                      title: const Text('Erreur'),
+                      description: Text('Erreur lors de la suppression: $e'),
+                      backgroundColor: Colors.red.shade200,
+                      autoCloseDuration: const Duration(seconds: 3),
+                    );
+                  }
                 }
               },
               child: const Text(

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -6,15 +7,15 @@ void main() {
       // Vérification que les nouvelles pages ont été créées
       const pages = [
         'EditPoolPage - Page de modification de cagnotte',
-        'ResetPasswordPage - Page de réinitialisation de mot de passe', 
+        'ResetPasswordPage - Page de réinitialisation de mot de passe',
         'WithdrawPoolPage - Page de retrait de cagnotte',
         'PaymentStatusPage - Page de statut paiement SEMOA',
       ];
-      
+
       for (final page in pages) {
-        print('✅ $page');
+        debugPrint('✅ $page');
       }
-      
+
       expect(pages.length, equals(4));
     });
 
@@ -26,11 +27,11 @@ void main() {
         'Navigation vers réinitialisation mot de passe',
         'Gestion de l\'authentification',
       ];
-      
+
       for (final feature in features) {
-        print('✅ $feature');
+        debugPrint('✅ $feature');
       }
-      
+
       expect(features.length, equals(5));
     });
 
@@ -40,11 +41,11 @@ void main() {
         'requestWithdraw - Demande de retrait',
         'PoolSuccess state - État de succès',
       ];
-      
+
       for (final method in methods) {
-        print('✅ $method');
+        debugPrint('✅ $method');
       }
-      
+
       expect(methods.length, equals(3));
     });
 
@@ -56,11 +57,11 @@ void main() {
         'Gestion des types de données (int vs double)',
         'Navigation et routing configurés',
       ];
-      
+
       for (final fix in fixes) {
-        print('✅ $fix');
+        debugPrint('✅ $fix');
       }
-      
+
       expect(fixes.length, equals(5));
     });
   });

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
@@ -20,12 +20,12 @@ class ApiConfig extends HttpClient {
         ),
       ) {
     if (!kIsWeb) {
-      (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
-          (client) {
-            client.badCertificateCallback =
-                (X509Certificate cert, String host, int port) => true;
-            return client;
-          };
+      (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        final client = io.HttpClient();
+        client.badCertificateCallback =
+            (io.X509Certificate cert, String host, int port) => true;
+        return client;
+      };
     }
     _dio.interceptors.add(
       InterceptorsWrapper(
@@ -77,22 +77,60 @@ class ApiConfig extends HttpClient {
   // Méthode pour attacher le token si nécessaire
   Future<void> _attachToken(RequestOptions options) async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      debugPrint("⚠️ Aucun utilisateur Firebase connecté");
+      return;
+    }
 
     final now = DateTime.now();
     if (_cachedToken == null ||
         _tokenExpiry == null ||
         now.isAfter(_tokenExpiry!)) {
+      debugPrint("🔄 Rafraîchissement du token JWT");
       final idTokenResult = await user.getIdTokenResult(true);
       _cachedToken = idTokenResult.token;
       _tokenExpiry = idTokenResult.expirationTime?.subtract(
         const Duration(minutes: 5),
       );
+      debugPrint("✅ Token JWT rafraîchi, expiration: $_tokenExpiry");
     }
 
     if (_cachedToken != null) {
       options.headers["Authorization"] = "Bearer $_cachedToken";
+      debugPrint("🔑 Token JWT attaché à la requête: ${options.path}");
+    } else {
+      debugPrint(
+        "❌ Aucun token JWT disponible pour la requête: ${options.path}",
+      );
     }
+  }
+
+  // Méthode pour effacer le cache du token lors de la déconnexion
+  void clearTokenCache() {
+    _cachedToken = null;
+    _tokenExpiry = null;
+    debugPrint('Cache du token JWT effacé');
+  }
+
+  Future<T> getPublic<T>(String url) async {
+    // Créer une instance Dio temporaire sans intercepteur pour les requêtes publiques
+    final publicDio = Dio(
+      BaseOptions(
+        baseUrl: _dio.options.baseUrl,
+        headers: {"Content-Type": "application/json"},
+      ),
+    );
+    if (!kIsWeb) {
+      (publicDio.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
+          () {
+            final client = io.HttpClient();
+            client.badCertificateCallback =
+                (io.X509Certificate cert, String host, int port) => true;
+            return client;
+          };
+    }
+    final response = await publicDio.get(url);
+    return response.data as T;
   }
 
   @override

@@ -16,10 +16,18 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    final email = json["email"] ?? "";
+    final name = json["name"];
+
+    // Utiliser une valeur par défaut plus appropriée
+    final defaultName = name?.isNotEmpty == true && name != "Utilisateur"
+        ? name
+        : (email.isNotEmpty ? email.split('@')[0] : "Utilisateur");
+
     return User(
       id: (json['id']),
-      email: json["email"],
-      name: json["name"] ?? "Utilisateur",
+      email: email,
+      name: defaultName,
       phone: json["phone"] ?? "",
       // isVerified: json["isVerified"],
       avatarUrl: json["avatarUrl"] ?? "",

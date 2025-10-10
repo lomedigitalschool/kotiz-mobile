@@ -11,25 +11,92 @@ class PoolService {
 
   Future<Pool> poolDetails(String id) async {
     try {
-      final data = await _app.get<Map<String, dynamic>>("public/pulls/$id");
-      debugPrint('Pool details: $data');
+      // ✅ CORRECTION: Utiliser l'endpoint mixte pour accéder aux détails avec contrôle d'accès
+      final response = await _app.get("pulls/$id");
+      debugPrint('Pool details response: $response');
 
-      return Pool.fromJson(data['data']);
+      // Sécuriser l'accès aux données avec gestion de différents formats
+      dynamic data;
+      if (response is Map<String, dynamic>) {
+        // Format { success: true, data: { ... } }
+        data = response['data'];
+        if (data == null) {
+          // Format direct { ... } sans enveloppe
+          data = response;
+        }
+      } else if (response is List) {
+        // Format inattendu en liste - prendre le premier élément si possible
+        debugPrint(
+          '⚠️ Réponse inattendue en liste pour poolDetails, utilisation du premier élément',
+        );
+        if (response.isNotEmpty) {
+          data = response[0];
+        } else {
+          throw Exception('Liste vide reçue du serveur');
+        }
+      } else {
+        throw Exception('Type de réponse inattendu: ${response.runtimeType}');
+      }
+
+      if (data != null && data is Map<String, dynamic>) {
+        debugPrint('✅ Parsing des détails de cagnotte réussi');
+        return Pool.fromJson(data);
+      }
+
+      throw Exception('Données de cagnotte nulles ou mal formatées');
     } catch (e, s) {
-      debugPrint(" error lors de la recuperation : $e\n$s");
+      debugPrint("❌ Erreur lors de la récupération des détails : $e\n$s");
       rethrow;
     }
   }
 
   Future<List<Pool>> fetchPools() async {
     try {
-      final data = await _app.get<Map<String, dynamic>>('public/pulls');
+      // ✅ CORRECTION: Utiliser l'endpoint privé pour récupérer les cagnottes de l'utilisateur connecté
+      // Au lieu de 'public/pulls' qui retourne toutes les cagnottes publiques
+      // Le backend retourne directement une liste, pas un objet avec clé 'data'
+      final response = await _app.get('/pulls');
 
-      final list = data['data'] as List<dynamic>;
+      final list = response as List<dynamic>;
+
+      debugPrint('✅ Cagnottes utilisateur récupérées: ${list.length}');
 
       return list.map((e) => Pool.fromJson(e as Map<String, dynamic>)).toList();
     } catch (e, s) {
-      debugPrint('Erreur de récupération des cagnottes : $e\n$s');
+      debugPrint('❌ Erreur de récupération des cagnottes utilisateur : $e\n$s');
+      rethrow;
+    }
+  }
+
+  Future<List<Pool>> fetchAllPools() async {
+    try {
+      // ✅ CORRECTION: Utiliser l'endpoint authentifié pour récupérer toutes les cagnottes (publiques et privées)
+      final response = await _app.get('pulls/all');
+      debugPrint('✅ Récupération de toutes les cagnottes via pulls/all');
+
+      // Le backend peut retourner soit une liste directement, soit un objet avec 'data' ou 'pools'
+      dynamic jsonData = response;
+
+      List<dynamic> list;
+      if (jsonData is List) {
+        list = jsonData;
+      } else if (jsonData is Map<String, dynamic>) {
+        // Essayer différentes structures possibles
+        list =
+            jsonData['data'] as List<dynamic>? ??
+            jsonData['pools'] as List<dynamic>? ??
+            (jsonData['data'] is Map
+                ? (jsonData['data']['pools'] as List<dynamic>? ?? [])
+                : []);
+      } else {
+        list = [];
+      }
+
+      debugPrint('✅ Toutes les cagnottes récupérées: ${list.length}');
+
+      return list.map((e) => Pool.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (e, s) {
+      debugPrint('❌ Erreur de récupération de toutes les cagnottes : $e\n$s');
       rethrow;
     }
   }
@@ -72,6 +139,9 @@ class PoolService {
   }
 
   Future<Map<String, dynamic>> createPool(PoolData poolData) async {
+    debugPrint("🔍 Début de création de cagnotte");
+    debugPrint("📊 Données de cagnotte: ${poolData.toJson()}");
+
     if (poolData.image != null) {
       // Si il y a une image, utiliser FormData mais avec les champs séparés
       final formData = FormData.fromMap({
@@ -87,6 +157,7 @@ class PoolService {
       });
 
       try {
+        debugPrint("📤 Envoi avec image via FormData");
         final Map<String, dynamic> response = await _app.post(
           "/pulls",
           data: formData,
@@ -95,12 +166,24 @@ class PoolService {
         debugPrint("✅ Réponse: ${response["message"]}");
         return response;
       } catch (e) {
-        debugPrint("❌ Erreur: $e");
+        debugPrint("❌ Erreur lors de la création avec image: $e");
+        if (e is DioException) {
+          debugPrint("🔍 Détails DioException:");
+          debugPrint("   Status Code: ${e.response?.statusCode}");
+          debugPrint("   Status Message: ${e.response?.statusMessage}");
+          debugPrint("   Response Data: ${e.response?.data}");
+          debugPrint("   Request Headers: ${e.requestOptions.headers}");
+          debugPrint(
+            "   Request URL: ${e.requestOptions.baseUrl}${e.requestOptions.path}",
+          );
+        }
         rethrow;
       }
     } else {
       // Si pas d'image, envoyer directement en JSON
       try {
+        debugPrint("📤 Envoi sans image via JSON");
+        debugPrint("📋 Payload JSON: ${poolData.toJson()}");
         final Map<String, dynamic> response = await _app.post(
           "/pulls",
           data: poolData.toJson(),
@@ -108,7 +191,17 @@ class PoolService {
         debugPrint("✅ Réponse: ${response["message"]}");
         return response;
       } catch (e) {
-        debugPrint("❌ Erreur: $e");
+        debugPrint("❌ Erreur lors de la création sans image: $e");
+        if (e is DioException) {
+          debugPrint("🔍 Détails DioException:");
+          debugPrint("   Status Code: ${e.response?.statusCode}");
+          debugPrint("   Status Message: ${e.response?.statusMessage}");
+          debugPrint("   Response Data: ${e.response?.data}");
+          debugPrint("   Request Headers: ${e.requestOptions.headers}");
+          debugPrint(
+            "   Request URL: ${e.requestOptions.baseUrl}${e.requestOptions.path}",
+          );
+        }
         rethrow;
       }
     }

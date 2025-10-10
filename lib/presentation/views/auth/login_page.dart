@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
           title: Text("Connexion", style: TextStyle(fontSize: 24)),
           centerTitle: true,
           leading: IconButton(
-            onPressed: () => context.go("/main"),
+            onPressed: () => context.go("/home"),
             icon: Icon(
               LucideIcons.arrowLeft400,
               size: 30.0,

@@ -22,6 +22,7 @@ import 'package:kotiz_app/logic/notification_cubit.dart';
 import 'package:kotiz_app/presentation/views/auth/register_page.dart';
 import 'package:kotiz_app/presentation/views/contribution_page.dart';
 import 'package:kotiz_app/presentation/views/create_page.dart';
+import 'package:kotiz_app/presentation/views/edit_pool_page.dart';
 import 'package:kotiz_app/presentation/views/kyc_page.dart';
 import 'package:kotiz_app/presentation/views/transaction_list.dart';
 import 'package:kotiz_app/presentation/views/notifications_page.dart';
@@ -61,14 +62,26 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final prefs = await SharedPreferences.getInstance();
-  final showHome = prefs.getBool("showHome") ?? false;
+  final secureStorage = SecureStorage();
+  final token = await secureStorage.getToken();
+  final seenOnboarding = prefs.getBool("seenOnboarding") ?? false;
 
-  runApp(MyApp(showHome: showHome));
+  runApp(
+    MyApp(
+      seenOnboarding: seenOnboarding,
+      isLoggedIn: token != null && token.isNotEmpty,
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, required this.showHome});
-  final bool showHome;
+  const MyApp({
+    super.key,
+    required this.seenOnboarding,
+    required this.isLoggedIn,
+  });
+  final bool seenOnboarding;
+  final bool isLoggedIn;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -97,12 +110,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   GoRouter _buildRouter() {
+    // Logique d'orientation intelligente
+    String initialRoute;
+    if (!widget.seenOnboarding) {
+      initialRoute = "/onboarding";
+    } else if (widget.isLoggedIn) {
+      initialRoute = "/main"; // utilisateur connecté
+    } else {
+      initialRoute = "/home"; // utilisateur non connecté
+    }
+
     return GoRouter(
-      initialLocation: "/main",
+      initialLocation: initialRoute,
       routes: [
         GoRoute(
           path: "/",
-          builder: (context, state) => SplashScreen(showHome: widget.showHome),
+          builder: (context, state) =>
+              SplashScreen(seenOnboarding: widget.seenOnboarding),
         ),
         GoRoute(path: "/login", builder: (context, state) => LoginPage()),
         GoRoute(path: "/onboarding", builder: (context, state) => OnBoarding()),
@@ -111,8 +135,6 @@ class _MyAppState extends State<MyApp> {
         GoRoute(path: "/create", builder: (context, state) => CreatePage()),
 
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
-        GoRoute(path: "/main", builder: (context, state) => MainPage()),
-
         // GoRoute(
         //   path: "/login",
         //   pageBuilder: (context, state) => CustomTransitionPage(
@@ -146,6 +168,15 @@ class _MyAppState extends State<MyApp> {
           },
         ),
         GoRoute(
+          path: "/edit-pool/:id",
+          builder: (context, state) {
+            final String poolId = state.pathParameters["id"]!;
+            // Pour l'instant, on va passer un pool vide et le charger dans la page
+            // Une meilleure approche serait de passer les données via extra
+            return EditPoolPage(poolId: poolId);
+          },
+        ),
+        GoRoute(
           path: "/contribute/:poolId",
           builder: (context, state) {
             final String poolId = state.pathParameters["poolId"]!;
@@ -176,13 +207,6 @@ class _MyAppState extends State<MyApp> {
         GoRoute(
           path: "/supported-pools",
           builder: (context, state) => const SupportedPoolsPage(),
-        ),
-        GoRoute(
-          path: "/pool-details/:id",
-          builder: (context, state) {
-            final String id = state.pathParameters["id"]!;
-            return PoolDetails(id: id);
-          },
         ),
         // Note: WithdrawPoolPage est accessible via navigation directe depuis PoolDetails
       ],
@@ -218,16 +242,17 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider(create: (_) => BottomNavCubit()),
         BlocProvider(create: (_) => AuthCubit(authService, _poolService)),
-        BlocProvider(create: (_) => PoolCubit(_poolService)..getAll()),
+        BlocProvider(create: (_) => PoolCubit(_poolService)),
         BlocProvider(create: (_) => TransactionCubit(_transactionService)),
         BlocProvider(create: (_) => NotificationCubit(_notificationService)),
       ],
       child: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           // Redirection automatique vers login lors de la déconnexion
-          if (state is Unauthenticated) {
-            _router.go('/login');
-          }
+          // Désactivé pour éviter les redirections inattendues sur les pages publiques
+          // if (state is Unauthenticated) {
+          //   _router.go('/login');
+          // }
         },
         child: MaterialApp.router(
           routerConfig: _router,

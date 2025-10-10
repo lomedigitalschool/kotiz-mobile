@@ -20,6 +20,22 @@ class PoolLoaded extends PoolState {
   List<Object?> get props => [pools];
 }
 
+class UserPoolsLoaded extends PoolState {
+  final List<Pool> userPools;
+
+  UserPoolsLoaded(this.userPools);
+  @override
+  List<Object?> get props => [userPools];
+}
+
+class AllPoolsLoaded extends PoolState {
+  final List<Pool> allPools;
+
+  AllPoolsLoaded(this.allPools);
+  @override
+  List<Object?> get props => [allPools];
+}
+
 class PoolCreated extends PoolState {
   final Map<String, dynamic> poolCreated;
   PoolCreated(this.poolCreated);
@@ -68,9 +84,19 @@ class PoolCubit extends Cubit<PoolState> {
     emit(PoolLoading());
     try {
       final pools = await _service.fetchPools();
-      emit(PoolLoaded(pools));
+      emit(UserPoolsLoaded(pools));
     } catch (e) {
-      emit(PoolError("Erreur lors de la  récupération des cagnottes"));
+      emit(PoolError("Erreur lors de la récupération des cagnottes utilisateur"));
+    }
+  }
+
+  Future<void> getAllPools() async {
+    emit(PoolLoading());
+    try {
+      final pools = await _service.fetchAllPools();
+      emit(AllPoolsLoaded(pools));
+    } catch (e) {
+      emit(PoolError("Erreur lors de la récupération de toutes les cagnottes"));
     }
   }
 

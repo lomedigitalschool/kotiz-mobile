@@ -325,18 +325,42 @@ class _ProfilPageState extends State<ProfilPage> {
                   Column(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          context.read<AuthCubit>().logout();
-                          toastification.show(
+                        onTap: () async {
+                          final shouldLogout = await showDialog<bool>(
                             context: context,
-                            type: ToastificationType.success,
-                            title: const Text('Déconnexion effectuée'),
-                            backgroundColor: Colors.green.shade100,
-                            autoCloseDuration: Duration(seconds: 2),
-                            animationDuration: Duration(milliseconds: 600),
+                            builder: (context) => AlertDialog(
+                              title: const Text('Confirmation'),
+                              content: const Text(
+                                'Voulez-vous vraiment vous déconnecter ?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: const Text('Annuler'),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: const Text('Se déconnecter'),
+                                ),
+                              ],
+                            ),
                           );
-                          // Redirection vers login
-                          context.go('/login');
+
+                          if (shouldLogout == true) {
+                            context.read<AuthCubit>().logout();
+                            toastification.show(
+                              context: context,
+                              type: ToastificationType.success,
+                              title: const Text('Déconnexion effectuée'),
+                              backgroundColor: Colors.green.shade100,
+                              autoCloseDuration: Duration(seconds: 2),
+                              animationDuration: Duration(milliseconds: 600),
+                            );
+                            // Redirection vers login
+                            context.go('/login');
+                          }
                         },
                         child: ProfilTile(
                           type: "Se Deconnecter",

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/transaction_cubit.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
-import 'package:kotiz_app/presentation/views/transaction_details.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class TransactionListPage extends StatefulWidget {
@@ -28,7 +27,7 @@ class _TransactionListPageState extends State<TransactionListPage> {
         backgroundColor: ColorConstant.colorWhite,
         centerTitle: true,
         title: Text(
-          "Mes Participations",
+          "Mes Transactions",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
@@ -46,17 +45,24 @@ class _TransactionListPageState extends State<TransactionListPage> {
               builder: (context, authState) {
                 if (authState is AuthSuccess) {
                   final dashboard = authState.dashboardData;
-                  final totalContributions = dashboard?.myContributions.length ?? 0;
-                  final totalAmount = dashboard?.myContributions
-                      .fold(0.0, (sum, c) => sum + c.amount) ?? 0.0;
-                  
+                  final totalContributions =
+                      dashboard?.myContributions.length ?? 0;
+                  final totalAmount =
+                      dashboard?.myContributions.fold(
+                        0.0,
+                        (sum, c) => sum + c.amount,
+                      ) ??
+                      0.0;
+
                   return Container(
                     margin: EdgeInsets.all(16),
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: ColorConstant.colorGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: ColorConstant.colorGreen.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: ColorConstant.colorGreen.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -113,8 +119,9 @@ class _TransactionListPageState extends State<TransactionListPage> {
               child: BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, authState) {
                   if (authState is AuthSuccess) {
-                    final contributions = authState.dashboardData?.myContributions ?? [];
-                    
+                    final contributions =
+                        authState.dashboardData?.myContributions ?? [];
+
                     if (contributions.isEmpty) {
                       return Center(
                         child: Column(
@@ -138,15 +145,13 @@ class _TransactionListPageState extends State<TransactionListPage> {
                             Text(
                               "Vous n'avez encore contribué à aucune cagnotte",
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey.shade500,
-                              ),
+                              style: TextStyle(color: Colors.grey.shade500),
                             ),
                           ],
                         ),
                       );
                     }
-                    
+
                     return ListView.builder(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       itemCount: contributions.length,
@@ -205,7 +210,9 @@ class _TransactionListPageState extends State<TransactionListPage> {
                                 ),
                               ],
                             ),
-                            onTap: () => context.push("/pool-details/${contribution.pullId}"),
+                            onTap: () => context.push(
+                              "/poolDetails/${contribution.pullId}",
+                            ),
                           ),
                         );
                       },
@@ -221,56 +228,6 @@ class _TransactionListPageState extends State<TransactionListPage> {
             ),
           ],
         ),
-      ),
-
-    );
-  }
-
-  Widget _buildTransactionItem(
-    String title,
-    String type,
-    String status,
-    String date,
-    String id,
-  ) {
-    Color statusColor;
-    switch (status) {
-      case "Réussi":
-        statusColor = Colors.green;
-        break;
-      case "En cours":
-        statusColor = Colors.orange;
-        break;
-      case "Échec":
-        statusColor = Colors.red;
-        break;
-      default:
-        statusColor = Colors.grey;
-    }
-
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ListTile(
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text("Type: $type"), Text("Date: $date")],
-        ),
-        trailing: Text(
-          status,
-          style: TextStyle(color: statusColor, fontWeight: FontWeight.bold),
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BlocProvider.value(
-                value: context.read<TransactionCubit>(),
-                child: TransactionDetailsPage(id: id),
-              ),
-            ),
-          );
-        },
       ),
     );
   }

@@ -15,7 +15,8 @@ Développée par Lome Digital School.
 - Support multilingue (français/anglais) préparé
 
 ### Système d'authentification complet
-- Inscription et connexion utilisateur
+- Inscription unifiée (prénom, nom, email, téléphone, mot de passe)
+- Connexion utilisateur
 - Authentification Firebase
 - Gestion des sessions persistantes
 - Vérification des emails
@@ -122,7 +123,7 @@ lib/
 ## 🔌 Intégration Backend
 
 ### Endpoints API utilisés
-- `POST /auth/register` - Inscription
+- `POST /auth/register-unified` - Inscription unifiée (email + téléphone + mot de passe)
 - `POST /auth/login` - Connexion
 - `GET /pulls` - Liste cagnottes
 - `POST /pulls` - Créer cagnotte

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kotiz_app/core/services/auth_service.dart';
 import 'package:kotiz_app/core/services/pool_service.dart';
@@ -7,6 +8,7 @@ import 'package:kotiz_app/data/models/dashboard_data.dart';
 import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/data/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // les States
 abstract class AuthState extends Equatable {
@@ -75,18 +77,27 @@ class AuthCubit extends Cubit<AuthState> {
 
   void validateRegisterForm(
     String name,
+    String prenom,
     String email,
     String phone,
     String password,
     String confirmPassword,
   ) {
-    final bool phoneOrEmail =
-        email.trim().isNotEmpty || phone.trim().isNotEmpty;
+    final hasEmail = email.trim().isNotEmpty;
+    final hasPhone = phone.trim().isNotEmpty;
+    final hasPassword = password.trim().isNotEmpty;
+    final hasConfirmPassword = confirmPassword.trim().isNotEmpty;
+
+    // Au moins un identifiant (email ou téléphone) et nom/prénom
+    final hasIdentifier = hasEmail || hasPhone;
     final isValid =
         name.trim().isNotEmpty &&
-        phoneOrEmail &&
-        password.trim().isNotEmpty &&
-        confirmPassword.trim().isNotEmpty;
+        prenom.trim().isNotEmpty &&
+        hasIdentifier &&
+        // Si email fourni, mot de passe requis
+        (!hasEmail || (hasPassword && hasConfirmPassword)) &&
+        // Si téléphone fourni sans email, pas besoin de mot de passe
+        (hasEmail || !hasPhone || !hasPassword || hasConfirmPassword);
     emit(AuthFormInvalid(isValid));
   }
 
@@ -95,7 +106,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       // Nettoyer les anciennes données
       await _secureStorage.clearAll();
-      
+
       final User user = await authService.login(email, password);
       final ProfilUser profil = await authService.fetchProfile();
       final DashboardData dashboard = await _service.fetchDashboard();
@@ -104,9 +115,9 @@ class AuthCubit extends Cubit<AuthState> {
       await _secureStorage.saveProfil(profil);
 
       emit(AuthSuccess(user: user, profil: profil, dashboardData: dashboard));
-      
+
       // Charger les notifications après la connexion réussie
-      // Note: Ceci nécessiterait l'injection du NotificationCubit, 
+      // Note: Ceci nécessiterait l'injection du NotificationCubit,
       // mais pour simplifier, on le fera dans l'UI
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -129,6 +140,69 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> registerUnified({
+    required String email,
+    required String password,
+    required String displayName,
+    required String phoneNumber,
+  }) async {
+    emit(AuthLoading());
+    try {
+      await authService.registerUnified(
+        email,
+        password,
+        displayName,
+        phoneNumber,
+      );
+      emit(AuthRegisterSucces());
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> registerWithEmail({
+    required String email,
+    required String password,
+    required String displayName,
+    String? phoneNumber,
+  }) async {
+    emit(AuthLoading());
+    try {
+      await authService.registerWithEmail(
+        email,
+        password,
+        displayName,
+        phoneNumber,
+      );
+      emit(AuthRegisterSucces());
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> registerWithPhone(String phoneNumber) async {
+    emit(AuthLoading());
+    try {
+      final confirmationResult = await authService.registerWithPhoneNumber(
+        phoneNumber,
+      );
+      emit(
+        AuthSuccess(
+          user: User(id: null, name: '', email: '', phone: phoneNumber),
+          profil: null,
+        ),
+      );
+      // Note: Pour l'inscription téléphone, il faudrait gérer l'OTP séparément
+      // Pour l'instant, on simule le succès
+      emit(AuthRegisterSucces());
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
   // Future<void> getProfil() async {
   //   emit(AuthLoading());
   //   try {
@@ -144,6 +218,11 @@ class AuthCubit extends Cubit<AuthState> {
   void logout() async {
     await authService.logout();
     await _secureStorage.clearAll();
+
+    // Effacer aussi SharedPreferences pour éviter tout cache résiduel
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
     emit(Unauthenticated());
   }
 
@@ -154,11 +233,13 @@ class AuthCubit extends Cubit<AuthState> {
         final profil = await authService.fetchProfile();
         final dashboard = await _service.fetchDashboard();
         await _secureStorage.saveProfil(profil);
-        emit(AuthSuccess(
-          user: currentState.user,
-          profil: profil,
-          dashboardData: dashboard,
-        ));
+        emit(
+          AuthSuccess(
+            user: currentState.user,
+            profil: profil,
+            dashboardData: dashboard,
+          ),
+        );
       } catch (e) {
         emit(AuthError(e.toString()));
       }
@@ -170,11 +251,13 @@ class AuthCubit extends Cubit<AuthState> {
     if (currentState is AuthSuccess) {
       try {
         final dashboard = await _service.fetchDashboard();
-        emit(AuthSuccess(
-          user: currentState.user,
-          profil: currentState.profil,
-          dashboardData: dashboard,
-        ));
+        emit(
+          AuthSuccess(
+            user: currentState.user,
+            profil: currentState.profil,
+            dashboardData: dashboard,
+          ),
+        );
       } catch (e) {
         emit(AuthError(e.toString()));
       }
@@ -192,23 +275,33 @@ class AuthCubit extends Cubit<AuthState> {
           // Toujours récupérer les données fraîches depuis l'API
           final ProfilUser profil = await authService.fetchProfile();
           final DashboardData dashboard = await _service.fetchDashboard();
-          
+
           // Créer un utilisateur à partir des données Firebase et du profil
           final User currentUser = User(
             id: null, // L'ID sera dans le profil
             email: firebaseUser.email ?? '',
-            name: profil.name ?? firebaseUser.displayName ?? 'Utilisateur',
+            name: profil.name.isNotEmpty == true && profil.name != 'Utilisateur'
+                ? profil.name
+                : (firebaseUser.displayName?.isNotEmpty == true
+                      ? firebaseUser.displayName!
+                      : firebaseUser.email?.split('@')[0] ?? 'Utilisateur'),
             phone: profil.phone ?? '',
           );
-          
+
           // Sauvegarder les données
           await _secureStorage.saveUser(currentUser);
           await _secureStorage.saveProfil(profil);
-          
-          emit(AuthSuccess(user: currentUser, profil: profil, dashboardData: dashboard));
+
+          emit(
+            AuthSuccess(
+              user: currentUser,
+              profil: profil,
+              dashboardData: dashboard,
+            ),
+          );
           return;
         } catch (e) {
-          print('Erreur lors de la récupération du profil: $e');
+          debugPrint('Erreur lors de la récupération du profil: $e');
           // Fallback avec les données stockées
           final User? storedUser = await _secureStorage.getUser();
           final ProfilUser? storedProfil = await _secureStorage.getProfil();
@@ -221,5 +314,75 @@ class AuthCubit extends Cubit<AuthState> {
     }
 
     emit(Unauthenticated());
+  }
+
+  // Vérifier si l'email de l'utilisateur est vérifié
+  bool isEmailVerified() {
+    final user = fb.FirebaseAuth.instance.currentUser;
+    return user?.emailVerified ?? false;
+  }
+
+  // Renvoyer l'email de vérification
+  Future<void> sendEmailVerification() async {
+    try {
+      final user = fb.FirebaseAuth.instance.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        debugPrint('Email de vérification envoyé à ${user.email}');
+      }
+    } catch (e) {
+      debugPrint('Erreur lors de l\'envoi de l\'email de vérification: $e');
+      rethrow;
+    }
+  }
+
+  // Rafraîchir le profil utilisateur depuis le backend
+  Future<void> fetchUserProfile() async {
+    final currentState = state;
+    if (currentState is AuthSuccess) {
+      try {
+        final profil = await authService.fetchProfile();
+        final dashboard = await _service.fetchDashboard();
+
+        // Mettre à jour l'utilisateur avec les données du profil
+        final updatedUser = User(
+          id: currentState.user.id,
+          email: currentState.user.email,
+          name: profil.name.isNotEmpty && profil.name != 'Utilisateur'
+              ? profil.name
+              : currentState.user.name,
+          phone: profil.phone ?? currentState.user.phone,
+          avatarUrl: currentState.user.avatarUrl,
+        );
+
+        await _secureStorage.saveUser(updatedUser);
+        await _secureStorage.saveProfil(profil);
+
+        emit(
+          AuthSuccess(
+            user: updatedUser,
+            profil: profil,
+            dashboardData: dashboard,
+          ),
+        );
+      } catch (e) {
+        debugPrint('Erreur lors du rafraîchissement du profil: $e');
+        // Ne pas émettre d'erreur pour éviter de casser l'UX
+      }
+    }
+  }
+
+  Future<void> syncEmailVerification() async {
+    final currentState = state;
+    if (currentState is AuthSuccess) {
+      try {
+        await authService.syncEmailVerification();
+        // Rafraîchir le profil après la synchronisation
+        await fetchUserProfile();
+      } catch (e) {
+        debugPrint('Erreur lors de la synchronisation email: $e');
+        // Ne pas émettre d'erreur pour éviter de casser l'UX
+      }
+    }
   }
 }

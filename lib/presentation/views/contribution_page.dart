@@ -6,7 +6,6 @@ import 'package:kotiz_app/core/netework/api_config.dart';
 import 'package:kotiz_app/core/services/payment_service.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
-import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/text_field.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -65,19 +64,57 @@ class _ContributionPageState extends State<ContributionPage> {
           isAnonymous: _isAnonymous,
         );
 
-        if (mounted) {
-          if (response['success'] == true) {
-            // Ouvrir l'URL de paiement si disponible
-            if (response['paymentUrl'] != null) {
-              launchUrl(Uri.parse(response['paymentUrl']));
+        if (response['success'] == true) {
+          // Ouvrir l'URL de paiement automatiquement
+          if (response['paymentUrl'] != null &&
+              response['paymentUrl'].isNotEmpty) {
+            try {
+              debugPrint(
+                'Ouverture URL de paiement: ${response['paymentUrl']}',
+              );
+              await launchUrl(
+                Uri.parse(response['paymentUrl']),
+                mode: LaunchMode
+                    .externalApplication, // Force ouverture dans navigateur externe
+              );
+              debugPrint('URL de paiement ouverte avec succès');
+            } catch (urlError) {
+              debugPrint(
+                'Erreur lors de l\'ouverture de l\'URL de paiement: $urlError',
+              );
+              // Ne pas bloquer le processus si l'ouverture d'URL échoue
+              if (mounted) {
+                toastification.show(
+                  context: context,
+                  type: ToastificationType.warning,
+                  title: const Text('URL de paiement'),
+                  description: Text(
+                    'Impossible d\'ouvrir automatiquement l\'URL de paiement. URL: ${response['paymentUrl']}',
+                  ),
+                  backgroundColor: Colors.orange.shade200,
+                  autoCloseDuration: const Duration(seconds: 5),
+                );
+              }
             }
+          } else {
+            debugPrint('Aucune URL de paiement reçue');
+          }
 
-            // Rediriger vers la page de statut de paiement
-            final contributionId = response['contribution']?['id']?.toString();
-            if (contributionId != null) {
+          // Rediriger vers la page de statut de paiement
+          final contributionId = response['contribution']?['id']?.toString();
+          if (contributionId != null) {
+            debugPrint(
+              'Redirection vers page de statut: /payment-status/$contributionId',
+            );
+            if (mounted) {
               context.go('/payment-status/$contributionId');
-            } else {
-              // Fallback si pas d'ID de contribution
+            }
+          } else {
+            // Fallback si pas d'ID de contribution
+            debugPrint(
+              'Pas d\'ID de contribution, affichage message de succès',
+            );
+            if (mounted) {
               toastification.show(
                 context: context,
                 type: ToastificationType.success,
@@ -90,9 +127,9 @@ class _ContributionPageState extends State<ContributionPage> {
               );
               context.pop();
             }
-          } else {
-            throw Exception(response['message'] ?? 'Erreur lors du paiement');
           }
+        } else {
+          throw Exception(response['message'] ?? 'Erreur lors du paiement');
         }
       } else {
         // Utilisateur anonyme - contribution publique
@@ -101,24 +138,80 @@ class _ContributionPageState extends State<ContributionPage> {
           amount: _amountController.text.trim(),
           phoneNumber: _completePhoneNumber,
           paymentMethod: _paymentMethod,
-          contributorName: _nameController.text.trim(),
-          contributorEmail: _emailController.text.trim(),
+          contributorName: _isAnonymous
+              ? "Anonyme"
+              : _nameController.text.trim(),
+          contributorEmail: _isAnonymous ? "" : _emailController.text.trim(),
           message: _messageController.text.trim(),
         );
 
-        if (mounted) {
-          if (response['success'] == true) {
-            // Ouvrir l'URL de paiement si disponible
-            if (response['paymentUrl'] != null) {
-              launchUrl(Uri.parse(response['paymentUrl']));
+        if (response['success'] == true) {
+          // Ouvrir l'URL de paiement automatiquement si disponible
+          if (response['paymentUrl'] != null &&
+              response['paymentUrl'].isNotEmpty) {
+            try {
+              debugPrint(
+                'Ouverture URL de paiement anonyme: ${response['paymentUrl']}',
+              );
+              await launchUrl(
+                Uri.parse(response['paymentUrl']),
+                mode: LaunchMode.externalApplication,
+              );
+              debugPrint('URL de paiement anonyme ouverte avec succès');
+            } catch (urlError) {
+              debugPrint(
+                'Erreur lors de l\'ouverture de l\'URL de paiement anonyme: $urlError',
+              );
+              if (mounted) {
+                toastification.show(
+                  context: context,
+                  type: ToastificationType.warning,
+                  title: const Text('URL de paiement'),
+                  description: Text(
+                    'Impossible d\'ouvrir l\'URL de paiement. Erreur: $urlError',
+                  ),
+                  backgroundColor: Colors.orange.shade200,
+                  autoCloseDuration: const Duration(seconds: 5),
+                );
+              }
             }
+          } else {
+            debugPrint(
+              'Aucune URL de paiement reçue pour contribution anonyme',
+            );
+            if (mounted) {
+              toastification.show(
+                context: context,
+                type: ToastificationType.info,
+                title: const Text('Paiement initié'),
+                description: const Text(
+                  'Votre paiement a été initié. Vous recevrez les instructions par SMS.',
+                ),
+                backgroundColor: Colors.blue.shade200,
+                autoCloseDuration: const Duration(seconds: 3),
+              );
+            }
+          }
 
-            // Rediriger vers la page de statut de paiement
-            final contributionId = response['contribution']?['id']?.toString();
-            if (contributionId != null) {
+          // Pour les contributions anonymes, ne rediriger vers la page de statut que si une URL de paiement a été ouverte
+          final contributionId = response['contribution']?['id']?.toString();
+          final paymentUrlOpened =
+              response['paymentUrl'] != null &&
+              response['paymentUrl'].isNotEmpty;
+
+          if (contributionId != null && paymentUrlOpened) {
+            debugPrint(
+              'Redirection vers page de statut anonyme: /payment-status/$contributionId',
+            );
+            if (mounted) {
               context.go('/payment-status/$contributionId');
-            } else {
-              // Fallback si pas d'ID de contribution
+            }
+          } else {
+            // Pour les contributions anonymes sans URL de paiement (SMS ou autre méthode)
+            debugPrint(
+              'Contribution anonyme créée sans URL de paiement, affichage message de succès',
+            );
+            if (mounted) {
               toastification.show(
                 context: context,
                 type: ToastificationType.success,
@@ -131,15 +224,15 @@ class _ContributionPageState extends State<ContributionPage> {
               );
               context.pop();
             }
-          } else {
-            throw Exception(
-              response['message'] ?? 'Erreur lors de la contribution',
-            );
           }
+        } else {
+          throw Exception(
+            response['message'] ?? 'Erreur lors de la contribution',
+          );
         }
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         toastification.show(
           context: context,
           type: ToastificationType.error,
@@ -150,7 +243,7 @@ class _ContributionPageState extends State<ContributionPage> {
         );
       }
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (context.mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -248,7 +341,7 @@ class _ContributionPageState extends State<ContributionPage> {
                           hintText: "Numéro pour le paiement",
                         ),
                         onChanged: (phone) {
-                          _completePhoneNumber = phone?.completeNumber ?? '';
+                          _completePhoneNumber = phone.completeNumber;
                         },
                         validator: (phone) {
                           if (phone == null || phone.number.isEmpty) {
@@ -274,10 +367,11 @@ class _ContributionPageState extends State<ContributionPage> {
                     TextFieldComponent(
                       labelTitle: "Nom complet",
                       controller: _nameController,
-                      astherix: true,
+                      astherix: !_isAnonymous,
                       validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Le nom est requis';
+                        if (!_isAnonymous &&
+                            (value == null || value.trim().isEmpty)) {
+                          return 'Le nom est requis sauf si vous contribuez anonymement';
                         }
                         return null;
                       },
@@ -287,13 +381,15 @@ class _ContributionPageState extends State<ContributionPage> {
                       labelTitle: "Email",
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      astherix: true,
+                      astherix: !_isAnonymous,
                       validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'L\'email est requis';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Veuillez entrer un email valide';
+                        if (!_isAnonymous) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'L\'email est requis sauf si vous contribuez anonymement';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Veuillez entrer un email valide';
+                          }
                         }
                         return null;
                       },

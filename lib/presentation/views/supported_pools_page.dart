@@ -121,7 +121,7 @@ class SupportedPoolsPage extends StatelessWidget {
                               ],
                             ),
                             trailing: Icon(LucideIcons.chevronRight),
-                            onTap: () => context.push("/pool-details/$poolId"),
+                            onTap: () => context.push("/poolDetails/$poolId"),
                           ),
                         );
                       },

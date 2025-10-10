@@ -37,7 +37,7 @@ class ProfilTile extends StatelessWidget {
             children: [
               Text(
                 type,
-                maxLines: 1,
+                maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
               ),

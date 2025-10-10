@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/page_builder.dart';
-import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -23,6 +23,25 @@ class _OnBoardingState extends State<OnBoarding> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+  }
+
+  // Fonction helper pour la redirection
+  Future<void> redirectAfterOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("showHome", true);
+
+    if (mounted) {
+      // Vérifier si l'utilisateur est connecté
+      final secureStorage = SecureStorage();
+      final token = await secureStorage.getToken();
+      final isLoggedIn = token != null && token.isNotEmpty;
+
+      if (isLoggedIn) {
+        context.go('/main');
+      } else {
+        context.go('/home');
+      }
+    }
   }
 
   @override
@@ -89,22 +108,11 @@ class _OnBoardingState extends State<OnBoarding> {
             ),
             !isLastPage
                 ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    spacing: 100,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setBool("showHome", true);
-                          if (mounted) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => HomePage(),
-                              ),
-                            );
-                          }
-                        },
+                        onPressed: () => redirectAfterOnboarding(),
                         child: Text(
                           "Passer",
                           style: TextStyle(
@@ -113,7 +121,6 @@ class _OnBoardingState extends State<OnBoarding> {
                           ),
                         ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.only(top: 21.0),
                         child: AppButton(
@@ -123,19 +130,8 @@ class _OnBoardingState extends State<OnBoarding> {
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.easeInOut,
                                 )
-                              : () async {
-                                  final prefs =
-                                      await SharedPreferences.getInstance();
-                                  await prefs.setBool("showHome", true);
-                                  if (mounted) {
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (context) => HomePage(),
-                                      ),
-                                    );
-                                  }
-                                },
-                          size: Size(200, 55),
+                              : () => redirectAfterOnboarding(),
+                          size: Size(150, 55),
                         ),
                       ),
                     ],
@@ -149,14 +145,7 @@ class _OnBoardingState extends State<OnBoarding> {
                               duration: const Duration(milliseconds: 500),
                               curve: Curves.easeInOut,
                             )
-                          : () async {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setBool("showHome", true);
-                              if (mounted) {
-                                context.go('/main');
-                              }
-                            },
+                          : () => redirectAfterOnboarding(),
                       size: Size(365, 55),
                     ),
                   ),

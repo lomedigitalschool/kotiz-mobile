@@ -22,6 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _prenomController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   String currentDialCode = '+228';
@@ -42,12 +43,58 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _onSubmit() {
-    context.read<AuthCubit>().register(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      phone: _phoneController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
+    final displayName =
+        '${_prenomController.text.trim()} ${_nameController.text.trim()}';
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final password = _passwordController.text.trim();
+
+    final hasEmail = email.isNotEmpty;
+    final hasPhone = phone.isNotEmpty;
+    final hasPassword = password.isNotEmpty;
+
+    // Validation basique
+    if (_prenomController.text.trim().isEmpty ||
+        _nameController.text.trim().isEmpty) {
+      return;
+    }
+
+    if (!hasEmail && !hasPhone) {
+      return; // Au moins un identifiant requis
+    }
+
+    // Détecter le type d'inscription
+    if (hasEmail && hasPhone && hasPassword) {
+      // 🎯 INSCRIPTION UNIFIÉE : Email + Téléphone + Mot de passe
+      if (_passwordController.text.trim() !=
+          _confirmPasswordController.text.trim()) {
+        return; // Mots de passe ne correspondent pas
+      }
+      context.read<AuthCubit>().registerUnified(
+        email: email,
+        password: password,
+        displayName: displayName,
+        phoneNumber: phone,
+      );
+    } else if (hasEmail && hasPassword) {
+      // 📧 INSCRIPTION EMAIL : Email + Mot de passe
+      if (_passwordController.text.trim() !=
+          _confirmPasswordController.text.trim()) {
+        return; // Mots de passe ne correspondent pas
+      }
+      context.read<AuthCubit>().registerWithEmail(
+        email: email,
+        password: password,
+        displayName: displayName,
+        phoneNumber: hasPhone ? phone : null,
+      );
+    } else if (hasPhone) {
+      // 📱 INSCRIPTION TÉLÉPHONE : Téléphone seulement (OTP)
+      context.read<AuthCubit>().registerWithPhone(phone);
+    } else {
+      // Cas non géré
+      return;
+    }
   }
 
   @override
@@ -55,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _phoneController.dispose();
     _nameController.dispose();
+    _prenomController.dispose();
     _confirmPasswordController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -76,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
           title: Text("Créer un compte", style: TextStyle(fontSize: 24)),
           centerTitle: true,
           leading: IconButton(
-            onPressed: () => context.pop(),
+            onPressed: () => context.push("/home"),
             icon: Icon(
               LucideIcons.arrowLeft,
               size: 30.0,
@@ -94,12 +142,47 @@ class _RegisterPageState extends State<RegisterPage> {
                 spacing: 20,
                 children: [
                   TextFieldComponent(
-                    controller: _nameController,
-                    labelTitle: "Nom",
+                    controller: _prenomController,
+                    labelTitle: "Prénom",
                     astherix: true,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Le prénom est obligatoire";
+                      }
+                      if (value.trim().length < 2) {
+                        return "Le prénom doit contenir au moins 2 caractères";
+                      }
+                      return null;
+                    },
                     onChanged: (_) {
                       context.read<AuthCubit>().validateRegisterForm(
                         _nameController.text.trim(),
+                        _prenomController.text.trim(),
+                        _emailController.text.trim(),
+                        _phoneController.text.trim(),
+                        _passwordController.text.trim(),
+                        _confirmPasswordController.text.trim(),
+                      );
+                    },
+                  ),
+
+                  TextFieldComponent(
+                    controller: _nameController,
+                    labelTitle: "Nom",
+                    astherix: true,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Le nom est obligatoire";
+                      }
+                      if (value.trim().length < 2) {
+                        return "Le nom doit contenir au moins 2 caractères";
+                      }
+                      return null;
+                    },
+                    onChanged: (_) {
+                      context.read<AuthCubit>().validateRegisterForm(
+                        _nameController.text.trim(),
+                        _prenomController.text.trim(),
                         _emailController.text.trim(),
                         _phoneController.text.trim(),
                         _passwordController.text.trim(),
@@ -111,9 +194,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   TextFieldComponent(
                     controller: _emailController,
                     labelTitle: "Email",
+                    astherix: false,
                     onChanged: (_) {
                       context.read<AuthCubit>().validateRegisterForm(
                         _nameController.text.trim(),
+                        _prenomController.text.trim(),
                         _emailController.text.trim(),
                         _phoneController.text.trim(),
                         _passwordController.text.trim(),
@@ -128,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       Flexible(
                         child: Text(
-                          "Numero de telephone",
+                          "Numéro de téléphone",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(fontSize: 24, color: Colors.black45),
@@ -146,6 +231,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     onChanged: (phone) {
                       _phoneController.text =
                           "${phone.countryCode}${phone.number}";
+                      context.read<AuthCubit>().validateRegisterForm(
+                        _nameController.text.trim(),
+                        _prenomController.text.trim(),
+                        _emailController.text.trim(),
+                        _phoneController.text.trim(),
+                        _passwordController.text.trim(),
+                        _confirmPasswordController.text.trim(),
+                      );
                     },
                     onCountryChanged: (country) {
                       setState(() {
@@ -171,6 +264,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onChanged: (_) {
                       context.read<AuthCubit>().validateRegisterForm(
                         _nameController.text.trim(),
+                        _prenomController.text.trim(),
                         _emailController.text.trim(),
                         _phoneController.text.trim(),
                         _passwordController.text.trim(),
@@ -199,6 +293,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onChanged: (_) {
                       context.read<AuthCubit>().validateRegisterForm(
                         _nameController.text.trim(),
+                        _prenomController.text.trim(),
                         _emailController.text.trim(),
                         _phoneController.text.trim(),
                         _passwordController.text.trim(),
@@ -241,35 +336,35 @@ class _RegisterPageState extends State<RegisterPage> {
                         return Padding(
                           padding: const EdgeInsets.only(top: 30.0),
                           child: AppButton(
-                              widget: state is AuthLoading
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: const [
-                                        SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
+                            widget: state is AuthLoading
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
                                         ),
-                                        SizedBox(width: 10),
-                                        Text("creation du ..."),
-                                      ],
-                                    )
-                                  : null,
-                              text: "Créer le compte",
-                              backgroundColor: isFill == false
-                                  ? Colors.grey
-                                  : ColorConstant.colorGreen,
-                              onPressed: () {
-                                final form = formKey.currentState!;
-                                if (isFill == false) {
-                                  null;
-                                } else if (form.validate()) {
-                                  _onSubmit();
-                                }
-                              }),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text("creation du ..."),
+                                    ],
+                                  )
+                                : null,
+                            text: "Créer le compte",
+                            backgroundColor: isFill == false
+                                ? Colors.grey
+                                : ColorConstant.colorGreen,
+                            onPressed: () {
+                              final form = formKey.currentState!;
+                              if (isFill == false) {
+                                null;
+                              } else if (form.validate()) {
+                                _onSubmit();
+                              }
+                            },
+                          ),
                         );
                       },
                     ),

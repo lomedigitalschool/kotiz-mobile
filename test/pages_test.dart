@@ -28,7 +28,9 @@ void main() {
         recentContributions: [],
       );
 
-      await tester.pumpWidget(MaterialApp(home: EditPoolPage(pool: mockPool)));
+      await tester.pumpWidget(
+        MaterialApp(home: EditPoolPage(poolId: mockPool.id.toString())),
+      );
 
       expect(find.text('Modifier la cagnotte'), findsOneWidget);
       expect(find.text('Test Pool'), findsOneWidget);
