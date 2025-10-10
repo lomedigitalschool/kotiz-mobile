@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/http_client.dart';
 
 class ApiConfig extends HttpClient {
+class ApiConfig extends HttpClient {
   final Dio _dio;
 
   String? _cachedToken;
@@ -154,8 +155,16 @@ class ApiConfig extends HttpClient {
   }
 
   @override
-  Future<T> put<T>(String url, {Map? data}) async {
-    final response = await _dio.put(url, data: data);
+  Future<T> put<T>(
+    String url, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? headers,
+  }) async {
+    final response = await _dio.put(
+      url,
+      data: data,
+      options: Options(headers: headers),
+    );
     return response.data as T;
   }
 

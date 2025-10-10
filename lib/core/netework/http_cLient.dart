@@ -1,4 +1,5 @@
 abstract class HttpClient {
+abstract class HttpClient {
   Future<T> get<T>(String url);
 
   Future<T> post<T>(String url, {dynamic data, Map<String, String>? headers});

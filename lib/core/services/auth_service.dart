@@ -146,6 +146,7 @@ class AuthService {
     required String name,
     required String email,
     required String phone,
+    required String idToken,
   }) async {
     try {
       debugPrint(
@@ -154,6 +155,7 @@ class AuthService {
       final response = await _app.put(
         "auth/profile",
         data: {"name": name, "email": email, "phone": phone},
+        headers: {'Authorization': 'Bearer $idToken'},
       );
 
       debugPrint('✅ Profil mis à jour - Réponse: $response');

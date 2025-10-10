@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
@@ -13,6 +14,8 @@ import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContributionPage extends StatefulWidget {
+  final String poolId;
+  const ContributionPage({super.key, required this.poolId});
   final String poolId;
   const ContributionPage({super.key, required this.poolId});
 
