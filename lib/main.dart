@@ -114,21 +114,24 @@ class _MyAppState extends State<MyApp> {
   GoRouter _buildRouter() {
     // Logique d'orientation intelligente
     String initialRoute;
-    if (!widget.seenOnboarding) {
-      initialRoute = "/onboarding";
-    } else if (widget.isLoggedIn) {
-      initialRoute = "/main"; // utilisateur connecté
-    } else {
-      initialRoute = "/home"; // utilisateur non connecté
-    }
+    initialRoute = "/";
+    // if (!widget.seenOnboarding) {
+    //   initialRoute = "/onboarding";
+    // } else if (widget.isLoggedIn) {
+    //   initialRoute = "/main"; // utilisateur connecté
+    // } else {
+    //   initialRoute = "/home"; // utilisateur non connecté
+    // }
 
     return GoRouter(
       initialLocation: initialRoute,
       routes: [
         GoRoute(
           path: "/",
-          builder: (context, state) =>
-              SplashScreen(seenOnboarding: widget.seenOnboarding),
+          builder: (context, state) => SplashScreen(
+            seenOnboarding: widget.seenOnboarding,
+            isLogged: widget.isLoggedIn,
+          ),
         ),
         GoRoute(path: "/login", builder: (context, state) => LoginPage()),
         GoRoute(path: "/onboarding", builder: (context, state) => OnBoarding()),

@@ -5,9 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key, required this.seenOnboarding});
+  const SplashScreen({
+    super.key,
+    required this.seenOnboarding,
+    required this.isLogged,
+  });
 
   final bool seenOnboarding;
+  final bool isLogged;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -56,7 +61,14 @@ class _SplashScreenState extends State<SplashScreen>
     _controllerAnimation.forward();
 
     Timer(Duration(seconds: 4), () {
-      widget.seenOnboarding ? context.go("/main") : context.go("/onboarding");
+      if (!widget.seenOnboarding) {
+        context.go("/onboarding");
+      } else if (widget.isLogged) {
+        context.go("/main"); // utilisateur connecté
+      } else {
+        context.go("/home"); // utilisateur non connecté
+      }
+      // widget.seenOnboarding ? context.go("/main") : context.go("/onboarding");
     });
   }
 

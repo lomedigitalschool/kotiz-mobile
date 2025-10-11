@@ -28,20 +28,7 @@ class _OnBoardingState extends State<OnBoarding> {
   // Fonction helper pour la redirection
   Future<void> redirectAfterOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("showHome", true);
-
-    if (mounted) {
-      // Vérifier si l'utilisateur est connecté
-      final secureStorage = SecureStorage();
-      final token = await secureStorage.getToken();
-      final isLoggedIn = token != null && token.isNotEmpty;
-
-      if (isLoggedIn) {
-        context.go('/main');
-      } else {
-        context.go('/home');
-      }
-    }
+    await prefs.setBool("seenOnboarding", true);
   }
 
   @override
@@ -112,7 +99,10 @@ class _OnBoardingState extends State<OnBoarding> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () => redirectAfterOnboarding(),
+                        onPressed: () {
+                          redirectAfterOnboarding();
+                          context.go('/home');
+                        },
                         child: Text(
                           "Passer",
                           style: TextStyle(
@@ -130,7 +120,10 @@ class _OnBoardingState extends State<OnBoarding> {
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.easeInOut,
                                 )
-                              : () => redirectAfterOnboarding(),
+                              : () {
+                                  redirectAfterOnboarding();
+                                  context.go('/home');
+                                },
                           size: Size(150, 55),
                         ),
                       ),

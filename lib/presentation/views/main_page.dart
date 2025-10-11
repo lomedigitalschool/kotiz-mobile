@@ -17,12 +17,7 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
-        children: const [
-          HomePage(),
-          DashboardPage(),
-          CreatePage(),
-          ProfilPage(),
-        ],
+        children: [HomePage(), DashboardPage(), CreatePage(), ProfilPage()],
       ),
 
       bottomNavigationBar: BottomNavigationBar(

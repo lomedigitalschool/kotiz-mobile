@@ -215,7 +215,7 @@ class _ContributionPageState extends State<ContributionPage> {
               toastification.show(
                 context: context,
                 type: ToastificationType.success,
-                title: const Text('Contribution créée'),
+                title: const Text('Contribution ajouté'),
                 description: const Text(
                   'Votre contribution a été enregistrée avec succès',
                 ),
