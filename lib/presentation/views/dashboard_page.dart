@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/data/models/pool.dart';
+import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 import 'package:kotiz_app/logic/notification_cubit.dart';
@@ -19,6 +20,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  late ProfilUser? profil;
+
   late final GoRouter _router;
   VoidCallback? _routeListener;
   @override
@@ -81,6 +84,7 @@ class _DashboardPageState extends State<DashboardPage> {
         if (state is AuthSuccess) {
           context.read<NotificationCubit>().fetchNotifications();
           context.read<PoolCubit>().getAll();
+          profil = state.profil;
         }
       },
       child: Scaffold(
@@ -111,11 +115,19 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               child: IconButton(
-                onPressed: () => context.push("/kyc"),
-                icon: Icon(
-                  LucideIcons.shieldCheck,
-                  color: ColorConstant.colorGreen,
-                ),
+                onPressed: () {
+                  if (profil?.isVerified == false) {
+                    context.push("/kyc");
+                  } else {
+                    context.read<BottomNavCubit>().setIndex(3);
+                  }
+                },
+                icon: profil?.isVerified == true
+                    ? Icon(
+                        LucideIcons.shieldCheck,
+                        color: ColorConstant.colorGreen,
+                      )
+                    : Icon(LucideIcons.shieldQuestionMark, color: Colors.amber),
                 tooltip: "🛡️ Vérifier mon identité",
               ),
             ),
