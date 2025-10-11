@@ -118,10 +118,7 @@ class _OnBoardingState extends State<OnBoarding> {
                             duration: const Duration(milliseconds: 500),
                             curve: Curves.easeInOut,
                           ),
-                          // : () {
-                          //     redirectAfterOnboarding();
-                          //     context.go('/home');
-                          //   },
+
                           size: Size(150, 55),
                         ),
                       ),

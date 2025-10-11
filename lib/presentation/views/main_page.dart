@@ -8,7 +8,7 @@ import 'package:kotiz_app/presentation/views/home_page.dart';
 import 'package:kotiz_app/presentation/views/profil_page.dart';
 
 class MainPage extends StatelessWidget {
-  MainPage({super.key});
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,12 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
-        children: [HomePage(), DashboardPage(), CreatePage(), ProfilPage()],
+        children: const [
+          HomePage(),
+          DashboardPage(),
+          CreatePage(),
+          ProfilPage(),
+        ],
       ),
 
       bottomNavigationBar: BottomNavigationBar(

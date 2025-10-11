@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({
@@ -59,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // lancement de l'animation
     _controllerAnimation.forward();
-
+    print(widget.isLogged);
     Timer(Duration(seconds: 4), () {
       if (!widget.seenOnboarding) {
         context.go("/onboarding");
@@ -68,7 +70,6 @@ class _SplashScreenState extends State<SplashScreen>
       } else {
         context.go("/home"); // utilisateur non connecté
       }
-      // widget.seenOnboarding ? context.go("/main") : context.go("/onboarding");
     });
   }
 

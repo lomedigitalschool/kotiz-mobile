@@ -222,8 +222,9 @@ class AuthCubit extends Cubit<AuthState> {
 
     // Effacer aussi SharedPreferences pour éviter tout cache résiduel
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-
+    await prefs.remove("token");
+    await prefs.remove("user");
+    await prefs.remove("profil");
     emit(Unauthenticated());
   }
 
@@ -292,6 +293,7 @@ class AuthCubit extends Cubit<AuthState> {
           // Sauvegarder les données
           await _secureStorage.saveUser(currentUser);
           await _secureStorage.saveProfil(profil);
+          await _secureStorage.saveToken(token);
 
           emit(
             AuthSuccess(

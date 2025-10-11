@@ -66,7 +66,8 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final secureStorage = SecureStorage();
   final String? token = await secureStorage.getToken();
-  final bool seenOnboarding = prefs.getBool("seenOnboarding") ?? false;
+
+  final bool seenOnboarding = await prefs.getBool("seenOnboarding") ?? false;
 
   runApp(
     MyApp(
@@ -115,13 +116,6 @@ class _MyAppState extends State<MyApp> {
     // Logique d'orientation intelligente
     String initialRoute;
     initialRoute = "/";
-    // if (!widget.seenOnboarding) {
-    //   initialRoute = "/onboarding";
-    // } else if (widget.isLoggedIn) {
-    //   initialRoute = "/main"; // utilisateur connecté
-    // } else {
-    //   initialRoute = "/home"; // utilisateur non connecté
-    // }
 
     return GoRouter(
       initialLocation: initialRoute,
@@ -137,29 +131,12 @@ class _MyAppState extends State<MyApp> {
         GoRoute(path: "/onboarding", builder: (context, state) => OnBoarding()),
         GoRoute(path: "/home", builder: (context, state) => HomePage()),
         GoRoute(path: "/explore", builder: (context, state) => DashboardPage()),
-        GoRoute(path: "/create", builder: (context, state) => CreatePage()),
+        GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
 
         GoRoute(path: "/profil", builder: (context, state) => ProfilPage()),
-        // GoRoute(
-        //   path: "/login",
-        //   pageBuilder: (context, state) => CustomTransitionPage(
-        //     key: state.pageKey,
-        //     child: const LoginPage(),
-        //     transitionDuration: const Duration(milliseconds: 600),
-        //     transitionsBuilder:
-        //         (context, animation, secondaryAnimation, child) =>
-        //             FadeTransition(opacity: animation, child: child),
-        //   ),
-        // ),
-        GoRoute(
-          path: "/main",
-          builder: (context, state) => BlocProvider.value(
-            value: context.read<BottomNavCubit>(),
-            child: MainPage(),
-          ),
-        ),
 
-        GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
+        GoRoute(path: "/main", builder: (context, state) => MainPage()),
+
         GoRoute(
           path: "/reset-password",
           builder: (context, state) => ResetPasswordPage(),
@@ -183,8 +160,7 @@ class _MyAppState extends State<MyApp> {
           path: "/edit-pool/:id",
           builder: (context, state) {
             final String poolId = state.pathParameters["id"]!;
-            // Pour l'instant, on va passer un pool vide et le charger dans la page
-            // Une meilleure approche serait de passer les données via extra
+
             return EditPoolPage(poolId: poolId);
           },
         ),

@@ -76,13 +76,13 @@ class ApiConfig extends HttpClient {
 
   // Méthode pour attacher le token si nécessaire
   Future<void> _attachToken(RequestOptions options) async {
+    final now = DateTime.now();
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       debugPrint("⚠️ Aucun utilisateur Firebase connecté");
       return;
     }
 
-    final now = DateTime.now();
     if (_cachedToken == null ||
         _tokenExpiry == null ||
         now.isAfter(_tokenExpiry!)) {

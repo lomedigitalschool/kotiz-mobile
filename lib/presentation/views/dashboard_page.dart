@@ -20,7 +20,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  late ProfilUser? profil;
+  ProfilUser? profil;
 
   late final GoRouter _router;
   VoidCallback? _routeListener;

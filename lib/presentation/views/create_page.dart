@@ -158,13 +158,25 @@ class _CreatePageState extends State<CreatePage> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, authState) {
         if (authState is! AuthSuccess) {
-          // Rediriger vers la page de connexion si non connecté
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-              GoRouter.of(context).go('/register');
-            }
-          });
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Veuillez vous connecter pour créer une cagnotte.",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(height: 20),
+                  AppButton(
+                    onPressed: () => context.go("/register"),
+                    text: "Créer un compte",
+                    backgroundColor: ColorConstant.colorBlue,
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         return PopScope(
