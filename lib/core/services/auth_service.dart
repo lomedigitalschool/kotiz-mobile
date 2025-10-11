@@ -145,16 +145,19 @@ class AuthService {
   Future<void> updateProfile({
     required String name,
     required String email,
-    required String phone,
+    String? phone,
   }) async {
     try {
-      debugPrint(
-        '📤 Mise à jour du profil - Payload: {"name": "$name", "email": "$email", "phone": "$phone"}',
-      );
-      final response = await _app.put(
-        "auth/profile",
-        data: {"name": name, "email": email, "phone": phone},
-      );
+      // Construire le payload dynamiquement
+      final Map<String, dynamic> data = {"name": name, "email": email};
+
+      // N'inclure phone que s'il n'est pas null ou vide
+      if (phone != null && phone.trim().isNotEmpty) {
+        data["phone"] = phone;
+      }
+
+      debugPrint('📤 Mise à jour du profil - Payload: $data');
+      final response = await _app.put("auth/profile", data: data);
 
       debugPrint('✅ Profil mis à jour - Réponse: $response');
     } on DioException catch (e) {
@@ -265,11 +268,7 @@ class AuthService {
       debugPrint(
         '📤 Envoi du profil - Name: $displayName, Email: $email, Phone: $phoneNumber',
       );
-      await updateProfile(
-        name: displayName,
-        email: email,
-        phone: phoneNumber ?? '',
-      );
+      await updateProfile(name: displayName, email: email, phone: phoneNumber);
       debugPrint('✅ Profil mis à jour avec succès');
     } on fb.FirebaseAuthException catch (e, s) {
       debugPrint("❌ Auth error: ${e.code} – ${e.message}\n$s");
