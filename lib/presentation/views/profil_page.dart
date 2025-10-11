@@ -31,8 +31,11 @@ class _ProfilPageState extends State<ProfilPage> {
       context.read<AuthCubit>().checkAuthStatus();
       await _refreshProfile();
       idToken = await _storage.getToken();
-      if (mounted) setState(() {}); // mettre à jour après récupération du token
     });
+  }
+
+  Future<void> _logout() async {
+    context.read<AuthCubit>().logout();
   }
 
   Future<void> _refreshProfile() async {
@@ -149,9 +152,9 @@ class _ProfilPageState extends State<ProfilPage> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         if (state is! AuthSuccess) {
-          return Container(
-            color: ColorConstant.colorWhite,
-            child: Center(
+          return Scaffold(
+            appBar: AppBar(title: Text("Profil "), centerTitle: true),
+            body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -340,27 +343,41 @@ class _ProfilPageState extends State<ProfilPage> {
                           final shouldLogout = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
+                              backgroundColor: ColorConstant.colorWhite,
                               title: const Text('Confirmation'),
                               content: const Text(
                                 'Voulez-vous vraiment vous déconnecter ?',
+                                style: TextStyle(fontSize: 16),
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(false),
-                                  child: const Text('Annuler'),
+                                  child: const Text(
+                                    'Annuler',
+                                    style: TextStyle(
+                                      color: ColorConstant.colorBlue,
+                                      fontSize: 16,
+                                    ),
+                                  ),
                                 ),
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(true),
-                                  child: const Text('Se déconnecter'),
+                                  child: const Text(
+                                    'Se déconnecter',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
                           );
 
                           if (shouldLogout == true) {
-                            context.read<AuthCubit>().logout();
+                            _logout();
                             toastification.show(
                               context: context,
                               type: ToastificationType.success,
@@ -369,12 +386,12 @@ class _ProfilPageState extends State<ProfilPage> {
                               autoCloseDuration: Duration(seconds: 2),
                               animationDuration: Duration(milliseconds: 600),
                             );
-                            // Redirection vers login
-                            context.go('/login');
+                            // Redirection vers home
+                            context.go('/home');
                           }
                         },
                         child: ProfilTile(
-                          type: "Se Deconnecter",
+                          type: "Se Déconnecter",
                           icon: Icon(LucideIcons.logOut),
                           showPen: false,
                         ),

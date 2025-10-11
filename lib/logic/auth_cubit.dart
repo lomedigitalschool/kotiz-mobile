@@ -377,9 +377,13 @@ class AuthCubit extends Cubit<AuthState> {
     final currentState = state;
     if (currentState is AuthSuccess) {
       try {
+        emit(AuthLoading());
         await authService.syncEmailVerification();
         // Rafraîchir le profil après la synchronisation
         await fetchUserProfile();
+        final User? user = await _secureStorage.getUser();
+
+        emit(AuthSuccess(user: user!));
       } catch (e) {
         debugPrint('Erreur lors de la synchronisation email: $e');
         // Ne pas émettre d'erreur pour éviter de casser l'UX

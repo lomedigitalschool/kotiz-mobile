@@ -21,8 +21,8 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
-  late final GoRouter _router;
-  VoidCallback? _routeListener;
+  // late final GoRouter _router;
+  // VoidCallback? _routeListener;
 
   @override
   void initState() {
@@ -38,20 +38,20 @@ class _HomePageState extends State<HomePage>
       }
 
       // Écouter les changements de route pour rafraîchir les données
-      _router = GoRouter.of(context);
-      _routeListener = () {
-        final location = _router.routeInformationProvider.value.location;
-        if (location == '/home') {
-          // Rafraîchir les cagnottes publiques
-          poolCubit.getAllPools();
-          // Si utilisateur connecté, rafraîchir aussi ses cagnottes et le dashboard
-          if (authCubit.state is AuthSuccess) {
-            poolCubit.getAll();
-            authCubit.refreshDashboard();
-          }
-        }
-      };
-      _router.routeInformationProvider.addListener(_routeListener!);
+      // _router = GoRouter.of(context);
+      // _routeListener = () {
+      //   final location = _router.routeInformationProvider.value.location;
+      //   if (location == '/home') {
+      //     // Rafraîchir les cagnottes publiques
+      //     poolCubit.getAllPools();
+      //     // Si utilisateur connecté, rafraîchir aussi ses cagnottes et le dashboard
+      //     if (authCubit.state is AuthSuccess) {
+      //       poolCubit.getAll();
+      //       authCubit.refreshDashboard();
+      //     }
+      //   }
+      // };
+      // _router.routeInformationProvider.addListener(_routeListener!);
     });
   }
 
@@ -74,9 +74,9 @@ class _HomePageState extends State<HomePage>
 
   @override
   void dispose() {
-    if (_routeListener != null) {
-      _router.routeInformationProvider.removeListener(_routeListener!);
-    }
+    // if (_routeListener != null) {
+    //   _router.routeInformationProvider.removeListener(_routeListener!);
+    // }
     super.dispose();
   }
 
@@ -369,15 +369,6 @@ class _HomePageState extends State<HomePage>
                                             text: "Créer une cagnotte",
                                             onPressed: () {
                                               context.push('/create');
-                                            },
-                                            backgroundColor:
-                                                ColorConstant.colorGreen,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          AppButton(
-                                            text: "Créer un compte",
-                                            onPressed: () {
-                                              context.push("/register");
                                             },
                                             backgroundColor:
                                                 ColorConstant.colorGreen,

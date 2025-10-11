@@ -63,52 +63,67 @@ class _CreatePageState extends State<CreatePage> {
         context: context,
         builder: (BuildContext dialogContext) {
           return AlertDialog(
+            backgroundColor: ColorConstant.colorWhite,
             title: const Text("Vérification email requise"),
             content: const Text(
               "Vous devez vérifier votre adresse email avant de pouvoir créer une cagnotte. Si vous venez de vérifier votre email dans le dashboard, cliquez sur 'Rafraîchir le statut'.",
+              style: TextStyle(fontSize: 16),
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text("Annuler"),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop();
-                  // Rafraîchir le profil et réessayer
-                  await authCubit.refreshProfile();
-                  await Future.delayed(const Duration(milliseconds: 500));
-                  _submit(); // Réessayer la soumission
-                },
-                child: const Text("Rafraîchir le statut"),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop();
-                  try {
-                    await authCubit.sendEmailVerification();
-                    toastification.show(
-                      context: context,
-                      type: ToastificationType.success,
-                      title: const Text("Email envoyé"),
-                      description: const Text(
-                        "Un nouvel email de vérification a été envoyé à votre adresse.",
-                      ),
-                      backgroundColor: Colors.green.shade200,
-                      autoCloseDuration: const Duration(seconds: 3),
-                    );
-                  } catch (e) {
-                    toastification.show(
-                      context: context,
-                      type: ToastificationType.error,
-                      title: const Text("Erreur"),
-                      description: Text("Impossible d'envoyer l'email: $e"),
-                      backgroundColor: Colors.red.shade200,
-                      autoCloseDuration: const Duration(seconds: 3),
-                    );
-                  }
-                },
-                child: const Text("Renvoyer l'email"),
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text(
+                      "Annuler",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.of(dialogContext).pop();
+                      // Rafraîchir le profil et réessayer
+                      await authCubit.refreshProfile();
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      _submit(); // Réessayer la soumission
+                    },
+                    child: const Text(
+                      "Rafraîchir le statut",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.of(dialogContext).pop();
+                      try {
+                        await authCubit.sendEmailVerification();
+                        toastification.show(
+                          context: context,
+                          type: ToastificationType.success,
+                          title: const Text("Email envoyé"),
+                          description: const Text(
+                            "Un nouvel email de vérification a été envoyé à votre adresse.",
+                          ),
+                          backgroundColor: Colors.green.shade200,
+                          autoCloseDuration: const Duration(seconds: 3),
+                        );
+                      } catch (e) {
+                        toastification.show(
+                          context: context,
+                          type: ToastificationType.error,
+                          title: const Text("Erreur"),
+                          description: Text("Impossible d'envoyer l'email: $e"),
+                          backgroundColor: Colors.red.shade200,
+                          autoCloseDuration: const Duration(seconds: 3),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      "Renvoyer l'email",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
               ),
             ],
           );
@@ -117,7 +132,6 @@ class _CreatePageState extends State<CreatePage> {
       return;
     }
 
-    // print(poolData.toJson());
     await context.read<PoolCubit>().create(poolData);
   }
 
