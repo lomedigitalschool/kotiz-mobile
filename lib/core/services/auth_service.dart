@@ -43,7 +43,7 @@ class AuthService {
         case 'user-disabled':
           throw Exception('Ce compte a été désactivé');
         case 'invalid-credential':
-          throw Exception('Information de connexion invalide');
+          throw Exception('Email ou mot de passe incorrect');
         default:
           throw Exception("Erreur lors de la connexion");
       }

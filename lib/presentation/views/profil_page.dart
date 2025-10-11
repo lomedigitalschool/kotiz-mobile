@@ -22,12 +22,17 @@ class _ProfilPageState extends State<ProfilPage> {
   String? idToken = "";
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    // Vérifier le statut d'authentification et récupérer le profil
-    context.read<AuthCubit>().checkAuthStatus();
-    _refreshProfile();
-    idToken = await _storage.getToken();
+
+    // On attend que le widget soit monté avant d’utiliser le context
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return; // sécurité
+      context.read<AuthCubit>().checkAuthStatus();
+      await _refreshProfile();
+      idToken = await _storage.getToken();
+      if (mounted) setState(() {}); // mettre à jour après récupération du token
+    });
   }
 
   Future<void> _refreshProfile() async {
@@ -54,7 +59,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
     return showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Modifier le nom'),
           content: Form(
@@ -96,7 +101,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       Navigator.of(context).pop();
                       // ignore: use_build_context_synchronously
                       toastification.show(
-                        context: context,
+                        context: dialogContext,
                         type: ToastificationType.success,
                         title: const Text('Nom modifié'),
                         description: const Text('Votre nom a été mis à jour'),
@@ -108,7 +113,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     if (!mounted) return;
                     // ignore: use_build_context_synchronously
                     toastification.show(
-                      context: context,
+                      context: dialogContext,
                       type: ToastificationType.error,
                       title: const Text('Erreur'),
                       description: Text('Erreur: $e'),

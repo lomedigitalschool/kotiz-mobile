@@ -151,7 +151,14 @@ class _MyAppState extends State<MyApp> {
         //             FadeTransition(opacity: animation, child: child),
         //   ),
         // ),
-        GoRoute(path: "/main", builder: (context, state) => MainPage()),
+        GoRoute(
+          path: "/main",
+          builder: (context, state) => BlocProvider.value(
+            value: context.read<BottomNavCubit>(),
+            child: MainPage(),
+          ),
+        ),
+
         GoRoute(path: "/register", builder: (context, state) => RegisterPage()),
         GoRoute(
           path: "/reset-password",
