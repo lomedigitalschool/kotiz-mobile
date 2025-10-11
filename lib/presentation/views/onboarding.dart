@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
-import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/page_builder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -114,16 +113,15 @@ class _OnBoardingState extends State<OnBoarding> {
                       Padding(
                         padding: const EdgeInsets.only(top: 21.0),
                         child: AppButton(
-                          text: !isLastPage ? "Suivant" : "Commencer",
-                          onPressed: !isLastPage
-                              ? () => pageController.nextPage(
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.easeInOut,
-                                )
-                              : () {
-                                  redirectAfterOnboarding();
-                                  context.go('/home');
-                                },
+                          text: "Suivant",
+                          onPressed: () => pageController.nextPage(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOut,
+                          ),
+                          // : () {
+                          //     redirectAfterOnboarding();
+                          //     context.go('/home');
+                          //   },
                           size: Size(150, 55),
                         ),
                       ),
@@ -132,13 +130,11 @@ class _OnBoardingState extends State<OnBoarding> {
                 : Padding(
                     padding: const EdgeInsets.only(top: 21.0),
                     child: AppButton(
-                      text: !isLastPage ? "Suivant" : "Commencer",
-                      onPressed: !isLastPage
-                          ? () => pageController.nextPage(
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut,
-                            )
-                          : () => redirectAfterOnboarding(),
+                      text: "Commencer",
+                      onPressed: () {
+                        redirectAfterOnboarding();
+                        context.go('/home');
+                      },
                       size: Size(365, 55),
                     ),
                   ),

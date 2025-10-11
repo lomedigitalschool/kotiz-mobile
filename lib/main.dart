@@ -65,8 +65,8 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final secureStorage = SecureStorage();
-  final token = await secureStorage.getToken();
-  final seenOnboarding = prefs.getBool("seenOnboarding") ?? false;
+  final String? token = await secureStorage.getToken();
+  final bool seenOnboarding = prefs.getBool("seenOnboarding") ?? false;
 
   runApp(
     MyApp(

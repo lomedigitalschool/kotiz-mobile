@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final poolCubit = context.read<PoolCubit>();
-      final authCubit = context.read<AuthCubit>();
+      // final authCubit = context.read<AuthCubit>();
 
       // Page d'accueil : charger toutes les cagnottes publiques pour tous les utilisateurs
       if (poolCubit.state is! AllPoolsLoaded) {
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage>
     final route = ModalRoute.of(context);
     if (route?.isCurrent ?? false) {
       final poolCubit = context.read<PoolCubit>();
-      final authCubit = context.read<AuthCubit>();
+      // final authCubit = context.read<AuthCubit>();
       final currentState = poolCubit.state;
 
       // Page d'accueil : s'assurer qu'on a toutes les cagnottes publiques
