@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
+import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
@@ -17,12 +18,16 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
+  final SecureStorage _storage = SecureStorage();
+  String? idToken = "";
+
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     // Vérifier le statut d'authentification et récupérer le profil
     context.read<AuthCubit>().checkAuthStatus();
     _refreshProfile();
+    idToken = await _storage.getToken();
   }
 
   Future<void> _refreshProfile() async {
@@ -80,6 +85,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     final authState = context.read<AuthCubit>().state;
                     if (authState is AuthSuccess) {
                       await context.read<AuthCubit>().authService.updateProfile(
+                        idToken: idToken!,
                         name: nameController.text.trim(),
                         email: authState.profil?.email ?? '',
                         phone: authState.profil?.phone ?? '',

@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/http_client.dart';
 
 class ApiConfig extends HttpClient {
-class ApiConfig extends HttpClient {
   final Dio _dio;
 
   String? _cachedToken;

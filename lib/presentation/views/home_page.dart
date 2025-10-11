@@ -108,11 +108,6 @@ class _HomePageState extends State<HomePage>
               child: Image.asset("assets/images/Logo-Text.png", width: 100),
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.refresh, color: ColorConstant.colorBlue),
-                onPressed: () => context.read<PoolCubit>().getAllPools(),
-                tooltip: "Actualiser les cagnottes",
-              ),
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
                   if (state is AuthSuccess) {

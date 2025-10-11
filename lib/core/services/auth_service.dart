@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
+import 'package:kotiz_app/core/utils/secure_storage.dart';
 import 'package:kotiz_app/data/models/profil_user.dart';
 import 'package:kotiz_app/data/models/user.dart';
 
 class AuthService {
   final ApiConfig _app;
   final fb.FirebaseAuth _firebase = fb.FirebaseAuth.instance;
+  final SecureStorage _storage = SecureStorage();
 
   AuthService(this._app);
 
@@ -23,6 +25,7 @@ class AuthService {
       }
 
       final idToken = await userFromFire.getIdToken(true);
+      _storage.saveToken(idToken.toString());
       final user = await firebaseSync(idToken.toString());
 
       await fetchProfile();
@@ -39,6 +42,8 @@ class AuthService {
           throw Exception('Email ou mot de passe incorrect');
         case 'user-disabled':
           throw Exception('Ce compte a été désactivé');
+        case 'invalid-credential':
+          throw Exception('Information de connexion invalide');
         default:
           throw Exception("Erreur lors de la connexion");
       }
@@ -63,6 +68,7 @@ class AuthService {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       final idToken = await cred.user!.getIdToken();
+
       debugPrint('✅ Firebase Auth réussi, ID Token obtenu');
 
       // synchronisation avec l'api du User en mettant a jour les infos de l utilisateur
@@ -72,23 +78,28 @@ class AuthService {
       debugPrint(
         '📤 Envoi du profil - Name: $name, Email: $email, Phone: $phone',
       );
-      await updateProfile(name: name, email: email, phone: phone);
+      await updateProfile(
+        name: name,
+        email: email,
+        phone: phone,
+        idToken: idToken.toString(),
+      );
       debugPrint('✅ Profil mis à jour avec succès');
     } on fb.FirebaseAuthException catch (e, s) {
       debugPrint("❌ Auth error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
         case 'email-already-in-use':
-          throw Exception('Cet e-mail est déjà utilisé.');
+          throw ('Cet e-mail est déjà utilisé.');
         case 'invalid-email':
-          throw Exception('Adresse e-mail invalide.');
+          throw ('Adresse e-mail invalide.');
         case 'weak-password':
-          throw Exception('Mot de passe trop faible.');
+          throw ('Mot de passe trop faible.');
         default:
-          throw Exception('Erreur d\'authentification.');
+          throw ('Erreur d\'authentification.');
       }
     } catch (e, s) {
       debugPrint("❌ Autre erreur lors de l'inscription: $e\n$s");
-      throw Exception('Une erreur inattendue est survenue.');
+      throw ('Une erreur inattendue est survenue.');
     }
   }
 
@@ -119,10 +130,10 @@ class AuthService {
         '❌ Erreur inscription unifiée - Status: ${e.response?.statusCode}',
       );
       debugPrint('❌ Erreur inscription unifiée - Body: ${e.response?.data}');
-      rethrow;
+      throw (e.response?.data["message"]);
     } catch (e, s) {
       debugPrint("❌ Autre erreur lors de l'inscription unifiée: $e\n$s");
-      throw Exception('Une erreur inattendue est survenue.');
+      throw ('Une erreur inattendue est survenue.');
     }
   }
 
@@ -268,6 +279,7 @@ class AuthService {
         '📤 Envoi du profil - Name: $displayName, Email: $email, Phone: $phoneNumber',
       );
       await updateProfile(
+        idToken: idToken.toString(),
         name: displayName,
         email: email,
         phone: phoneNumber ?? '',

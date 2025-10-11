@@ -157,6 +157,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthRegisterSucces());
       emit(AuthInitial());
     } catch (e) {
+      print(e);
       emit(AuthError(e.toString()));
     }
   }
