@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kotiz_app/core/utils/color_constants.dart';
 import 'package:kotiz_app/logic/auth_cubit.dart';
 import 'package:kotiz_app/logic/bottom_nav_cubit.dart';
+import 'package:kotiz_app/logic/pool_cubit.dart';
 import 'package:kotiz_app/presentation/components/app_button.dart';
 import 'package:kotiz_app/presentation/components/text_field.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -137,6 +138,8 @@ class _LoginPageState extends State<LoginPage> {
                         // Puis naviguer vers le dashboard (index 1)
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           if (mounted) {
+                            context.read<PoolCubit>().getAllPools();
+
                             context.read<BottomNavCubit>().setIndex(1);
                           }
                         });

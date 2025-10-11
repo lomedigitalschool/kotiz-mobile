@@ -285,13 +285,24 @@ class _ProfilPageState extends State<ProfilPage> {
                           ),
                         ),
                         child: GestureDetector(
-                          onTap: () => context.push("/kyc"),
+                          onTap: () {
+                            if (profil?.isVerified == false) {
+                              context.push("/kyc");
+                            }
+                          },
                           child: ProfilTile(
-                            type: "🛡️ Vérifier mon identité (KYC)",
-                            icon: Icon(
-                              LucideIcons.shieldCheck,
-                              color: ColorConstant.colorGreen,
-                            ),
+                            type: profil?.isVerified == false
+                                ? "🛡️ Vérifier mon identité (KYC)"
+                                : "Votre compte est vérifié",
+                            icon: profil?.isVerified == true
+                                ? Icon(
+                                    LucideIcons.shieldCheck,
+                                    color: ColorConstant.colorGreen,
+                                  )
+                                : Icon(
+                                    LucideIcons.shieldQuestionMark,
+                                    color: Colors.amber,
+                                  ),
                             showPen: false,
                           ),
                         ),

@@ -5,7 +5,7 @@ class ProfilUser {
   final String? phone;
   final String role;
   final String? avatarUrl;
-  final bool isVerified;
+  final bool? isVerified;
   final bool isBlocked;
   final DateTime? lastLogin;
   final String? resetToken;

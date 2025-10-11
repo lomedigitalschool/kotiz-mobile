@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final poolCubit = context.read<PoolCubit>();
-      // final authCubit = context.read<AuthCubit>();
 
       // Page d'accueil : charger toutes les cagnottes publiques pour tous les utilisateurs
       if (poolCubit.state is! AllPoolsLoaded) {
