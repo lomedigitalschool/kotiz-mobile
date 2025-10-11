@@ -138,9 +138,8 @@ class _LoginPageState extends State<LoginPage> {
                         // Puis naviguer vers le dashboard (index 1)
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           if (mounted) {
-                            context.read<PoolCubit>().getAllPools();
-
                             context.read<BottomNavCubit>().setIndex(1);
+                            context.read<PoolCubit>().getAllPools();
                           }
                         });
                       }

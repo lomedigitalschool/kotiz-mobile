@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage>
                           state.profil?.name ?? state.user.name,
                           style: TextStyle(
                             color: ColorConstant.colorBlue,
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
