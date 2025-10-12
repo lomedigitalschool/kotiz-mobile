@@ -38,10 +38,9 @@ class PaymentService {
         'message': response['message'] ?? 'Paiement initié avec succès',
       };
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Erreur lors de l\'initiation du paiement: $e',
-      };
+      throw (
+        'Erreur lors de l\'initiation du paiement, numéro de téléphone invalide ou montant invalide',
+      );
     }
   }
 

@@ -232,7 +232,10 @@ class _CreatePageState extends State<CreatePage> {
                   ),
                   centerTitle: true,
                   leading: IconButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () {
+                      context.read<PoolCubit>().getAllPools();
+                      context.read<BottomNavCubit>().setIndex(0);
+                    },
                     icon: Icon(
                       LucideIcons.arrowLeft,
                       size: 24.0,

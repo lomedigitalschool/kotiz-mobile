@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +35,19 @@ class _HomePageState extends State<HomePage>
         poolCubit
             .getAllPools(); // ✅ Page d'accueil = toutes les cagnottes publiques
       }
+    });
+    startAutoFetch();
+  }
+
+  void startAutoFetch() {
+    Timer.periodic(const Duration(seconds: 300), (timer) async {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      final poolCubit = context.read<PoolCubit>();
+
+      await poolCubit.getAllPools();
     });
   }
 
@@ -278,27 +293,12 @@ class _HomePageState extends State<HomePage>
                             ],
                           );
                         }
-                        // if ((state is AllPoolsLoaded &&
-                        //         state.allPools.isEmpty) ||
-                        //     (state is UserPoolsLoaded &&
-                        //         state.userPools.isEmpty)) {
-                        //   return SizedBox(
-                        //     height: 500,
-                        //     child: Center(
-                        //       child: Column(
-                        //         mainAxisAlignment: MainAxisAlignment.center,
-                        //         children: [
-                        //           Text(
-                        //             "Aucune cagnottes disponibles  pour le moment ",
-                        //             textAlign: TextAlign.center,
-                        //             style: TextStyle(fontSize: 22),
-                        //           ),
-                        //           SizedBox(height: 8),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
+                        if ((state is AllPoolsLoaded &&
+                                state.allPools.isEmpty) ||
+                            (state is UserPoolsLoaded &&
+                                state.userPools.isEmpty)) {
+                          context.read<PoolCubit>().getAllPools();
+                        }
                         if (state is PoolError) {
                           return SizedBox(
                             height: 500,

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:kotiz_app/core/netework/api_config.dart';
 
 class ContributionService {
@@ -10,14 +11,18 @@ class ContributionService {
     String? message,
     bool? isAnonymous,
   }) async {
-    final response = await _app.post(
-      "pulls/$poolId/contribute",
-      data: {
-        "amount": amount,
-        "message": message ?? "",
-        "isAnonymous": isAnonymous ?? false,
-      },
-    );
-    return response;
+    try {
+      final response = await _app.post(
+        "pulls/$poolId/contribute",
+        data: {
+          "amount": amount,
+          "message": message ?? "",
+          "isAnonymous": isAnonymous ?? false,
+        },
+      );
+      return response;
+    } on Exception catch (e) {
+      throw Exception("Erreur lors de la contribution");
+    }
   }
 }

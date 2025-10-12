@@ -237,7 +237,7 @@ class _ContributionPageState extends State<ContributionPage> {
           context: context,
           type: ToastificationType.error,
           title: const Text('Erreur'),
-          description: Text('Erreur: $e'),
+          description: Text("$e"),
           backgroundColor: Colors.red.shade200,
           autoCloseDuration: const Duration(seconds: 3),
         );

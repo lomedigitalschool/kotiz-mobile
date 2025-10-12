@@ -137,7 +137,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
     // Rediriger vers le dashboard après 3 secondes
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        context.go('/explore');
+        context.go('/main');
       }
     });
   }
@@ -159,7 +159,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
 
     // Rediriger vers le dashboard
     if (mounted) {
-      context.go('/explore');
+      context.go('/main');
     }
   }
 
@@ -265,7 +265,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
         title: const Text('Statut du paiement'),
         backgroundColor: ColorConstant.colorWhite,
         leading: IconButton(
-          onPressed: () => context.go('/explore'),
+          onPressed: () => context.go('/main'),
           icon: const Icon(LucideIcons.arrowLeft),
         ),
       ),

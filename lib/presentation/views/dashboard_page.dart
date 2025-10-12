@@ -406,7 +406,8 @@ class _DashboardPageState extends State<DashboardPage> {
                               child: AppButton(
                                 text: "Créer une cagnotte",
                                 backgroundColor: ColorConstant.colorGreen,
-                                onPressed: () => context.push('/create'),
+                                onPressed: () =>
+                                    context.read<BottomNavCubit>().setIndex(2),
                               ),
                             ),
                           ),
