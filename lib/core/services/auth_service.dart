@@ -35,21 +35,21 @@ class AuthService {
       debugPrint("Firebase login error: ${e.code} – ${e.message}\n$s");
       switch (e.code) {
         case 'user-not-found':
-          throw Exception('Aucun compte ne correspond à cet e-mail');
+          throw ('Aucun compte ne correspond à cet e-mail');
         case 'wrong-password':
-          throw Exception('Email ou mot de passe incorrect');
+          throw ('Email ou mot de passe incorrect');
         case 'invalid-email':
-          throw Exception('Email ou mot de passe incorrect');
+          throw ('Email ou mot de passe incorrect');
         case 'user-disabled':
-          throw Exception('Ce compte a été désactivé');
+          throw ('Ce compte a été désactivé');
         case 'invalid-credential':
-          throw Exception('Email ou mot de passe incorrect');
+          throw ('Email ou mot de passe incorrect');
         default:
-          throw Exception("Erreur lors de la connexion");
+          throw ("Erreur lors de la connexion");
       }
     } catch (e, s) {
       debugPrint("Autre erreur de connexion: $e\n$s");
-      throw Exception('Une erreur inattendue est survenue.');
+      throw ('Une erreur inattendue est survenue.');
     }
   }
 

@@ -32,10 +32,10 @@ class PoolService {
         if (response.isNotEmpty) {
           data = response[0];
         } else {
-          throw Exception('Liste vide reçue du serveur');
+          throw ('Liste vide reçue du serveur');
         }
       } else {
-        throw Exception('Type de réponse inattendu: ${response.runtimeType}');
+        throw ('Type de réponse inattendu: ${response.runtimeType}');
       }
 
       if (data != null && data is Map<String, dynamic>) {
@@ -43,7 +43,7 @@ class PoolService {
         return Pool.fromJson(data);
       }
 
-      throw Exception('Données de cagnotte nulles ou mal formatées');
+      throw ('Données de cagnotte nulles ou mal formatées');
     } catch (e, s) {
       debugPrint("❌ Erreur lors de la récupération des détails : $e\n$s");
       rethrow;
