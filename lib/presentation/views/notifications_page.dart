@@ -28,7 +28,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
     context.read<NotificationCubit>().fetchNotifications();
   }
 
-  List<NotificationModel> _filterNotifications(List<NotificationModel> notifications) {
+  List<NotificationModel> _filterNotifications(
+    List<NotificationModel> notifications,
+  ) {
     switch (_filter) {
       case 'unread':
         return notifications.where((notif) => !notif.isRead).toList();
@@ -96,14 +98,16 @@ class _NotificationsPageState extends State<NotificationsPage> {
         title: const Text('Notifications'),
         backgroundColor: ColorConstant.colorWhite,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => context.go("/main"),
           icon: const Icon(LucideIcons.arrowLeft),
         ),
         actions: [
           BlocBuilder<NotificationCubit, NotificationState>(
             builder: (context, state) {
               if (state is NotificationLoaded) {
-                final hasUnread = state.notifications.any((notif) => !notif.isRead);
+                final hasUnread = state.notifications.any(
+                  (notif) => !notif.isRead,
+                );
                 if (hasUnread) {
                   return TextButton(
                     onPressed: _markAllAsRead,
@@ -147,16 +151,25 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     Expanded(
                       child: BlocBuilder<NotificationCubit, NotificationState>(
                         builder: (context, state) {
-                          final notifications = state is NotificationLoaded ? state.notifications : <NotificationModel>[];
+                          final notifications = state is NotificationLoaded
+                              ? state.notifications
+                              : <NotificationModel>[];
                           final allCount = notifications.length;
-                          final unreadCount = notifications.where((n) => !n.isRead).length;
-                          final readCount = notifications.where((n) => n.isRead).length;
+                          final unreadCount = notifications
+                              .where((n) => !n.isRead)
+                              .length;
+                          final readCount = notifications
+                              .where((n) => n.isRead)
+                              .length;
 
                           return Row(
                             children: [
                               _buildFilterButton('all', 'Toutes ($allCount)'),
                               const SizedBox(width: 8),
-                              _buildFilterButton('unread', 'Non lues ($unreadCount)'),
+                              _buildFilterButton(
+                                'unread',
+                                'Non lues ($unreadCount)',
+                              ),
                               const SizedBox(width: 8),
                               _buildFilterButton('read', 'Lues ($readCount)'),
                             ],
@@ -173,9 +186,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 child: BlocBuilder<NotificationCubit, NotificationState>(
                   builder: (context, state) {
                     if (state is NotificationLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     if (state is NotificationError) {
@@ -183,7 +194,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.error, size: 64, color: Colors.red),
+                            const Icon(
+                              Icons.error,
+                              size: 64,
+                              color: Colors.red,
+                            ),
                             const SizedBox(height: 16),
                             Text(
                               state.message,
@@ -201,18 +216,27 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     }
 
                     if (state is NotificationLoaded) {
-                      final filteredNotifications = _filterNotifications(state.notifications);
+                      final filteredNotifications = _filterNotifications(
+                        state.notifications,
+                      );
 
                       if (filteredNotifications.isEmpty) {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(LucideIcons.bell, size: 64, color: Colors.grey),
+                              const Icon(
+                                LucideIcons.bell,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
                               const SizedBox(height: 16),
                               Text(
                                 _getEmptyMessage(),
-                                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ],
@@ -296,7 +320,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: _getNotificationColor(notification.type).withValues(alpha: 0.1),
+                color: _getNotificationColor(
+                  notification.type,
+                ).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
@@ -317,7 +343,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     notification.message,
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+                      fontWeight: notification.isRead
+                          ? FontWeight.normal
+                          : FontWeight.bold,
                       color: Colors.black87,
                     ),
                   ),
@@ -333,7 +361,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(10),
@@ -370,11 +401,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 ),
               )
             else
-              const Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 20,
-              ),
+              const Icon(Icons.check_circle, color: Colors.green, size: 20),
           ],
         ),
       ),
