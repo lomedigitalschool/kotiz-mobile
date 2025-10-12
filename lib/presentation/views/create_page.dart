@@ -169,8 +169,8 @@ class _CreatePageState extends State<CreatePage> {
                   ),
                   SizedBox(height: 20),
                   AppButton(
-                    onPressed: () => context.go("/register"),
-                    text: "Créer un compte",
+                    onPressed: () => context.go("/login"),
+                    text: "Se connecter",
                     backgroundColor: ColorConstant.colorBlue,
                   ),
                 ],
@@ -215,98 +215,105 @@ class _CreatePageState extends State<CreatePage> {
                 _refreshAndNavigate();
               }
             },
-            child: Scaffold(
-              resizeToAvoidBottomInset: true,
-              backgroundColor: ColorConstant.colorWhite,
-              appBar: AppBar(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
                 backgroundColor: ColorConstant.colorWhite,
-                title: Text(
-                  "Créer une cagnotte",
-                  style: TextStyle(fontSize: 24),
-                ),
-                centerTitle: true,
-                leading: IconButton(
-                  onPressed: () => context.pop(),
-                  icon: Icon(
-                    LucideIcons.arrowLeft,
-                    size: 24.0,
-                    color: ColorConstant.colorBlue,
+                appBar: AppBar(
+                  backgroundColor: ColorConstant.colorWhite,
+                  title: Text(
+                    "Créer une cagnotte",
+                    style: TextStyle(fontSize: 24),
                   ),
-                ),
-                actions: [
-                  IconButton(
+                  centerTitle: true,
+                  leading: IconButton(
                     onPressed: () => context.pop(),
                     icon: Icon(
-                      Icons.close,
+                      LucideIcons.arrowLeft,
                       size: 24.0,
                       color: ColorConstant.colorBlue,
                     ),
-                    tooltip: "Fermer",
                   ),
-                ],
-              ),
-              body: BlocBuilder<PoolCubit, PoolState>(
-                builder: (context, state) {
-                  return Stepper(
-                    steps: getSteps(),
-                    currentStep: currentStep,
-                    type: StepperType.horizontal,
-                    margin: EdgeInsetsGeometry.all(50),
-                    elevation: 0,
-                    stepIconMargin: EdgeInsets.all(0),
-                    onStepContinue: () {
-                      final form = formKeys[currentStep].currentState!;
-                      if (state is! PoolLoading) {
-                        if (form.validate()) {
-                          if (currentStep == 1) {
-                            _submit();
-                          } else {
-                            setState(() => currentStep += 1);
+                  actions: [
+                    IconButton(
+                      onPressed: () => context.pop(),
+                      icon: Icon(
+                        Icons.close,
+                        size: 24.0,
+                        color: ColorConstant.colorBlue,
+                      ),
+                      tooltip: "Fermer",
+                    ),
+                  ],
+                ),
+                body: BlocBuilder<PoolCubit, PoolState>(
+                  builder: (context, state) {
+                    return Stepper(
+                      steps: getSteps(),
+                      currentStep: currentStep,
+                      type: StepperType.horizontal,
+                      margin: EdgeInsetsGeometry.all(50),
+                      elevation: 0,
+                      stepIconMargin: EdgeInsets.all(0),
+                      onStepContinue: () {
+                        final form = formKeys[currentStep].currentState!;
+                        if (state is! PoolLoading) {
+                          if (form.validate()) {
+                            if (currentStep == 1) {
+                              _submit();
+                            } else {
+                              setState(() => currentStep += 1);
+                            }
                           }
                         }
-                      }
-                    },
-                    onStepCancel: currentStep > 0
-                        ? () {
-                            setState(() {
-                              currentStep -= 1;
-                            });
-                          }
-                        : null,
-                    controlsBuilder: (context, details) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 15,
-                        children: [
-                          SizedBox(height: 10),
-                          AppButton(
-                            widget: state is PoolLoading
-                                ? SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
+                      },
+                      onStepCancel: currentStep > 0
+                          ? () {
+                              setState(() {
+                                currentStep -= 1;
+                              });
+                            }
+                          : null,
+                      controlsBuilder: (context, details) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 15,
+                          children: [
+                            SizedBox(height: 10),
+                            AppButton(
+                              widget: state is PoolLoading
+                                  ? SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : null,
+                              onPressed: details.onStepContinue,
+                              text: currentStep == 1 ? "Créer " : "Suivant",
+                              backgroundColor: state is PoolLoading
+                                  ? Colors.grey
+                                  : ColorConstant.colorGreen,
+                            ),
+                            currentStep == 1
+                                ? AppButton(
+                                    onPressed: details.onStepCancel,
+                                    backgroundColor: Colors.grey,
+                                    text: "Retour",
                                   )
-                                : null,
-                            onPressed: details.onStepContinue,
-                            text: currentStep == 1 ? "Créer " : "Suivant",
-                            backgroundColor: state is PoolLoading
-                                ? Colors.grey
-                                : ColorConstant.colorGreen,
-                          ),
-                          currentStep == 1
-                              ? AppButton(
-                                  onPressed: details.onStepCancel,
-                                  backgroundColor: Colors.grey,
-                                  text: "Retour",
-                                )
-                              : Text(""),
-                        ],
-                      );
-                    },
-                  );
-                },
+                                : Text(""),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),

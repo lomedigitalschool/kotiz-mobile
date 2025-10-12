@@ -278,51 +278,60 @@ class _HomePageState extends State<HomePage>
                             ],
                           );
                         }
-                        if ((state is AllPoolsLoaded &&
-                                state.allPools.isEmpty) ||
-                            (state is UserPoolsLoaded &&
-                                state.userPools.isEmpty)) {
-                          return SizedBox(
-                            height: 500,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Aucune cagnottes disponibles  pour le moment ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 22),
-                                  ),
-                                  SizedBox(height: 8),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
+                        // if ((state is AllPoolsLoaded &&
+                        //         state.allPools.isEmpty) ||
+                        //     (state is UserPoolsLoaded &&
+                        //         state.userPools.isEmpty)) {
+                        //   return SizedBox(
+                        //     height: 500,
+                        //     child: Center(
+                        //       child: Column(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         children: [
+                        //           Text(
+                        //             "Aucune cagnottes disponibles  pour le moment ",
+                        //             textAlign: TextAlign.center,
+                        //             style: TextStyle(fontSize: 22),
+                        //           ),
+                        //           SizedBox(height: 8),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   );
+                        // }
                         if (state is PoolError) {
                           return SizedBox(
                             height: 500,
                             child: Center(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    state.message,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 22),
-                                  ),
-                                  SizedBox(height: 8),
-                                  TextButton(
-                                    onPressed: () =>
-                                        context.read<PoolCubit>().getAllPools(),
-                                    child: Text(
-                                      "Ressayer",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: ColorConstant.colorBlue,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        state.message,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 22),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(height: 8),
+                                    TextButton(
+                                      onPressed: () => context
+                                          .read<PoolCubit>()
+                                          .getAllPools(),
+                                      child: Text(
+                                        "Ressayer",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: ColorConstant.colorBlue,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
